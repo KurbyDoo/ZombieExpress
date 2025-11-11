@@ -10,6 +10,9 @@ dependencies {
   runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
   api "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
 
+  implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+  runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
+
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
