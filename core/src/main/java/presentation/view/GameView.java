@@ -2,6 +2,7 @@ package presentation.view;
 
 import domain.entities.Player;
 import domain.entities.World;
+import domain.entities.Zombie; // delete this later
 import presentation.controllers.CameraController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
@@ -80,6 +81,10 @@ public class GameView implements Viewable {
         worldGenerationController.generateInitialWorld(8, 4, 32);
 
         setupUI();
+
+        //test add entities
+        Zombie zombie = new Zombie(objectRenderer);
+        zombie.createZombie(); //delete this later
     }
 
     @Override
@@ -97,6 +102,8 @@ public class GameView implements Viewable {
 
             // Handle hotbar numeric key input
             handleHotbarKeyInput();
+
+            // Call entity controller and pass world and entity list
         }
 
         // BACKGROUND PROCESSING
@@ -106,7 +113,7 @@ public class GameView implements Viewable {
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        objectRenderer.render();
+        objectRenderer.render(deltaTime, player.getPosition());
         refreshTimeLabel();
         refreshHotbarSelection();
         uiStage.act(deltaTime);
