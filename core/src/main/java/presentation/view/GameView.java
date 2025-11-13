@@ -55,7 +55,12 @@ public class GameView implements Viewable {
     private ChunkGenerationInteractor chunkGenerationUseCase;
     private Player player;
 
-    public btCollisionWorld collisionWorld;
+//    public btCollisionConfiguration collisionConfig;
+//    public btDispatcher dispatcher;
+//    public btBroadphaseInterface broadPhase;
+//    public btCollisionWorld collisionWorld;
+//
+//    public ChunkMeshManager chunkMeshManager;
 
     private float accumulator;
 
@@ -76,7 +81,7 @@ public class GameView implements Viewable {
     public void createView() {
 
         // need to initialize before any BulletPhysics related calls
-        Bullet.init();
+//        Bullet.init();
         // initialize collisionWorld
         btDefaultCollisionConfiguration config = new btDefaultCollisionConfiguration();
         btCollisionDispatcher dispatcher = new btCollisionDispatcher(config);
@@ -101,6 +106,8 @@ public class GameView implements Viewable {
         meshBuilder = new GameMeshBuilder(world);
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
         chunkGenerationUseCase = new ChunkGenerationInteractor();
+
+//        chunkMeshManager = new ChunkMeshManager();
 
         worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
 
@@ -159,6 +166,15 @@ public class GameView implements Viewable {
     @Override
     public void disposeView() {
         objectRenderer.dispose();
+
+//        chunkMeshManager.dispose();
+
+//        collisionWorld.dispose();
+//        broadPhase.dispose();
+//        dispatcher.dispose();
+//        collisionConfig.dispose();
+
+
     }
 
     @SuppressWarnings("unchecked")

@@ -30,6 +30,10 @@ public class ObjectRenderer {
 
     public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
 
+    public List<btCollisionShape> collisionBodies = new ArrayList<>();
+
+    public List<ChunkMeshData> meshData = new ArrayList<>();
+
     public ObjectRenderer(PerspectiveCamera camera) {
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
@@ -82,6 +86,14 @@ public class ObjectRenderer {
     }
 
     public void dispose() {
+        // No need to dispose, ChunkMeshData stores the same objects
+//        for (btCollisionShape shape : collisionBodies) {
+//            shape.dispose();
+//        }
+        for(ChunkMeshData data : meshData){
+            data.dispose();
+        }
+
         modelBatch.dispose();
         models.clear();
         sceneManager.dispose();
