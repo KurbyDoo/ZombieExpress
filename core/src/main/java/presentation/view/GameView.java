@@ -19,6 +19,9 @@ import physics.CollisionHandler;
 import physics.GameMesh;
 import physics.HitBox;
 import infrastructure.rendering.*;
+import domain.entities.Player;
+import domain.entities.World;
+import domain.entities.Zombie; // delete this later
 import presentation.controllers.CameraController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
@@ -66,13 +69,6 @@ public class GameView implements Viewable{
     private BlockMaterialRepository materialRepository;
 
     private float accumulator;
-
-    private CollisionHandler colHandler;
-
-    private EntityBehaviourSystem entityBehaviourSystem;
-
-    private GameSimulationController gameSimulationController;
-
 
     private Stage uiStage;
     private Container<Label>[] hotbarSlots;
@@ -140,6 +136,10 @@ public class GameView implements Viewable{
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
         setupUI();
+
+        //test add entities
+        Zombie zombie = new Zombie(objectRenderer);
+        zombie.createZombie(); //delete this later
     }
 
     @Override
