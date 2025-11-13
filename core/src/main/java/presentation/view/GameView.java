@@ -1,26 +1,25 @@
 package presentation.view;
 
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
+import application.use_cases.PlayerMovement.PlayerMovementInteractor;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.ZombieStorage;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
+import infrastructure.input_boundary.GameInputAdapter;
+import infrastructure.rendering.ObjectRenderer;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import physics.HitBox;
 import presentation.ZombieInstanceUpdater;
-import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
-import infrastructure.input_boundary.GameInputAdapter;
-import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
-import application.use_cases.PlayerMovement.PlayerMovementInteractor;
 import presentation.controllers.WorldController;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
 
 import static physics.HitBox.ShapeTypes.SPHERE;
-
 
 public class GameView implements Viewable {
     private final float FPS = 120.0f;
@@ -32,15 +31,13 @@ public class GameView implements Viewable {
     private ViewCamera camera;
     private Player player;
 
-    // Left: Refactored World Controller
-    private WorldController worldController;
-
-    // Right: Entity & Physics Controllers
-    private EntityController entityController;
+    // --- WORLD & ENTITY MANAGEMENT ---
+    private WorldController worldController; // From Left/Middle for chunk management
+    private EntityController entityController; // From Right for entity logic
     private EntityGenerationInteractor entityGenerationInteractor;
     private RenderZombieInteractor renderZombieInteractor;
-    private CollisionHandler colHandler;
-    private HitBox block; // Physics testing object
+    private CollisionHandler colHandler; // From Right for physics
+    private HitBox block; // Physics testing object (From Right)
 
     private float accumulator;
 
@@ -59,20 +56,20 @@ public class GameView implements Viewable {
 
         cameraController = new FirstPersonCameraController(camera, player);
 
-        // Right: Initialize Collision Handler
+        // --- RENDERER & PHYSICS SETUP (From Right) ---
         colHandler = new CollisionHandler();
-        // Right: ObjectRenderer now requires CollisionHandler
+        // ObjectRenderer now requires CollisionHandler
         objectRenderer = new ObjectRenderer(camera, colHandler);
 
-        // Left: Initialize WorldController (Replaces static WorldGenerationController)
-        worldController = new WorldController(objectRenderer, 4);
+        // --- WORLD & CHUNK SETUP (From Left/Middle) ---
+        worldController = new WorldController(objectRenderer, 4); // 4 chunk radius;
 
-        // Right: Physics Test Object
+        // --- PHYSICS TEST OBJECT (From Right) ---
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
         GameMesh red = block.Construct();
         objectRenderer.add(red);
 
-        // Right: Entity System Setup
+        // --- ENTITY SYSTEM SETUP (From Right) ---
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
@@ -81,7 +78,6 @@ public class GameView implements Viewable {
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
         entityController.generateZombie();
     }
-
 
     @Override
     public void renderView() {
@@ -92,21 +88,22 @@ public class GameView implements Viewable {
             accumulator -= TIME_STEP;
             cameraController.updatePrevious();
 
-            // WORLD UPDATES
+            // --- GAME LOGIC ---
+            // 1. Process player input
             gameInputAdapter.processInput(TIME_STEP);
-            // Update chunks based on player position:
-            chunkRadiusManager.execute(player.getPosition());
-
+            // 2. Update the world
+            worldController.update(player.getPosition());
         }
+
 
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        // Right: Render Entities
+        // Render Entities (From Right)
         entityController.renderZombie();
 
-        // Right: Render Objects (with delta)
+        // Render Objects (with deltaTime for SceneManager updates) (From Right)
         objectRenderer.render(deltaTime);
     }
 

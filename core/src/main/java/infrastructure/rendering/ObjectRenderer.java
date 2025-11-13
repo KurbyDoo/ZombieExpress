@@ -13,7 +13,9 @@ import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import physics.CollisionHandler;
 import physics.GameMesh;
 
+import net.mgsx.gltf.loaders.gltf.GLTFLoader; // Keep from Left for GLTF functionality
 import net.mgsx.gltf.scene3d.scene.Scene;
+import net.mgsx.gltf.scene3d.scene.SceneAsset; // Keep from Left for GLTF functionality
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
 import java.util.ArrayList;
@@ -27,14 +29,18 @@ public class ObjectRenderer {
     public PerspectiveCamera camera;
     public ModelBatch modelBatch;
 
-    // RENDER LISTS & HANDLERS
-    public List<GameMesh> models = new ArrayList<>(); // Changed from ModelInstance to GameMesh
+    // RENDER LISTS & HANDLERS (Prioritizing Right's structure)
+    public List<GameMesh> models = new ArrayList<>();
     private SceneManager sceneManager;
     public CollisionHandler colHandler;
 
-    // ASYNCHRONOUS QUEUES (Using GameMesh from Right/ModelInstance from Left implies GameMesh is correct)
+    // GLTF LOADING (From Left, to be used by the entity system)
+    private SceneAsset zombieSceneAsset;
+    public ModelInstance zombieInstance; // Keep for temporary access/testing if needed
+
+    // ASYNCHRONOUS QUEUES (Using GameMesh)
     public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
-    public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>(); // Added from Left for de-rendering
+    public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
 
     public ObjectRenderer(PerspectiveCamera camera) {
         environment = new Environment();
@@ -42,15 +48,19 @@ public class ObjectRenderer {
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
         modelBatch = new ModelBatch();
-
         this.camera = camera;
         this.colHandler = colHandler;
 
-        // Set up scene manager (from Right)
+        // Set up Scene Manager (From Right)
         sceneManager = new SceneManager();
         sceneManager.setShaderProvider(new DefaultShaderProvider());
         sceneManager.setCamera(camera);
         sceneManager.setAmbientLight(1f);
+
+        // Load the zombie GLTF asset (From Left)
+        // NOTE: The asset itself is loaded, but not immediately added to the sceneManager,
+        // as the EntityController will handle scene additions.
+        zombieSceneAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
     }
 
     public void add(GameMesh obj) {
@@ -69,27 +79,30 @@ public class ObjectRenderer {
         sceneManager.addScene(scene);
     }
 
+    // Kept from Left to allow the EntityController to set the instance
+    public void addZombieInstance(ModelInstance zombieInstance) {
+        this.zombieInstance = zombieInstance;
+    }
 
     private void updateRenderList() {
         GameMesh instance;
 
-        // Add new models (from Middle/Right)
+        // Add new models
         while ((instance = toAdd.poll()) != null) {
             models.add(instance);
         }
 
-        // Remove and dispose old models (from Left, adapted for GameMesh)
+        // Remove and dispose old models (From Middle/Right logic, adapted for GameMesh)
         while ((instance = toRemove.poll()) != null) {
             models.remove(instance);
 
-            // Dispose of the model's resources when it's removed
-            instance.dispose(); // Assuming GameMesh has a comprehensive dispose method
-            instance.modelDispose(); // Use the modelDispose method from Right for Model resources
+            instance.dispose();
+            instance.modelDispose();
 
-            // Also remove from collision handler if necessary (not explicitly in conflicts, but good practice)
             colHandler.remove(instance);
         }
     }
+
 
     public void render(Float deltaTime) {
         updateRenderList();
@@ -118,9 +131,13 @@ public class ObjectRenderer {
         colHandler.checkCollision(); // Check collisions (from Right)
 
         modelBatch.begin(camera);
-        // Render GameMesh objects (casting to ModelInstance is needed if GameMesh doesn't extend it)
         for (GameMesh obj : models) {
-            modelBatch.render(obj, environment); // Render GameMesh
+            modelBatch.render(obj, environment);
+        }
+
+        // Render the zombieInstance (From Left - if it exists, for testing)
+        if (zombieInstance != null) {
+            modelBatch.render(zombieInstance, environment);
         }
         modelBatch.end();
     }
@@ -138,8 +155,12 @@ public class ObjectRenderer {
         toRemove.clear();
 
         colHandler.dispose(); // Dispose collision handler (from Right)
-
         modelBatch.dispose();
         sceneManager.dispose(); // Dispose scene manager (from Right)
+
+        // Dispose GLTF asset if needed
+        if (zombieSceneAsset != null) {
+            zombieSceneAsset.dispose(); // From Left
+        }
     }
 }
