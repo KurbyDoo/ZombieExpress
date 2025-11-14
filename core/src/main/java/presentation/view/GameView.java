@@ -61,7 +61,6 @@ public class GameView implements Viewable {
         btDbvtBroadphase broadphase = new btDbvtBroadphase();
         collisionWorld = new btCollisionWorld(dispatcher, broadphase, config);
 
-        Vector3 startingPosition = new Vector3(0, 200f, 0);
         Vector3 startingPosition = new Vector3(0, 16f, 0);
         player = new Player(startingPosition);
 
