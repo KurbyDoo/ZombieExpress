@@ -1,25 +1,29 @@
 package presentation.view;
 
+import application.use_cases.EntityGeneration.EntityGenerationInputData;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
-import application.use_cases.PlayerMovement.PlayerMovementInteractor;
+import application.use_cases.EntityGeneration.EntityGenerationInputData;
+import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
+import domain.entities.World;
 import domain.entities.ZombieStorage;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
-import infrastructure.input_boundary.GameInputAdapter;
-import infrastructure.rendering.ObjectRenderer;
-import physics.CollisionHandler;
-import physics.GameMesh;
-import physics.HitBox;
 import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
+import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
+import infrastructure.input_boundary.GameInputAdapter;
+import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
+import application.use_cases.PlayerMovement.PlayerMovementInteractor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
+import io.github.testlibgdx.ChunkLoader;
+import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldController;
 
-import static physics.HitBox.ShapeTypes.SPHERE;
+
 
 public class GameView implements Viewable {
     private final float FPS = 120.0f;
@@ -30,16 +34,13 @@ public class GameView implements Viewable {
     private GameInputAdapter gameInputAdapter;
     private ViewCamera camera;
     private Player player;
+    private WorldController worldController;
+    private float accumulator;
 
-    // --- WORLD & ENTITY MANAGEMENT ---
-    private WorldController worldController; // From Left/Middle for chunk management
-    private EntityController entityController; // From Right for entity logic
+    // add EntityController
+    private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
     private RenderZombieInteractor renderZombieInteractor;
-    private CollisionHandler colHandler; // From Right for physics
-    private HitBox block; // Physics testing object (From Right)
-
-    private float accumulator;
 
     @Override
     public void createView() {
@@ -56,25 +57,17 @@ public class GameView implements Viewable {
 
         cameraController = new FirstPersonCameraController(camera, player);
 
-        // --- RENDERER & PHYSICS SETUP (From Right) ---
-        colHandler = new CollisionHandler();
-        // ObjectRenderer now requires CollisionHandler
-        objectRenderer = new ObjectRenderer(camera, colHandler);
-
-        // --- WORLD & CHUNK SETUP (From Left/Middle) ---
+        objectRenderer = new ObjectRenderer(camera);
         worldController = new WorldController(objectRenderer, 4); // 4 chunk radius;
-
-        // --- PHYSICS TEST OBJECT (From Right) ---
-        block = new HitBox("sphere", SPHERE, 10, 10, 60);
-        GameMesh red = block.Construct();
-        objectRenderer.add(red);
-
-        // --- ENTITY SYSTEM SETUP (From Right) ---
+        //test add entities
+//        Zombie zombie = new Zombie(objectRenderer);
+//        zombie.createZombie(); //delete this later
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
         ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
 
+        //entityGenerationInteractor.execute(new EntityGenerationInputData());
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
         entityController.generateZombie();
     }
@@ -100,16 +93,12 @@ public class GameView implements Viewable {
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        // Render Entities (From Right)
+        objectRenderer.render();
         entityController.renderZombie();
-
-        // Render Objects (with deltaTime for SceneManager updates) (From Right)
-        objectRenderer.render(deltaTime);
     }
 
     @Override
     public void disposeView() {
         objectRenderer.dispose();
-        if (block != null) block.dispose();
     }
 }

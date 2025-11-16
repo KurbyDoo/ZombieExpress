@@ -10,9 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Vector3;
-import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
-import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
 import java.util.ArrayList;
@@ -70,7 +68,7 @@ public class ObjectRenderer {
         this.zombieInstance = zombieInstance;
     }
 
-    public void addZombieToScene(Scene scene) {
+    public void addToSceneManager(Scene scene) { //delete this later
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
@@ -111,6 +109,7 @@ public class ObjectRenderer {
         sceneManager.render();
 
         modelBatch.begin(camera);
+
         for (ModelInstance modelInstance : models) {
             modelBatch.render(modelInstance, environment);
         }
