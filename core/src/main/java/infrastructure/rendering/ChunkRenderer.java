@@ -32,20 +32,20 @@ public class ChunkRenderer implements ChunkRadiusManagerOutputBoundary {
 
         ModelInstance instance = meshBuilder.build(chunk);
 
+        // Keep track of the instance
         instances.put(new Vector3(pos), instance);
+
+        // Tell the main renderer to add it
+        objectRenderer.add(instance);
     }
 
     @Override
     public void onChunkRemoved(Vector3 pos) {
+        // Find the instance to remove
         ModelInstance removed = instances.remove(pos);
-        if (removed != null && removed.model != null) {
-            removed.model.dispose();
-        }
-    }
-
-    public void render() {
-        for (ModelInstance inst : instances.values()) {
-            objectRenderer.modelBatch.render(inst, objectRenderer.environment);
+        if (removed != null) {
+            objectRenderer.remove(removed);
+            // Disposal now happens inside ObjectRenderer
         }
     }
 }
