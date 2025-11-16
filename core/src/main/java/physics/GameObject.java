@@ -9,10 +9,11 @@ import com.badlogic.gdx.utils.Disposable;
 public class GameObject extends ModelInstance implements Disposable {
 
     public final btCollisionObject body;
-    public boolean moving;
-
+    public boolean moving = true;
+    public String id;
     public GameObject(Model model, String node, btCollisionShape shape){
         super(model, node);
+        this.id = node;
         body = new btCollisionObject();
         body.setCollisionShape(shape);
     }
