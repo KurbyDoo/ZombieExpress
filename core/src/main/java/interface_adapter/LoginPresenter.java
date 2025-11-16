@@ -14,11 +14,15 @@ public class LoginPresenter implements LoginOutputBoundary {
     // TODO: need to set the success and fail status and notify the UI(javaSwing) to update
     @Override
     public void loginSuccess(LoginOutputData  data) {
-
+        viewModel.setSuccessfulLogin(true);
+        viewModel.setErrorMssage(null);
+        viewModel.firePropertyChange();
     }
 
     @Override
     public void loginFailed(String error_message) {
-
+        viewModel.setSuccessfulLogin(false);
+        viewModel.setErrorMssage(error_message);
+        viewModel.firePropertyChange();
     }
 }
