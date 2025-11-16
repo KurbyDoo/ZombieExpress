@@ -14,12 +14,13 @@ public class LoginInteractor implements LoginInputBoundary {
             presenter.loginFailed("Email or password is empty");
             return;
         }
-        boolean success_login  = userDataAccess.login(email, password);
-        if (success_login){
-            LoginOutputData data = new LoginOutputData(email);
+        String uid = userDataAccess.login(email, password);
+
+        if (uid != null){
+            LoginOutputData data = new LoginOutputData(email, uid);
             presenter.loginSuccess(data);
         }else{
-            presenter.loginFailed("Incorrect email or password");
+            presenter.loginFailed("Invalid email or password");
         }
     }
 }

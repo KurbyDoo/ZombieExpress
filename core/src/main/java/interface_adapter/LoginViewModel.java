@@ -27,6 +27,13 @@ public class LoginViewModel {
     public String getLoginEmail() {
         return email;
     }
+
+    public String setLoginEmail(String email) {
+        String oldEmail = this.email;
+        this.email = email;
+        return oldEmail;
+    }
+
     public String getErrorMessage() {
         return errorMssage;
     }

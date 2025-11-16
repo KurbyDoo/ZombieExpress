@@ -1,5 +1,6 @@
 package UseCases.Login;
 
 public interface LoginDataAccessInterface {
-    boolean login(String email, String password);
+    String login(String email, String password);
+    // I change the attribute from boolean to String
 }
