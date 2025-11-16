@@ -22,10 +22,12 @@ import application.use_cases.player_movement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import presentation.controllers.WorldGenerationController;
+// import io.github.testlibgdx.ChunkLoader;
+import application.use_cases.ChunkRadius.ChunkRadiusManagerInteractor;
 
 import static physics.HitBox.ShapeTypes.SPHERE;
 
-public class GameView implements Viewable{
+public class GameView implements Viewable {
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
 
@@ -41,6 +43,11 @@ public class GameView implements Viewable{
     private BlockRepository blockRepository;
     private BlockMaterialRepository materialRepository;
 
+    // Fields from Left (Radius Manager)
+    private ChunkGenerationInteractor chunkGenerationUseCase;
+    private ChunkRenderer chunkRenderer;
+    private ChunkRadiusManagerInteractor chunkRadiusManager;
+
     private float accumulator;
 
     private CollisionHandler colHandler;
@@ -52,9 +59,9 @@ public class GameView implements Viewable{
     private EntityGenerationInteractor entityGenerationInteractor;
     private RenderZombieInteractor renderZombieInteractor;
 
+
     @Override
     public void createView() {
-
         Vector3 startingPosition = new Vector3(0, 16f, 0);
         player = new Player(startingPosition);
 
@@ -75,25 +82,36 @@ public class GameView implements Viewable{
 
         objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
+        // Using the new Facade from Right branch
         meshBuilder = new ModelGeneratorFacade(world, blockRepository, materialRepository);
-        chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
+//        chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
 
-        worldGenerationController = new WorldGenerationController(world, chunkLoader, blockRepository);
-        worldGenerationController.generateInitialWorld(8, 4, 32);
+        // Setup for Radius Manager (From Left)
+        chunkGenerationUseCase = new ChunkGenerationInteractor();
+        chunkRenderer = new ChunkRenderer(meshBuilder, objectRenderer, world);
+
+        // Radius manager ties domain + generator + renderer together:
+        chunkRadiusManager = new ChunkRadiusManagerInteractor(
+            world,
+            chunkGenerationUseCase,
+            chunkRenderer,
+            4 // radius
+        );
+
+//        worldGenerationController = new WorldGenerationController(world, chunkLoader, blockRepository);
+//        worldGenerationController.generateInitialWorld(8, 4, 32);
+
         // physics testing
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
         GameMesh red = block.Construct();
         objectRenderer.add(red);
 
-        //test add entities
-//        Zombie zombie = new Zombie(objectRenderer);
-//        zombie.createZombie(); //delete this later
+        // Entities (From Right)
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
         ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
 
-        //entityGenerationInteractor.execute(new EntityGenerationInputData());
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
         entityController.generateZombie();
     }
@@ -109,14 +127,13 @@ public class GameView implements Viewable{
 
             // WORLD UPDATES
             gameInputAdapter.processInput(deltaTime);
-
-            // Call entity controller and pass world and entity list
-
         }
-
+        // Update chunks based on player position (From Left):
+        chunkRadiusManager.execute(player.getPosition());
+        chunkRenderer.render();
 
         // BACKGROUND PROCESSING
-        chunkLoader.loadChunks();
+        // chunkLoader.loadChunks();
 
         float alpha = accumulator / TIME_STEP;
 
@@ -129,6 +146,5 @@ public class GameView implements Viewable{
     @Override
     public void disposeView() {
         objectRenderer.dispose();
-        block.dispose();
     }
 }
