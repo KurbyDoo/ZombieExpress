@@ -11,26 +11,34 @@ import domain.entities.Chunk;
 import application.use_cases.ChunkGeneration.*;
 
 public class ChunkRadiusManagerInteractor implements ChunkRadiusManagerInputBoundary {
+    private static final int MAX_X_CHUNKS = 8;
+    private static final int MIN_X_CHUNKS = -8;
+    private static final int MAX_Y_CHUNKS = 32;
+    private static final int MIN_Y_CHUNKS = 0;
 
-    private final World world;
-    private final ChunkGenerationInputBoundary generator;
-    private final ChunkRadiusManagerOutputBoundary output;
-    private final int radius;
+    private boolean isWithinWorldBounds(int x, int y, int z) {
+        if (x < MIN_X_CHUNKS || x > MAX_X_CHUNKS) {
+            return false;
+        }
 
-    public ChunkRadiusManagerInteractor(
-        World world,
-        ChunkGenerationInputBoundary generator,
-        ChunkRadiusManagerOutputBoundary output,
-        int radius) {
+        if (y < MIN_Y_CHUNKS || y > MAX_Y_CHUNKS) {
+            return false;
+        }
 
-        this.world = world;
-        this.generator = generator;
-        this.output = output;
-        this.radius = radius;
+        return true;
     }
 
+
     @Override
-    public void execute(Vector3 playerPosition) {
+    public void execute(ChunkRadiusManagerInputData inputData) { // <-- MODIFIED SIGNATURE
+
+        // --- EXTRACT DATA FROM INPUT OBJECT ---
+        final Vector3 playerPosition = inputData.playerPosition;
+        final World world = inputData.world;
+        final ChunkGenerationInputBoundary generator = inputData.generator;
+        final ChunkRadiusManagerOutputBoundary output = inputData.output;
+        final int radius = inputData.radius;
+        // --------------------------------------
 
         int cx = (int) Math.floor(playerPosition.x / Chunk.CHUNK_SIZE);
         int cy = (int) Math.floor(playerPosition.y / Chunk.CHUNK_SIZE);
@@ -38,22 +46,31 @@ public class ChunkRadiusManagerInteractor implements ChunkRadiusManagerInputBoun
 
         Set<Vector3> desired = new HashSet<>();
 
-        // Generate all chunks inside radius
+        // Generate all chunks inside the player's viewing radius
         for (int dx = -radius; dx <= radius; dx++) {
+            // NOTE: The vertical (Y) range is small for performance, only 3 chunks high.
             for (int dy = -1; dy <= 1; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
 
-                    Vector3 pos = new Vector3(cx + dx, cy + dy, cz + dz);
+                    int targetX = cx + dx;
+                    int targetY = cy + dy;
+                    int targetZ = cz + dz;
+
+                    // CHECK: ONLY LOAD CHUNKS WITHIN THE DEFINED WORLD BOUNDS
+                    if (!isWithinWorldBounds(targetX, targetY, targetZ)) {
+                        continue; // Skip this coordinate, it's outside the world bounds
+                    }
+
+                    Vector3 pos = new Vector3(targetX, targetY, targetZ);
                     desired.add(pos);
 
-                    if (!world.hasChunk((int)pos.x, (int)pos.y, (int)pos.z)) {
+                    if (!world.hasChunk(targetX, targetY, targetZ)) {
 
-                        Chunk newChunk = world.addChunk(
-                            (int) pos.x,
-                            (int) pos.y,
-                            (int) pos.z);
+                        Chunk newChunk = world.addChunk(targetX, targetY, targetZ);
 
+                        // Use the injected generator dependency
                         generator.execute(new ChunkGenerationInputData(newChunk));
+                        // Use the injected output dependency
                         output.onChunkCreated(pos);
                     }
                 }
@@ -70,6 +87,7 @@ public class ChunkRadiusManagerInteractor implements ChunkRadiusManagerInputBoun
 
         for (Vector3 pos : toRemove) {
             world.removeChunk((int)pos.x, (int)pos.y, (int)pos.z);
+            // Use the injected output dependency
             output.onChunkRemoved(pos);
         }
     }
