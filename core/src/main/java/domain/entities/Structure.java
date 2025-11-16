@@ -1,2 +1,4 @@
-package domain.entities;public class Structure {
+package domain.entities;
+
+public class Structure {
 }

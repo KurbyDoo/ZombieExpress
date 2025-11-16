@@ -31,3 +31,66 @@ Useful Gradle tasks and flags:
 
 Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
 For example, `core:clean` removes `build` folder only from the `core` project.
+
+
+File structure (As of nov 14th):
+```
+java
+├── domain
+│   ├── entity
+│   │   ├── BlockType.java
+│   │   ├── Chunk.java
+│   │   ├── FuelItem.java
+│   │   ├── Player.java
+│   │   ├── Weapon.java
+│   │   └── World.java
+│
+├── usecases
+│   ├── chunkgeneration
+│   │   ├── ChunkGenerationInputBoundary.java
+│   │   ├── ChunkGenerationInputData.java
+│   │   ├── ChunkGenerationInteractor.java
+│   │   └── ChunkGenerationOutputBoundary.java
+│   ├── login
+│   │   ├── LoginDataAccessInterface.java
+│   │   ├── LoginInputBoundary.java
+│   │   ├── LoginInteractor.java
+│   │   └── LoginOutputBoundary.java
+│   └── playermovement
+│       ├── PlayerMovementInputBoundary.java
+│       ├── PlayerMovementInputData.java
+│       └── PlayerMovementInteractor.java
+│
+├── interfaceadapters
+│   ├── controllers
+│   │   ├── CameraController.java
+│   │   ├── FirstPersonCameraController.java
+│   │   └── WorldGenerationController.java
+│   ├── presenters
+│   │   └── LoginPresenter.java
+│   ├── viewmodels
+│   │   └── LoginViewModel.java
+│   └── input
+│       └── GameInputAdapter.java
+│
+└── frameworksanddrivers
+    ├── main
+    │   └── Main.java
+    ├── config
+    │   └── GameConfig.java
+    ├── dataaccess
+    │   └── FirebaseAuthManager.java
+    ├── gdx
+    │   ├── view
+    │   │   ├── GameView.java
+    │   │   ├── LoginView.java
+    │   │   ├── Viewable.java
+    │   │   ├── ViewManager.java
+    │   │   └── ViewCamera.java
+    │   ├── rendering
+    │   │   ├── ChunkLoader.java
+    │   │   ├── GameMeshBuilder.java
+    │   │   └── ObjectRenderer.java
+    │   └── noise
+    │       └── PerlinNoise.java
+```

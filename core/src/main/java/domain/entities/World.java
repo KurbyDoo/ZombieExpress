@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector3;
 import java.util.HashMap;
 
 public class World {
+    private final int worldDepthChunks = 20;
     private HashMap<Vector3, Chunk> chunks;
 
     public World() {
@@ -38,4 +39,9 @@ public class World {
             return BlockType.STONE;
         }
     }
+
+    public int getWorldDepthChunks() {
+        return worldDepthChunks;
+    }
+
 }

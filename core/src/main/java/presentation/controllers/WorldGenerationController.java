@@ -17,11 +17,10 @@ public class WorldGenerationController {
     }
 
     public void generateInitialWorld(int worldWidth, int worldHeight, int worldDepth) {
-        for (int d = 0; d < worldDepth; d++) {
+        for (int d = -10; d < worldDepth; d++) {
             for (int x = -worldWidth; x <= worldWidth; x++) {
                 for (int y = 0; y <= worldHeight; y++) {
                     generateAndLoadChunk(d, y, x);
-                    if (d > 0) generateAndLoadChunk(d, y, x);
                 }
             }
         }
@@ -29,7 +28,7 @@ public class WorldGenerationController {
     public void generateAndLoadChunk(int chunkX, int chunkY, int chunkZ) {
         Chunk newChunk = world.addChunk(chunkX, chunkY, chunkZ);
 
-        ChunkGenerationInputData inputData = new ChunkGenerationInputData(newChunk);
+        ChunkGenerationInputData inputData = new ChunkGenerationInputData(newChunk, world);
         chunkGenerator.execute(inputData);
 
         chunkLoader.addChunkToLoad(newChunk);
