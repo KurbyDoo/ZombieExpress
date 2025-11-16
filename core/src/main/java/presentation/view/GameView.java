@@ -1,10 +1,12 @@
 package presentation.view;
 
-import application.use_cases.EntityGeneration.EntityGenerationInputData;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.RenderZombie.RenderZombieInputData;
+import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
-import domain.entities.Zombie; // delete this later
+import domain.entities.ZombieStorage;
+import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
@@ -39,6 +41,7 @@ public class GameView implements Viewable {
     // add EntityController
     private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
+    private RenderZombieInteractor renderZombieInteractor;
 
     @Override
     public void createView() {
@@ -66,12 +69,16 @@ public class GameView implements Viewable {
         worldGenerationController.generateInitialWorld(8, 4, 32);
 
         //test add entities
-        Zombie zombie = new Zombie(objectRenderer);
-        zombie.createZombie(); //delete this later
-        entityController = new EntityController(player);
-        entityGenerationInteractor = new EntityGenerationInteractor(objectRenderer);
-        entityGenerationInteractor.execute(new EntityGenerationInputData());
+//        Zombie zombie = new Zombie(objectRenderer);
+//        zombie.createZombie(); //delete this later
+        ZombieStorage zombieStorage = new ZombieStorage();
+        entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
+        renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
+        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
 
+        //entityGenerationInteractor.execute(new EntityGenerationInputData());
+        entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
+        entityController.generateZombie();
     }
 
     @Override
@@ -97,6 +104,7 @@ public class GameView implements Viewable {
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
+        entityController.renderZombie();
         objectRenderer.render(deltaTime, player.getPosition());
     }
 

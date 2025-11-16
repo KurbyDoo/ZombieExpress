@@ -10,9 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Vector3;
-import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
-import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
 import java.util.ArrayList;
@@ -61,12 +59,19 @@ public class ObjectRenderer {
 
     public void addZombieInstance(ModelInstance zombieInstance) {
         this.zombieInstance = zombieInstance;
-    }
+    } //delete this later
 
-    public void addZombieToScene(Scene scene) {
+    public void addToSceneManager(Scene scene) { //delete this later
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
+
+//    private void updateSceneManager() {
+//        List<Scene> zombieInstances = zombieMesh.getZombieInstances();
+//        for (Scene zombieInstance : zombieInstances) {
+//            sceneManager.addScene(zombieInstance);
+//        }
+//    }
 
     private void updateRenderList() {
         ModelInstance instance;
@@ -76,6 +81,7 @@ public class ObjectRenderer {
     }
 
     public void render(Float deltaTime, Vector3 playerPos) {
+        //updateSceneManager();
         updateRenderList();
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
