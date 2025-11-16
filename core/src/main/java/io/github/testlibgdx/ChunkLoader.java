@@ -38,7 +38,7 @@ public class ChunkLoader {
                 ChunkMeshData chunkMesh;
                 chunkMesh = meshBuilder.build(chunk);
                 objectRenderer.add(chunkMesh.getGameObject());
-                objectRenderer.addMeshData(chunkMesh);
+                //objectRenderer.addMeshData(chunkMesh);
             }
         } catch (Exception e) {
             e.printStackTrace();

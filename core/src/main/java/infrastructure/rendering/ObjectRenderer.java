@@ -61,9 +61,9 @@ public class ObjectRenderer {
         sceneManager.setAmbientLight(1f);
     }
 
-    public void add(ModelInstance modelInstance) {
-        toAdd.add(modelInstance);
-    }
+//    public void add(ModelInstance modelInstance) {
+//        toAdd.add(modelInstance);
+//    }
 
     public void add(GameObject obj){
         toAdd.add(obj);
@@ -85,6 +85,12 @@ public class ObjectRenderer {
         while ((instance = toAdd.poll()) != null){
             models.add(instance);
         }
+
+    }
+
+//    public void addMeshData(ChunkMeshData data) {
+//        meshData.add(data);
+//    }
 
     public void render(Float deltaTime) {
         updateRenderList();
@@ -109,8 +115,12 @@ public class ObjectRenderer {
 
         colHandler.dispose();
 
-        for(ChunkMeshData data : meshData){
-            data.dispose();
+//        for(ChunkMeshData data : meshData){
+//            data.dispose();
+//        }
+
+        for (GameObject obj : models){
+            obj.dispose();
         }
 
         modelBatch.dispose();
