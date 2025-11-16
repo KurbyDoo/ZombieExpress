@@ -1,4 +1,4 @@
-package application.use_cases.PlayerMovement;
+package application.use_cases.player_movement;
 
 public class PlayerMovementInputData {
     private final boolean forward;

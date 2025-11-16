@@ -1,10 +1,10 @@
 package presentation.controllers;
 
-import application.use_cases.ChunkGeneration.ChunkGenerationInputData;
+import application.use_cases.chunk_generation.ChunkGenerationInputData;
 import domain.entities.Chunk;
 import domain.entities.World;
-import application.use_cases.ChunkGeneration.ChunkGenerationInteractor;
-import io.github.testlibgdx.ChunkLoader;
+import application.use_cases.chunk_generation.ChunkGenerationInteractor;
+import infrastructure.rendering.ChunkLoader;
 
 public class WorldGenerationController {
     private ChunkGenerationInteractor chunkGenerator;

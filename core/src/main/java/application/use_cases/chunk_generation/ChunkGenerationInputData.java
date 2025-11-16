@@ -1,4 +1,4 @@
-package application.use_cases.ChunkGeneration;
+package application.use_cases.chunk_generation;
 
 import domain.entities.Chunk;
 import domain.entities.World;

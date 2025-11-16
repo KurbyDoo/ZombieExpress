@@ -13,13 +13,13 @@ import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
-import application.use_cases.ChunkGeneration.ChunkGenerationInteractor;
-import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
-import application.use_cases.PlayerMovement.PlayerMovementInteractor;
+import application.use_cases.chunk_generation.ChunkGenerationInteractor;
+import application.use_cases.player_movement.PlayerMovementInputBoundary;
+import application.use_cases.player_movement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import io.github.testlibgdx.ChunkLoader;
-import infrastructure.rendering.GameMeshBuilder;
+import infrastructure.rendering.ChunkLoader;
+import infrastructure.rendering.ModelGeneratorFacade;
 import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldGenerationController;
 
@@ -30,7 +30,7 @@ public class GameView implements Viewable{
     private final float TIME_STEP = 1.0f / FPS;
 
     public ObjectRenderer objectRenderer;
-    public GameMeshBuilder meshBuilder;
+    public ModelGeneratorFacade meshBuilder;
     public World world;
     private CameraController cameraController;
     private GameInputAdapter gameInputAdapter;
@@ -71,7 +71,7 @@ public class GameView implements Viewable{
 
         objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
-        meshBuilder = new GameMeshBuilder(world);
+        meshBuilder = new ModelGeneratorFacade(world);
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
         chunkGenerationUseCase = new ChunkGenerationInteractor();
 

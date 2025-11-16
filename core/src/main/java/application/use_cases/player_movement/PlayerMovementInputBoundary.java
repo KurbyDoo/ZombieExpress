@@ -1,4 +1,4 @@
-package application.use_cases.PlayerMovement;
+package application.use_cases.player_movement;
 
 public interface PlayerMovementInputBoundary {
     void execute(PlayerMovementInputData playerMovementInputData);
