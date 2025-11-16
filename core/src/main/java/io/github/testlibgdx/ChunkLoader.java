@@ -19,9 +19,6 @@ public class ChunkLoader {
     private final ObjectRenderer objectRenderer;
 
     private final int BUFFER_SIZE = 32;
-    // private HashMap<String, GameObject.Constructor> constructor = new HashMap<>(tring.class, GameObject.Constrctor.class);
-
-    private ArrayList<GameObject.Constructor> constructor2;
 
     public ChunkLoader(GameMeshBuilder meshBuilder, ObjectRenderer objectRenderer) {
         this.meshBuilder = meshBuilder;
@@ -40,9 +37,7 @@ public class ChunkLoader {
 
                 ChunkMeshData chunkMesh;
                 chunkMesh = meshBuilder.build(chunk);
-                objectRenderer.add(chunkMesh.getModel());
-//                objectRenderer.add(meshBuilder.build(chunk));
-                objectRenderer.collisionAssets(chunkMesh.getBvhTriangle());
+                objectRenderer.add(chunkMesh.getGameObject());
                 objectRenderer.addMeshData(chunkMesh);
             }
         } catch (Exception e) {

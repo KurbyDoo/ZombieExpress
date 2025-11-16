@@ -54,7 +54,7 @@ public class HitBox extends Model implements Disposable {
         switch(type){
             case BOX:
                 complete = model.createBox(w, h, d, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                return new GameObject(complete, "box", new btBoxShape(new Vector3())).construct();
+                return new GameObject.Constructor(complete, "box", new btBoxShape(new Vector3())).construct();
 
             case SPHERE:
                 complete = model.createSphere(w, h, d, 8, 8, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);

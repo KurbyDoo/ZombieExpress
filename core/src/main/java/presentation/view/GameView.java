@@ -1,10 +1,16 @@
 package presentation.view;
 
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.physics.bullet.collision.*;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
+import infrastructure.rendering.ChunkMeshManager;
+import physics.CollisionHandler;
+import physics.GameObject;
+import physics.HitBox;
 import domain.entities.ZombieStorage;
 import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
@@ -40,7 +46,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import domain.entities.InventorySlot;
 
-public class GameView implements Viewable {
+import static physics.HitBox.ShapeTypes.BOX;
+
+public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
 
@@ -55,13 +63,6 @@ public class GameView implements Viewable {
     private ChunkGenerationInteractor chunkGenerationUseCase;
     private Player player;
 
-//    public btCollisionConfiguration collisionConfig;
-//    public btDispatcher dispatcher;
-//    public btBroadphaseInterface broadPhase;
-//    public btCollisionWorld collisionWorld;
-//
-//    public ChunkMeshManager chunkMeshManager;
-
     private float accumulator;
 
     private Stage uiStage;
@@ -72,6 +73,8 @@ public class GameView implements Viewable {
     private Label timeLabel;
     private float elapsedTime = 0;
 
+    private GameObject block;
+
     // add EntityController
     private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
@@ -79,12 +82,6 @@ public class GameView implements Viewable {
 
     @Override
     public void createView() {
-
-        // initialize collisionWorld
-        btDefaultCollisionConfiguration config = new btDefaultCollisionConfiguration();
-        btCollisionDispatcher dispatcher = new btCollisionDispatcher(config);
-        btDbvtBroadphase broadphase = new btDbvtBroadphase();
-        collisionWorld = new btCollisionWorld(dispatcher, broadphase, config);
 
         Vector3 startingPosition = new Vector3(0, 16f, 0);
         player = new Player(startingPosition);
@@ -105,13 +102,14 @@ public class GameView implements Viewable {
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
         chunkGenerationUseCase = new ChunkGenerationInteractor();
 
-//        chunkMeshManager = new ChunkMeshManager();
-
         worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
 
         worldGenerationController.generateInitialWorld(8, 4, 32);
 
         setupUI();
+
+//        block = (new HitBox("Red", BOX, 30, 600, 30)).Construct();
+//        objectRenderer.add(block);
 
         //test add entities
 //        Zombie zombie = new Zombie(objectRenderer);
@@ -146,6 +144,7 @@ public class GameView implements Viewable {
 
         }
 
+
         // BACKGROUND PROCESSING
         chunkLoader.loadChunks();
 
@@ -163,6 +162,7 @@ public class GameView implements Viewable {
 
     @Override
     public void disposeView() {
+        block.dispose();
         objectRenderer.dispose();
 
 //        chunkMeshManager.dispose();

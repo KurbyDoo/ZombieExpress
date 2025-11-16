@@ -1,29 +1,45 @@
 package physics;
 
-import com.badlogic.gdx.physics.bullet.collision.ContactListener;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
+import com.badlogic.gdx.physics.bullet.collision.*;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.util.ArrayList;
 
-public class CollisionHandler extends ContactListener {
-    public ArrayList<GameObject> collisionBlocks;
+/**
+ * creates an btCollisionWorld that calls for the contactListener when any collisions are detected.
+ */
+public class CollisionHandler implements Disposable {
 
-    private BroadphaseInterface broadphase = new DbvtBroadphase();
-    private CollisionConfiguration config = new DefaultCollisionConfiguration();
-    private CollisionDispatcher dispatcher = new CollisionDispatcher(config);
+    public btCollisionConfiguration config;
+    public btDispatcher dispatch;
+    public btBroadphaseInterface broadphase;
+    public btCollisionWorld collisionWorld;
+    public ObjectContactListener listener;
 
-    btCollisionWorld world = new btCollisionWorld(dispatcher, broadphase, config);
+    public CollisionHandler(){
+        config = new btDefaultCollisionConfiguration();
+        dispatch = new btCollisionDispatcher(config);
+        broadphase = new btDbvtBroadphase();
+        collisionWorld = new btCollisionWorld(dispatch, broadphase, config);
 
-
-    public CollisionHandler(){}
-
-
-    public void add(GameObject object){
-        collisionBlocks.add(object);
     }
 
-    public boolean checkCollision(){
+    public void add(GameObject object){
+        collisionWorld.addCollisionObject(object.body);
+    }
 
+    public void checkCollision(){
+        collisionWorld.performDiscreteCollisionDetection();
+    }
+
+    @Override
+    public void dispose(){
+        dispatch.dispose();
+        config.dispose();
+        broadphase.dispose();
+        collisionWorld.dispose();
+
+        listener.dispose();
     }
 
 }

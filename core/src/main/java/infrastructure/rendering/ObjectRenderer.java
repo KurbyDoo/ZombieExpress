@@ -1,5 +1,6 @@
 package infrastructure.rendering;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -8,6 +9,11 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import physics.CollisionHandler;
+import physics.GameObject;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.Vector3;
 import net.mgsx.gltf.scene3d.scene.Scene;
@@ -23,16 +29,21 @@ public class ObjectRenderer {
 
     public PerspectiveCamera camera;
     public ModelBatch modelBatch;
-    public List<ModelInstance> models = new ArrayList<>();
+//    public List<ModelInstance> models = new ArrayList<>();
+
+//    public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
 
     // Add scene manager (to load models)
     private SceneManager sceneManager;
 
     public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
+    // public List<ChunkMeshData> meshData = new ArrayList<>();
 
-    public List<btCollisionShape> collisionBodies = new ArrayList<>();
+    public BlockingQueue<GameObject> toAdd = new LinkedBlockingQueue<>();
 
-    public List<ChunkMeshData> meshData = new ArrayList<>();
+    public CollisionHandler colHandler = new CollisionHandler();
+
+    public List<GameObject> models = new ArrayList<GameObject>();
 
     public ObjectRenderer(PerspectiveCamera camera) {
         environment = new Environment();
@@ -54,17 +65,26 @@ public class ObjectRenderer {
         toAdd.add(modelInstance);
     }
 
+    public void add(GameObject obj){
+        toAdd.add(obj);
+        colHandler.add(obj);
+    }
+
     public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
 
     private void updateRenderList() {
-        ModelInstance instance;
-        while ((instance = toAdd.poll()) != null) {
+//        ModelInstance instance;
+//        while ((instance = toAdd.poll()) != null) {
+//            models.add(instance);
+//        }
+
+        GameObject instance;
+        while ((instance = toAdd.poll()) != null){
             models.add(instance);
         }
-    }
 
     public void render(Float deltaTime) {
         updateRenderList();
@@ -86,6 +106,8 @@ public class ObjectRenderer {
     }
 
     public void dispose() {
+
+        colHandler.dispose();
 
         for(ChunkMeshData data : meshData){
             data.dispose();
