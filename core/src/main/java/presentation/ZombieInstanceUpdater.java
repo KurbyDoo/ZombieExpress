@@ -23,10 +23,10 @@ public class ZombieInstanceUpdater {
         // Create a zombie instance and add to ObjectRender
         List<Zombie> zombies = zombieStorage.getZombies();
         for(Zombie zombie : zombies){
-            if (zombie.isRendered()) {
+            if (zombie.isVisible()) {
                 // a scene is a model instance
                 Scene zombieInstance = new Scene(zombieAsset.scene);
-                zombieInstance.modelInstance.transform.setToTranslation(0f, 0f, 0f);
+                zombieInstance.modelInstance.transform.setToTranslation(0f, 1f, 0f);
                 objectRenderer.addToSceneManager(zombieInstance);
             }
         }

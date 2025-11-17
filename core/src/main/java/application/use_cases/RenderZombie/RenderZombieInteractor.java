@@ -1,7 +1,5 @@
 package application.use_cases.RenderZombie;
 
-import application.use_cases.EntityGeneration.EntityGenerationInputBoundary;
-import application.use_cases.EntityGeneration.EntityGenerationInputData;
 import com.badlogic.gdx.Gdx;
 import domain.entities.ZombieStorage;
 import domain.entities.Zombie;
@@ -24,7 +22,7 @@ public class RenderZombieInteractor implements RenderZombieInputBoundary {
     public void execute(RenderZombieInputData inputData) {
         List<Zombie> zombies = zombieStorage.getZombies();
         for (Zombie zombie : zombies) {
-            zombie.setRendered(true);
+            zombie.setVisible(true);
         }
     }
 }

@@ -7,7 +7,7 @@ public class Zombie {
     private Vector3 position;
     private float speed = 2f;
     private float Health = 100f;
-    private boolean rendered = false;
+    private boolean visible = false;
 
     public Zombie(Vector3 position){
         this.position = position;
@@ -23,11 +23,11 @@ public class Zombie {
         this.position = position;
     }
 
-    public boolean isRendered() {
-        return rendered;
+    public boolean isVisible() {
+        return visible;
     }
 
-    public void setRendered(boolean rendered) {
-        this.rendered = rendered;
+    public void setVisible(boolean boolValue) {
+        this.visible = boolValue;
     }
 }
