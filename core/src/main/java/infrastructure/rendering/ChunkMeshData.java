@@ -10,8 +10,8 @@ public class ChunkMeshData extends GameObject{
 
     final private btTriangleMesh triangle;
 
-    public ChunkMeshData(Model model, String node, btTriangleMesh triangle, btBvhTriangleMeshShape shape){
-        super(model, node, shape);
+    public ChunkMeshData(Model model, btTriangleMesh triangle, btBvhTriangleMeshShape shape){
+        super(model, shape);
         this.triangle = triangle;
     }
 
@@ -21,6 +21,5 @@ public class ChunkMeshData extends GameObject{
     public void dispose() {
         super.dispose();
         triangle.dispose();
-        model.dispose();
     }
 }

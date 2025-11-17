@@ -73,7 +73,7 @@ public class GameMeshBuilder {
         bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
         Model completeModel = modelBuilder.end();
 
-        return new ChunkMeshData(completeModel, "BvhTriangle", triangleMesh, bvhTriangle);
+        return new ChunkMeshData(completeModel, triangleMesh, bvhTriangle);
 
 //        // THIS CRASHES IF YOU PASS AN EMPTY MESH
 //        if (triangleMesh.getNumTriangles() != 0) {

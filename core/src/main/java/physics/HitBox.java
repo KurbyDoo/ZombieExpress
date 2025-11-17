@@ -16,7 +16,7 @@ import static com.badlogic.gdx.graphics.GL20.GL_ONE_MINUS_SRC_ALPHA;
 import static com.badlogic.gdx.graphics.GL20.GL_SRC_ALPHA;
 
 /**
- * This is a helper class to a GameObject
+ * Placeholder to build all kind of GameObjects, replace this with specific factories would be the goal.
  */
 public class HitBox extends Model implements Disposable {
 
@@ -54,11 +54,11 @@ public class HitBox extends Model implements Disposable {
         switch(type){
             case BOX:
                 complete = model.createBox(w, h, d, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                return new GameObject(complete, "box", new btBoxShape(new Vector3()));
+                return new GameObject(complete, new btBoxShape(new Vector3()));
 
             case SPHERE:
                 complete = model.createSphere(w, h, d, 8, 8, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                return new GameObject(complete, "sphere", new btSphereShape(3f));
+                return new GameObject(complete, new btSphereShape(3f));
             default:
                 throw new IllegalArgumentException("Unknown Shape type: " + type);
         }
