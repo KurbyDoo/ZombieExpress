@@ -6,7 +6,7 @@ public class Chunk {
     public static final int CHUNK_SIZE = 16;
     private static boolean enableCaves = false;
 
-    private BlockType[][][] blocks = new BlockType[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
+    private short[][][] blocks = new short[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
     private final Vector3 chunkCoordinates;
     private boolean isUnderground;
     public Chunk(int chunkX, int chunkY, int chunkZ) {
@@ -18,7 +18,7 @@ public class Chunk {
     }
 
 
-    public BlockType getBlock(int x, int y, int z) {
+    public short getBlock(int x, int y, int z) {
         return blocks[x][y][z];
     }
 
@@ -26,8 +26,8 @@ public class Chunk {
         return isUnderground;
     }
 
-    public void setBlock(int x, int y, int z, BlockType type) {
-        blocks[x][y][z] = type;
+    public void setBlock(int x, int y, int z, Block block) {
+        blocks[x][y][z] = block.getId();
     }
 
     public int getChunkX() {

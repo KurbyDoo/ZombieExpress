@@ -1,4 +1,4 @@
-package application.use_cases.ChunkGeneration;
+package application.use_cases.chunk_generation;
 
 public interface ChunkGenerationInputBoundary {
     void execute(ChunkGenerationInputData inputData);
