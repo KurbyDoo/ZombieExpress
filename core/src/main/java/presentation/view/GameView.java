@@ -1,8 +1,5 @@
 package presentation.view;
 
-import application.use_cases.EntityGeneration.EntityGenerationInputData;
-import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.EntityGeneration.EntityGenerationInputData;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
@@ -12,29 +9,33 @@ import domain.entities.ZombieStorage;
 import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
-import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
+import application.use_cases.ChunkGeneration.ChunkGenerationInteractor;
 import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
 import application.use_cases.PlayerMovement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import io.github.testlibgdx.ChunkLoader;
+import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
-import presentation.controllers.WorldController;
-
-
+import presentation.controllers.WorldGenerationController;
 
 public class GameView implements Viewable {
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
 
     public ObjectRenderer objectRenderer;
+    public GameMeshBuilder meshBuilder;
+    public World world;
     private CameraController cameraController;
     private GameInputAdapter gameInputAdapter;
     private ViewCamera camera;
+    private ChunkLoader chunkLoader;
+    private WorldGenerationController worldGenerationController;
+    private ChunkGenerationInteractor chunkGenerationUseCase;
     private Player player;
-    private WorldController worldController;
+
     private float accumulator;
 
     // add EntityController
@@ -58,7 +59,15 @@ public class GameView implements Viewable {
         cameraController = new FirstPersonCameraController(camera, player);
 
         objectRenderer = new ObjectRenderer(camera);
-        worldController = new WorldController(objectRenderer, 4); // 4 chunk radius;
+        world = new World();
+        meshBuilder = new GameMeshBuilder(world);
+        chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
+        chunkGenerationUseCase = new ChunkGenerationInteractor();
+
+        worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
+
+        worldGenerationController.generateInitialWorld(8, 4, 32);
+
         //test add entities
 //        Zombie zombie = new Zombie(objectRenderer);
 //        zombie.createZombie(); //delete this later
@@ -81,20 +90,22 @@ public class GameView implements Viewable {
             accumulator -= TIME_STEP;
             cameraController.updatePrevious();
 
-            // --- GAME LOGIC ---
-            // 1. Process player input
-            gameInputAdapter.processInput(TIME_STEP);
-            // 2. Update the world
-            worldController.update(player.getPosition());
+            // WORLD UPDATES
+            gameInputAdapter.processInput(deltaTime);
+
+            // Call entity controller and pass world and entity list
+
         }
 
+        // BACKGROUND PROCESSING
+        chunkLoader.loadChunks();
 
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        objectRenderer.render();
         entityController.renderZombie();
+        objectRenderer.render(deltaTime);
     }
 
     @Override
