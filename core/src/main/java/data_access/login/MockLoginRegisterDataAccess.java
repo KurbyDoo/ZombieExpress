@@ -1,11 +1,10 @@
-package data_access;
+package data_access.login;
 
 import UseCases.Login.LoginDataAccessInterface;
 import UseCases.Register.RegisterUserDataAccessInterface;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class MockLoginRegisterDataAccess implements LoginDataAccessInterface,RegisterUserDataAccessInterface {
     private final Map<String, String> accounts = new HashMap<>();

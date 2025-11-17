@@ -1,4 +1,4 @@
-package data_access;
+package data_access.player;
 
 import UseCases.PlayerData.PlayerDataAccessInterface;
 import domain.entities.PlayerSession;

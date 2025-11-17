@@ -3,11 +3,11 @@ package runner;
 import UseCases.Login.*;
 import UseCases.PlayerData.LoadPlayerDataInteractor;
 import UseCases.PlayerData.PlayerDataAccessInterface;
-import UseCases.Register.RegisterUserDataAccessInterface;
-import data_access.MockLoginRegisterDataAccess;
-import data_access.MockPlayerDataAccess;
-import interface_adapter.*;
-import data_access.FirebaseAuthManager;
+import data_access.login.MockLoginRegisterDataAccess;
+import data_access.player.MockPlayerDataAccess;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginPresenter;
+import interface_adapter.login.LoginViewModel;
 import presentation.view.LoginView;
 
 public class testMain{
