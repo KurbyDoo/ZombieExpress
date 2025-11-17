@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.register;
 
 import UseCases.Register.RegisterOutputBoundary;
 import UseCases.Register.RegisterOutputData;

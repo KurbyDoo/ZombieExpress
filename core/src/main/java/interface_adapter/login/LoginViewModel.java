@@ -1,6 +1,6 @@
 // TODO: Add PropertyChangeSupport to notify the LoginView when state changes.
 
-package interface_adapter;
+package interface_adapter.login;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 

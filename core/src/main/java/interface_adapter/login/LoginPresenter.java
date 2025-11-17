@@ -1,4 +1,4 @@
-package interface_adapter;
+package interface_adapter.login;
 
 import UseCases.Login.LoginOutputBoundary;
 import UseCases.Login.LoginOutputData;

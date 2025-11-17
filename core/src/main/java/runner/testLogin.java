@@ -1,8 +1,10 @@
 package runner;
 
 import UseCases.Login.*;
-import interface_adapter.*;
-import data_access.FirebaseAuthManager;
+import data_access.login.FirebaseAuthManager;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginPresenter;
+import interface_adapter.login.LoginViewModel;
 import presentation.view.LoginView;
 
 public class testLogin {

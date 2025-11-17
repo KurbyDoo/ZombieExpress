@@ -4,9 +4,12 @@ package presentation.view;
 
 import UseCases.PlayerData.LoadPlayerDataInteractor;
 import UseCases.Register.RegisterInteractor;
-import UseCases.Register.RegisterUserDataAccessInterface;
-import data_access.MockLoginRegisterDataAccess;
-import interface_adapter.*;
+import data_access.login.MockLoginRegisterDataAccess;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginViewModel;
+import interface_adapter.register.RegisterController;
+import interface_adapter.register.RegisterPresenter;
+import interface_adapter.register.RegisterViewModel;
 
 import java.awt.*;
 import javax.swing.*;

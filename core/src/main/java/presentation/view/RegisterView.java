@@ -2,9 +2,12 @@ package presentation.view;
 
 import UseCases.Login.LoginInteractor;
 import UseCases.PlayerData.LoadPlayerDataInteractor;
-import data_access.FirebaseAuthManager;
-import data_access.MockLoginRegisterDataAccess;
-import interface_adapter.*;
+import data_access.login.MockLoginRegisterDataAccess;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginPresenter;
+import interface_adapter.login.LoginViewModel;
+import interface_adapter.register.RegisterController;
+import interface_adapter.register.RegisterViewModel;
 
 import javax.swing.*;
 import java.awt.*;
