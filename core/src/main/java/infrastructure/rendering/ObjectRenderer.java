@@ -8,6 +8,10 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
+import com.badlogic.gdx.math.Vector3;
+import net.mgsx.gltf.scene3d.scene.Scene;
+import net.mgsx.gltf.scene3d.scene.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +25,9 @@ public class ObjectRenderer {
     public ModelBatch modelBatch;
     public List<ModelInstance> models = new ArrayList<>();
 
+    // Add scene manager (to load models)
+    private SceneManager sceneManager;
+
     public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
 
     public ObjectRenderer(PerspectiveCamera camera) {
@@ -31,10 +38,21 @@ public class ObjectRenderer {
         modelBatch = new ModelBatch();
 
         this.camera = camera;
+
+        //set up scene manager
+        sceneManager = new SceneManager();
+        sceneManager.setShaderProvider(new DefaultShaderProvider());
+        sceneManager.setCamera(camera);
+        sceneManager.setAmbientLight(1f);
     }
 
     public void add(ModelInstance modelInstance) {
         toAdd.add(modelInstance);
+    }
+
+    public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
+        System.out.println("Zombie added to scene.");
+        sceneManager.addScene(scene);
     }
 
     private void updateRenderList() {
@@ -44,21 +62,28 @@ public class ObjectRenderer {
         }
     }
 
-    public void render() {
+    public void render(Float deltaTime) {
         updateRenderList();
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+        // Render scene manager
+        sceneManager.update(deltaTime);
+        sceneManager.render();
+
         modelBatch.begin(camera);
+
         for (ModelInstance modelInstance : models) {
             modelBatch.render(modelInstance, environment);
         }
+
         modelBatch.end();
     }
 
     public void dispose() {
         modelBatch.dispose();
         models.clear();
+        sceneManager.dispose();
     }
 }

@@ -1,8 +1,14 @@
 package presentation.view;
 
+import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.RenderZombie.RenderZombieInputData;
+import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
+import domain.entities.ZombieStorage;
+import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
+import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
 import application.use_cases.ChunkGeneration.ChunkGenerationInteractor;
@@ -32,6 +38,11 @@ public class GameView implements Viewable {
 
     private float accumulator;
 
+    // add EntityController
+    private EntityController entityController;
+    private EntityGenerationInteractor entityGenerationInteractor;
+    private RenderZombieInteractor renderZombieInteractor;
+
     @Override
     public void createView() {
         Vector3 startingPosition = new Vector3(0, 16f, 0);
@@ -56,6 +67,18 @@ public class GameView implements Viewable {
         worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
 
         worldGenerationController.generateInitialWorld(8, 4, 32);
+
+        //test add entities
+//        Zombie zombie = new Zombie(objectRenderer);
+//        zombie.createZombie(); //delete this later
+        ZombieStorage zombieStorage = new ZombieStorage();
+        entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
+        renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
+        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
+
+        //entityGenerationInteractor.execute(new EntityGenerationInputData());
+        entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
+        entityController.generateZombie();
     }
 
     @Override
@@ -69,6 +92,9 @@ public class GameView implements Viewable {
 
             // WORLD UPDATES
             gameInputAdapter.processInput(deltaTime);
+
+            // Call entity controller and pass world and entity list
+
         }
 
         // BACKGROUND PROCESSING
@@ -78,7 +104,8 @@ public class GameView implements Viewable {
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        objectRenderer.render();
+        entityController.renderZombie();
+        objectRenderer.render(deltaTime);
     }
 
     @Override
