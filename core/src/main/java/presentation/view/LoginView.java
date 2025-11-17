@@ -2,11 +2,13 @@
 
 package presentation.view;
 
-import interface_adapter.LoginController;
-import interface_adapter.LoginViewModel;
+import UseCases.PlayerData.LoadPlayerDataInteractor;
+import UseCases.Register.RegisterInteractor;
+import UseCases.Register.RegisterUserDataAccessInterface;
+import data_access.MockLoginRegisterDataAccess;
+import interface_adapter.*;
 
 import java.awt.*;
-import java.io.*;
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -14,19 +16,25 @@ import java.beans.PropertyChangeListener;
 public class LoginView extends JFrame implements PropertyChangeListener {
     private LoginViewModel viewModel;
     private LoginController controller;
+    private final MockLoginRegisterDataAccess mockUserDB;
+    private final LoadPlayerDataInteractor loadPlayer;
 
+    private final JButton goRegister = new JButton("Create Account");
     private final JTextField useremail = new JTextField(20);
     private final JPasswordField password = new JPasswordField(20);
     private final JButton loginButton = new JButton("Login");
     private final JLabel messageLabel = new JLabel("");
 
-    public LoginView(LoginController loginController, LoginViewModel viewModel) {
+    public LoginView(LoginController loginController, LoginViewModel viewModel, MockLoginRegisterDataAccess mockUserDB,
+                     LoadPlayerDataInteractor loadPlayer) {
         this.controller = loginController;
         this.viewModel = viewModel;
+        this.mockUserDB = mockUserDB;
+        this.loadPlayer = loadPlayer;
 
         viewModel.addPropertyChangeListener(this);
 
-        setSize(800, 600);
+        setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
         setLocationRelativeTo(null);
@@ -47,6 +55,7 @@ public class LoginView extends JFrame implements PropertyChangeListener {
         panel.add(password);
 
         panel.add(loginButton);
+        panel.add(goRegister);
         panel.add(messageLabel);
 
         add(panel);
@@ -58,13 +67,37 @@ public class LoginView extends JFrame implements PropertyChangeListener {
             controller.login(email, passwordText);
 
         });
+        goRegister.addActionListener(e -> {
+            RegisterViewModel viewModel = new RegisterViewModel();
+            RegisterPresenter presenter = new RegisterPresenter(viewModel);
+            RegisterInteractor interactor = new RegisterInteractor(mockUserDB, presenter);
+            RegisterController controller = new RegisterController(interactor);
+
+            new RegisterView(controller, viewModel, mockUserDB, loadPlayer);
+
+            dispose();
+        });
     }
     @Override
     public void propertyChange(PropertyChangeEvent event){
-        if (viewModel.isSuccessfulLogin()){
-            messageLabel.setText("Login Successful");
-        }else{
-            messageLabel.setText(viewModel.getErrorMessage());
+        switch (event.getPropertyName()) {
+            case "successfulLogin":
+                boolean success = (boolean) event.getNewValue();
+                if (success) {
+                    messageLabel.setText("Login successful");
+                }
+                break;
+
+            case "errorMessage":
+                String errorMessage = (String) event.getNewValue();
+                if (errorMessage != null) {
+                    messageLabel.setText(errorMessage);
+                }
+                break;
+
+            case "email":
+                String email = (String) event.getNewValue();
+                break;
         }
     }
 }
