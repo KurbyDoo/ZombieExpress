@@ -5,8 +5,7 @@ import domain.entities.ZombieStorage;
 import domain.entities.Zombie;
 
 public class EntityGenerationInteractor implements EntityGenerationInputBoundary{
-    // Makes changes to the zombies in the storage
-    // makes isRendered true
+    // Populates zombieStorage
 
     private ZombieStorage zombieStorage;
 
@@ -24,20 +23,4 @@ public class EntityGenerationInteractor implements EntityGenerationInputBoundary
 
         }
     }
-//    private Scene scene;
-//    private SceneAsset sceneAsset;
-//    private final ObjectRenderer objectRenderer;
-//
-//    public EntityGenerationInteractor(ObjectRenderer objectRenderer) {
-//        System.out.println("EntityGenerationInteractor initialized.");
-//        this.objectRenderer = objectRenderer;
-//    }
-//
-//    @Override
-//    public void execute(EntityGenerationInputData inputData) {
-//        System.out.println("EntityGenerationInteractor executed.");
-//        SceneAsset sceneAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
-//        Scene scene = new Scene(sceneAsset.scene);
-//        objectRenderer.addZombieToScene(scene);
-//    }
 
