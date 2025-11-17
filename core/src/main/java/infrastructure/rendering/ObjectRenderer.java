@@ -1,6 +1,5 @@
 package infrastructure.rendering;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -10,7 +9,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import physics.CollisionHandler;
-import physics.GameObject;
+import physics.GameMesh;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
@@ -30,11 +29,11 @@ public class ObjectRenderer {
     // Add scene manager (to load models)
     private SceneManager sceneManager;
 
-    public BlockingQueue<GameObject> toAdd = new LinkedBlockingQueue<>();
+    public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
 
     public CollisionHandler colHandler;
 
-    public List<GameObject> models = new ArrayList<>();
+    public List<GameMesh> models = new ArrayList<>();
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler) {
         environment = new Environment();
@@ -55,7 +54,7 @@ public class ObjectRenderer {
     }
 
 
-    public void add(GameObject obj){
+    public void add(GameMesh obj){
         toAdd.add(obj);
         colHandler.add(obj);
     }
@@ -67,7 +66,7 @@ public class ObjectRenderer {
 
     private void updateRenderList() {
 
-        GameObject instance;
+        GameMesh instance;
         while ((instance = toAdd.poll()) != null){
             models.add(instance);
         }
@@ -95,7 +94,7 @@ public class ObjectRenderer {
 
         // Movement Update
         final float delta = Math.min(1f / 30f, Gdx.graphics.getDeltaTime());
-        for (GameObject obj : models){
+        for (GameMesh obj : models){
             if (obj.moving){
                 obj.transform.trn(0f, -delta, 0f);
                 obj.body.setWorldTransform(obj.transform);
@@ -115,14 +114,14 @@ public class ObjectRenderer {
 
     public void dispose() {
 
-        for (GameObject obj: models){
+        for (GameMesh obj: models){
             obj.dispose();
         }
 
         colHandler.dispose();
 
         modelBatch.dispose();
-        for (GameObject obj : models){
+        for (GameMesh obj : models){
             obj.modelDispose();
         }
         models.clear();
