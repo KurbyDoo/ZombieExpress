@@ -62,7 +62,7 @@ public class ObjectRenderer {
         }
     }
 
-    public void render(Float deltaTime, Vector3 playerPos) {
+    public void render(Float deltaTime) {
         updateRenderList();
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
