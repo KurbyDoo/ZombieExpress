@@ -44,12 +44,9 @@ public class ObjectRenderer {
 
         this.camera = camera;
 
-        //set up scene
-        sceneAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
-        scene = new Scene(sceneAsset.scene);
+        //set up scene manager
         sceneManager = new SceneManager();
         sceneManager.setShaderProvider(new DefaultShaderProvider());
-//        sceneManager.addScene(scene);
         sceneManager.setCamera(camera);
         sceneManager.setAmbientLight(1f);
     }
@@ -72,6 +69,13 @@ public class ObjectRenderer {
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
+
+//    private void updateSceneManager() {
+//        List<Scene> zombieInstances = zombieMesh.getZombieInstances();
+//        for (Scene zombieInstance : zombieInstances) {
+//            sceneManager.addScene(zombieInstance);
+//        }
+//    }
 
     private void updateRenderList() {
         ModelInstance instance;
