@@ -9,13 +9,9 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.physics.bullet.collision.Collision;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import physics.CollisionHandler;
 import physics.GameObject;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import com.badlogic.gdx.math.Vector3;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
 
@@ -29,15 +25,10 @@ public class ObjectRenderer {
 
     public PerspectiveCamera camera;
     public ModelBatch modelBatch;
-//    public List<ModelInstance> models = new ArrayList<>();
 
-//    public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
 
     // Add scene manager (to load models)
     private SceneManager sceneManager;
-
-    public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
-    // public List<ChunkMeshData> meshData = new ArrayList<>();
 
     public BlockingQueue<GameObject> toAdd = new LinkedBlockingQueue<>();
 
@@ -101,6 +92,7 @@ public class ObjectRenderer {
         // Render scene manager
         sceneManager.update(deltaTime);
         sceneManager.render();
+
         // Movement Update
         final float delta = Math.min(1f / 30f, Gdx.graphics.getDeltaTime());
         for (GameObject obj : models){

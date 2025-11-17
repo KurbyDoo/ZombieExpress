@@ -13,6 +13,7 @@ public class ChunkMeshData extends GameObject{
     public ChunkMeshData(Model model, btTriangleMesh triangle, btBvhTriangleMeshShape shape){
         super(model, shape);
         this.triangle = triangle;
+        this.moving = false;
     }
 
     /**
