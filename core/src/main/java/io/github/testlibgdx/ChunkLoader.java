@@ -18,7 +18,7 @@ public class ChunkLoader {
     private final GameMeshBuilder meshBuilder;
     private final ObjectRenderer objectRenderer;
 
-    private final int BUFFER_SIZE = 32;
+    private final int BUFFER_SIZE = 2;
 
     public ChunkLoader(GameMeshBuilder meshBuilder, ObjectRenderer objectRenderer) {
         this.meshBuilder = meshBuilder;
@@ -40,11 +40,8 @@ public class ChunkLoader {
 //                objectRenderer.add(chunkMesh);
 
                 ChunkMeshData chunkMesh = meshBuilder.build(chunk);
-                if (chunkMesh != null) {
-                    objectRenderer.add(chunkMesh);
-                }
 
-                //objectRenderer.addMeshData(chunkMesh);
+                objectRenderer.add(chunkMesh);
             }
         } catch (Exception e) {
             e.printStackTrace();

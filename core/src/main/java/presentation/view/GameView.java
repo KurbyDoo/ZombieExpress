@@ -1,5 +1,6 @@
 package presentation.view;
 
+import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
@@ -7,6 +8,7 @@ import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
+import physics.CollisionHandler;
 import physics.GameObject;
 import physics.HitBox;
 import domain.entities.ZombieStorage;
@@ -49,6 +51,8 @@ public class GameView implements Viewable{
 
     private GameObject block;
 
+    private CollisionHandler colHandler;
+
     // add EntityController
     private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
@@ -70,7 +74,9 @@ public class GameView implements Viewable{
 
         cameraController = new FirstPersonCameraController(camera, player);
 
-        objectRenderer = new ObjectRenderer(camera);
+        colHandler = new CollisionHandler();
+
+        objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
         meshBuilder = new GameMeshBuilder(world);
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
@@ -79,6 +85,7 @@ public class GameView implements Viewable{
         worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
 
         worldGenerationController.generateInitialWorld(8, 4, 32);
+
 
 //        block = (new HitBox("Red", BOX, 30, 600, 30)).Construct();
 //        objectRenderer.add(block);
@@ -127,6 +134,5 @@ public class GameView implements Viewable{
     @Override
     public void disposeView() {
         objectRenderer.dispose();
-
     }
 }
