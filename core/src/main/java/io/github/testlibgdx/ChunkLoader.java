@@ -15,7 +15,7 @@ public class ChunkLoader {
     private final GameMeshBuilder meshBuilder;
     private final ObjectRenderer objectRenderer;
 
-    private final int BUFFER_SIZE = 2;
+    private final int BUFFER_SIZE = 32;
 
     public ChunkLoader(GameMeshBuilder meshBuilder, ObjectRenderer objectRenderer) {
         this.meshBuilder = meshBuilder;
