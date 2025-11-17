@@ -1,7 +1,8 @@
 package io.github.testlibgdx;
 
 import domain.entities.Chunk;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+
+import infrastructure.rendering.ChunkMeshData;
 import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
 
@@ -30,8 +31,15 @@ public class ChunkLoader {
         try {
             Chunk chunk;
             for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
-                final ModelInstance model = meshBuilder.build(chunk);
-                objectRenderer.add(model);
+
+//                ChunkMeshData chunkMesh;
+//                chunkMesh = meshBuilder.build(chunk);
+//                objectRenderer.add(chunkMesh);
+
+                ChunkMeshData chunkMesh = meshBuilder.build(chunk);
+                if (chunkMesh != null) {
+                    objectRenderer.add(chunkMesh);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

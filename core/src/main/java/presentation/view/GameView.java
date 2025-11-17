@@ -1,10 +1,12 @@
 package presentation.view;
 
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
+import physics.CollisionHandler;
+import physics.GameMesh;
+import physics.HitBox;
 import domain.entities.ZombieStorage;
 import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
@@ -21,7 +23,9 @@ import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldGenerationController;
 
-public class GameView implements Viewable {
+import static physics.HitBox.ShapeTypes.SPHERE;
+
+public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
 
@@ -38,6 +42,10 @@ public class GameView implements Viewable {
 
     private float accumulator;
 
+    private CollisionHandler colHandler;
+
+    private HitBox block;
+
     // add EntityController
     private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
@@ -45,6 +53,7 @@ public class GameView implements Viewable {
 
     @Override
     public void createView() {
+
         Vector3 startingPosition = new Vector3(0, 16f, 0);
         player = new Player(startingPosition);
 
@@ -58,7 +67,9 @@ public class GameView implements Viewable {
 
         cameraController = new FirstPersonCameraController(camera, player);
 
-        objectRenderer = new ObjectRenderer(camera);
+        colHandler = new CollisionHandler();
+
+        objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
         meshBuilder = new GameMeshBuilder(world);
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
@@ -67,6 +78,10 @@ public class GameView implements Viewable {
         worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
 
         worldGenerationController.generateInitialWorld(8, 4, 32);
+        // physics testing
+        block = new HitBox("sphere", SPHERE, 10, 10, 60);
+        GameMesh red = block.Construct();
+        objectRenderer.add(red);
 
         //test add entities
 //        Zombie zombie = new Zombie(objectRenderer);
@@ -97,6 +112,7 @@ public class GameView implements Viewable {
 
         }
 
+
         // BACKGROUND PROCESSING
         chunkLoader.loadChunks();
 
@@ -111,5 +127,6 @@ public class GameView implements Viewable {
     @Override
     public void disposeView() {
         objectRenderer.dispose();
+        block.dispose();
     }
 }
