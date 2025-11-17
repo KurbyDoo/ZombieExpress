@@ -46,6 +46,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import domain.entities.InventorySlot;
 
+import static physics.HitBox.ShapeTypes.BOX;
+import static physics.HitBox.ShapeTypes.SPHERE;
+
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
@@ -74,6 +77,8 @@ public class GameView implements Viewable{
     private GameObject block;
 
     private CollisionHandler colHandler;
+
+    private HitBox block;
 
     // add EntityController
     private EntityController entityController;
@@ -112,6 +117,10 @@ public class GameView implements Viewable{
 
 //        block = (new HitBox("Red", BOX, 30, 600, 30)).Construct();
 //        objectRenderer.add(block);
+        // physics testing
+        block = new HitBox("sphere", SPHERE, 10, 10, 60);
+        GameObject red = block.Construct();
+        objectRenderer.add(red);
 
         //test add entities
 //        Zombie zombie = new Zombie(objectRenderer);
@@ -165,6 +174,7 @@ public class GameView implements Viewable{
     @Override
     public void disposeView() {
         objectRenderer.dispose();
+        block.dispose();
 //        chunkMeshManager.dispose();
 
 //        collisionWorld.dispose();

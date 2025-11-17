@@ -90,6 +90,7 @@ public class ObjectRenderer {
     public void render(Float deltaTime) {
         updateRenderList();
 
+        // GPT said to implement these idk what they do
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl.glCullFace(GL20.GL_BACK);
@@ -101,13 +102,13 @@ public class ObjectRenderer {
         sceneManager.update(deltaTime);
         sceneManager.render();
         // Movement Update
-//        final float delta = Math.min(1f / 30f, Gdx.graphics.getDeltaTime());
-//        for (GameObject obj : models){
-//            if (obj.moving){
-//                obj.transform.trn(0f, -delta, 0f);
-//                obj.body.setWorldTransform(obj.transform);
-//            }
-//        }
+        final float delta = Math.min(1f / 30f, Gdx.graphics.getDeltaTime());
+        for (GameObject obj : models){
+            if (obj.moving){
+                obj.transform.trn(0f, -delta, 0f);
+                obj.body.setWorldTransform(obj.transform);
+            }
+        }
 
         colHandler.checkCollision();
 

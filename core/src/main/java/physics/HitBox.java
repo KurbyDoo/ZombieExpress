@@ -54,9 +54,10 @@ public class HitBox extends Model implements Disposable {
         switch(type){
             case BOX:
                 complete = model.createBox(w, h, d, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                return new GameObject(complete, new btBoxShape(new Vector3()));
+                return new GameObject(complete, new btBoxShape(new Vector3(w/2f, h/2f, d/2f)));
 
             case SPHERE:
+                float radius = Math.max(w, Math.max(h, d)) / 2f;
                 complete = model.createSphere(w, h, d, 8, 8, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
                 return new GameObject(complete, new btSphereShape(3f));
             default:
