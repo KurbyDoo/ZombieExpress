@@ -2,10 +2,6 @@ package infrastructure.rendering;
 
 import domain.entities.Chunk;
 
-import infrastructure.rendering.ChunkMeshData;
-import infrastructure.rendering.ModelGeneratorFacade;
-import infrastructure.rendering.ObjectRenderer;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -31,12 +27,6 @@ public class ChunkLoader {
         try {
             Chunk chunk;
             for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
-
-//                ChunkMeshData chunkMesh;
-//                chunkMesh = meshBuilder.build(chunk);
-//                objectRenderer.add(chunkMesh);
-
-
                 ChunkMeshData chunkMesh = (ChunkMeshData) meshBuilder.buildModel(chunk);
                 if (chunkMesh != null) {
                     objectRenderer.add(chunkMesh);

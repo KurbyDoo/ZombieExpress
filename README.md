@@ -46,11 +46,18 @@ java
 │   │   └── World.java
 │
 ├── usecases
+│   ├── ports
+│   │   ├── BlockMaterialRepository.java
+│   │   ├── BlockRepository.java
 │   ├── chunkgeneration
 │   │   ├── ChunkGenerationInputBoundary.java
 │   │   ├── ChunkGenerationInputData.java
-│   │   ├── ChunkGenerationInteractor.java
-│   │   └── ChunkGenerationOutputBoundary.java
+│   │   └── ChunkGenerationInteractor.java
+│   ├── chunkmeshgeneration
+│   │   ├── ChunkMeshGenerationInputBoundary.java
+│   │   ├── ChunkMeshGenerationInputData.java
+│   │   ├── ChunkMeshGenerationInteractor.java
+│   │   └── ChunkMeshGenerationOutputData.java
 │   ├── login
 │   │   ├── LoginDataAccessInterface.java
 │   │   ├── LoginInputBoundary.java
@@ -79,6 +86,7 @@ java
     ├── config
     │   └── GameConfig.java
     ├── dataaccess
+    │   ├── InMemoryBlockRepository.java
     │   └── FirebaseAuthManager.java
     ├── gdx
     │   ├── view
@@ -88,6 +96,7 @@ java
     │   │   ├── ViewManager.java
     │   │   └── ViewCamera.java
     │   ├── rendering
+    │   │   ├── LibGDXMaterialRepository.java
     │   │   ├── ChunkLoader.java
     │   │   ├── GameMeshBuilder.java
     │   │   └── ObjectRenderer.java

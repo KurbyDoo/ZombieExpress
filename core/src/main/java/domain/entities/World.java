@@ -23,7 +23,7 @@ public class World {
         return chunk;
     }
 
-    public BlockType getBlock(int x, int y, int z) {
+    public short getBlock(int x, int y, int z) {
         int localX = ((x % Chunk.CHUNK_SIZE) + Chunk.CHUNK_SIZE) % Chunk.CHUNK_SIZE;
         int localY = ((y % Chunk.CHUNK_SIZE) + Chunk.CHUNK_SIZE) % Chunk.CHUNK_SIZE;
         int localZ = ((z % Chunk.CHUNK_SIZE) + Chunk.CHUNK_SIZE) % Chunk.CHUNK_SIZE;
@@ -36,12 +36,11 @@ public class World {
         if (chunks.containsKey(chunkVector)) {
             return chunks.get(chunkVector).getBlock(localX, localY, localZ);
         } else {
-            return BlockType.STONE;
+            return 3; // TODO: Change this somehow to not be hardcoded
         }
     }
 
     public int getWorldDepthChunks() {
         return worldDepthChunks;
     }
-
 }

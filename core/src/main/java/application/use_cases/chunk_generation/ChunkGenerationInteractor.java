@@ -1,11 +1,17 @@
 package application.use_cases.chunk_generation;
 
-import domain.entities.BlockType;
+import application.use_cases.ports.BlockRepository;
 import domain.entities.Chunk;
 import domain.entities.World;
 import infrastructure.noise.PerlinNoise;
 
 public class ChunkGenerationInteractor implements ChunkGenerationInputBoundary {
+    private final BlockRepository blockRepository;
+
+    public ChunkGenerationInteractor(BlockRepository blockRepository) {
+        this.blockRepository = blockRepository;
+    }
+
     @Override
     public void execute(ChunkGenerationInputData inputData) {
         Chunk chunk = inputData.getChunk();
@@ -40,12 +46,8 @@ public class ChunkGenerationInteractor implements ChunkGenerationInputBoundary {
                     }
                     int height = (int)(perlinNoise * valleyHeight * valleyHeight);
 
-                    BlockType type;
-                    if (worldY > height) type = BlockType.AIR;
-                    else if (worldY == height) type = BlockType.GRASS;
-                    else if (worldY >= height - 3) type = BlockType.DIRT;
-                    else type = BlockType.STONE;
-                    chunk.setBlock(x, h, z, type);
+                    String type = getBlockByHeight(height, worldY);
+                    chunk.setBlock(x, h, z, blockRepository.findByName(type).orElseThrow());
                 }
             }
         }
@@ -53,9 +55,16 @@ public class ChunkGenerationInteractor implements ChunkGenerationInputBoundary {
         // generate rails
         if (chunk.getChunkZ() == 0 && chunk.getChunkY() == 0) {
             for (int x = 0; x < chunkSize; x++) {
-                chunk.setBlock(x, 0, 5, BlockType.STONE);
-                chunk.setBlock(x, 0, 10, BlockType.STONE);
+                chunk.setBlock(x, 0, 5,  blockRepository.findByName("STONE").orElseThrow());
+                chunk.setBlock(x, 0, 10,  blockRepository.findByName("STONE").orElseThrow());
             }
         }
+    }
+
+    private String getBlockByHeight(int height, int worldY) {
+        if (worldY > height) return "AIR";
+        if (worldY == height) return "GRASS";
+        if (worldY >= height - 3) return "DIRT";
+        return "STONE";
     }
 }

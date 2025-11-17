@@ -1,6 +1,7 @@
 package presentation.controllers;
 
 import application.use_cases.chunk_generation.ChunkGenerationInputData;
+import application.use_cases.ports.BlockRepository;
 import domain.entities.Chunk;
 import domain.entities.World;
 import application.use_cases.chunk_generation.ChunkGenerationInteractor;
@@ -10,10 +11,12 @@ public class WorldGenerationController {
     private ChunkGenerationInteractor chunkGenerator;
     private World world;
     private ChunkLoader chunkLoader;
-    public WorldGenerationController(ChunkGenerationInteractor chunkGeneration, World world, ChunkLoader chunkLoader) {
-        this.chunkGenerator = chunkGeneration;
+
+    public WorldGenerationController(World world, ChunkLoader chunkLoader, BlockRepository blockRepository) {
         this.world = world;
         this.chunkLoader = chunkLoader;
+
+        this.chunkGenerator = new ChunkGenerationInteractor(blockRepository);
     }
 
     public void generateInitialWorld(int worldWidth, int worldHeight, int worldDepth) {

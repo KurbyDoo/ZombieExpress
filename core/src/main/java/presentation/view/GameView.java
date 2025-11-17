@@ -2,6 +2,8 @@ package presentation.view;
 
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
+import application.use_cases.ports.BlockRepository;
+import data_access.InMemoryBlockRepository;
 import domain.entities.Player;
 import domain.entities.World;
 import physics.CollisionHandler;
@@ -9,6 +11,7 @@ import physics.GameMesh;
 import physics.HitBox;
 import domain.entities.ZombieStorage;
 import presentation.ZombieInstanceUpdater;
+import infrastructure.rendering.*;
 import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
@@ -18,9 +21,6 @@ import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import infrastructure.rendering.ChunkLoader;
-import infrastructure.rendering.ModelGeneratorFacade;
-import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldGenerationController;
 
 import static physics.HitBox.ShapeTypes.SPHERE;
@@ -37,8 +37,9 @@ public class GameView implements Viewable{
     private ViewCamera camera;
     private ChunkLoader chunkLoader;
     private WorldGenerationController worldGenerationController;
-    private ChunkGenerationInteractor chunkGenerationUseCase;
     private Player player;
+    private BlockRepository blockRepository;
+    private BlockMaterialRepository materialRepository;
 
     private float accumulator;
 
@@ -67,16 +68,17 @@ public class GameView implements Viewable{
 
         cameraController = new FirstPersonCameraController(camera, player);
 
+        blockRepository = new InMemoryBlockRepository();
+        materialRepository = new LibGDXMaterialRepository();
+
         colHandler = new CollisionHandler();
 
         objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
-        meshBuilder = new ModelGeneratorFacade(world);
+        meshBuilder = new ModelGeneratorFacade(world, blockRepository, materialRepository);
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
-        chunkGenerationUseCase = new ChunkGenerationInteractor();
 
-        worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
-
+        worldGenerationController = new WorldGenerationController(world, chunkLoader, blockRepository);
         worldGenerationController.generateInitialWorld(8, 4, 32);
         // physics testing
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
