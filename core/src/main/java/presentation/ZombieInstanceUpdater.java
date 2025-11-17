@@ -19,11 +19,12 @@ public class ZombieInstanceUpdater {
         this.objectRenderer = objectRenderer;
     }
 
-    public void updateMesh(ZombieStorage zombieStorage) {
-        //used by object renderer
+    public void updateRenderList(ZombieStorage zombieStorage) {
+        // Create a zombie instance and add to ObjectRender
         List<Zombie> zombies = zombieStorage.getZombies();
         for(Zombie zombie : zombies){
             if (zombie.isRendered()) {
+                // a scene is a model instance
                 Scene zombieInstance = new Scene(zombieAsset.scene);
                 zombieInstance.modelInstance.transform.setToTranslation(0f, 0f, 0f);
                 objectRenderer.addToSceneManager(zombieInstance);

@@ -11,6 +11,7 @@ import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import java.util.List;
 
 public class RenderZombieInteractor implements RenderZombieInputBoundary {
+    // Set zombie.isRendered() to true
 
     private ZombieStorage zombieStorage;
     private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
