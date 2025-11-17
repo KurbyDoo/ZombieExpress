@@ -7,8 +7,6 @@ import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
-import infrastructure.rendering.ChunkMeshManager;
-import physics.CollisionHandler;
 import physics.GameObject;
 import physics.HitBox;
 import domain.entities.ZombieStorage;
@@ -31,8 +29,6 @@ import io.github.testlibgdx.ChunkLoader;
 import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldGenerationController;
-
-import static physics.HitBox.ShapeTypes.BOX;
 
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
@@ -130,7 +126,6 @@ public class GameView implements Viewable{
 
     @Override
     public void disposeView() {
-        block.dispose();
         objectRenderer.dispose();
 
     }

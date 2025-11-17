@@ -6,46 +6,21 @@ import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
 import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
 import physics.GameObject;
 
-public class ChunkMeshData {
-    final private Model model;
+public class ChunkMeshData extends GameObject{
+
     final private btTriangleMesh triangle;
-    final private btBvhTriangleMeshShape shape;
-    final private GameObject object;
-//    public GameObject gameObject = null;
-//    public ChunkMeshData(){
-//        model = null;
-//        triangle = null;
-//        shape = null;
-//    }
 
-    public ChunkMeshData(Model model, btTriangleMesh triangle, btBvhTriangleMeshShape shape){
-        assert model != null;
-        this.model = model;
+    public ChunkMeshData(Model model, String node, btTriangleMesh triangle, btBvhTriangleMeshShape shape){
+        super(model, node, shape);
         this.triangle = triangle;
-        this.shape = shape;
-        this.object = new GameObject(this.model, "BvhTriangleMesh", this.shape);
-
     }
 
     /**
      * WE MUST DISPOSE WHEN DE-RENDERING UNLOADING A CHUNK
      */
     public void dispose() {
-        model.dispose();
+        super.dispose();
         triangle.dispose();
-        shape.dispose();
+        model.dispose();
     }
-
-    public GameObject getGameObject() {
-        return this.object;
-    }
-
-    public btTriangleMesh getTriangleMesh() {
-        return this.triangle;
-    }
-
-    public btBvhTriangleMeshShape getBvhTriangle() {
-        return this.shape;
-    }
-
 }

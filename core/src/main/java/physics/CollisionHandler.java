@@ -25,6 +25,8 @@ public class CollisionHandler implements Disposable {
     }
 
     public void add(GameObject object){
+
+
         collisionWorld.addCollisionObject(object.body);
     }
 
