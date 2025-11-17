@@ -1,14 +1,7 @@
 package presentation.view;
 
-import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
-import physics.CollisionHandler;
-import physics.GameMesh;
-import physics.HitBox;
-import domain.entities.ZombieStorage;
-import presentation.ZombieInstanceUpdater;
 import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
@@ -188,6 +181,7 @@ public class GameView implements Viewable{
 
         slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
         slotSelectedDrawable = createSlotDrawable(Color.WHITE);
+
         Table hotbarTable = new Table();
 
         int HOTBAR_SIZE = 10;
