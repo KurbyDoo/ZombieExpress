@@ -35,9 +35,15 @@ public class ChunkLoader {
             Chunk chunk;
             for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
 
-                ChunkMeshData chunkMesh;
-                chunkMesh = meshBuilder.build(chunk);
-                objectRenderer.add(chunkMesh.getGameObject());
+//                ChunkMeshData chunkMesh;
+//                chunkMesh = meshBuilder.build(chunk);
+//                objectRenderer.add(chunkMesh);
+
+                ChunkMeshData chunkMesh = meshBuilder.build(chunk);
+                if (chunkMesh != null) {
+                    objectRenderer.add(chunkMesh);
+                }
+
                 //objectRenderer.addMeshData(chunkMesh);
             }
         } catch (Exception e) {

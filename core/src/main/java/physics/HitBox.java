@@ -54,11 +54,11 @@ public class HitBox extends Model implements Disposable {
         switch(type){
             case BOX:
                 complete = model.createBox(w, h, d, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                return new GameObject.Constructor(complete, "box", new btBoxShape(new Vector3())).construct();
+                return new GameObject(complete, "box", new btBoxShape(new Vector3()));
 
             case SPHERE:
                 complete = model.createSphere(w, h, d, 8, 8, material, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-                return new GameObject.Constructor(complete, "sphere", new btSphereShape(3f)).construct();
+                return new GameObject(complete, "sphere", new btSphereShape(3f));
             default:
                 throw new IllegalArgumentException("Unknown Shape type: " + type);
         }

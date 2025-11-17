@@ -43,7 +43,7 @@ public class ObjectRenderer {
 
     public CollisionHandler colHandler = new CollisionHandler();
 
-    public List<GameObject> models = new ArrayList<GameObject>();
+    public List<GameObject> models = new ArrayList<>();
 
     public ObjectRenderer(PerspectiveCamera camera) {
         environment = new Environment();
@@ -61,9 +61,6 @@ public class ObjectRenderer {
         sceneManager.setAmbientLight(1f);
     }
 
-//    public void add(ModelInstance modelInstance) {
-//        toAdd.add(modelInstance);
-//    }
 
     public void add(GameObject obj){
         toAdd.add(obj);
@@ -76,10 +73,6 @@ public class ObjectRenderer {
     }
 
     private void updateRenderList() {
-//        ModelInstance instance;
-//        while ((instance = toAdd.poll()) != null) {
-//            models.add(instance);
-//        }
 
         GameObject instance;
         while ((instance = toAdd.poll()) != null){
@@ -104,8 +97,8 @@ public class ObjectRenderer {
 
         modelBatch.begin(camera);
 
-        for (ModelInstance modelInstance : models) {
-            modelBatch.render(modelInstance, environment);
+        for (ModelInstance obj : models) {
+            modelBatch.render(obj, environment);
         }
 
         modelBatch.end();
@@ -113,15 +106,12 @@ public class ObjectRenderer {
 
     public void dispose() {
 
-        colHandler.dispose();
-
-//        for(ChunkMeshData data : meshData){
-//            data.dispose();
-//        }
-
-        for (GameObject obj : models){
+        for (GameObject obj: models){
             obj.dispose();
         }
+        models.clear();
+
+        colHandler.dispose();
 
         modelBatch.dispose();
         models.clear();

@@ -63,17 +63,28 @@ public class GameMeshBuilder {
 
         btBvhTriangleMeshShape bvhTriangle = null;
 
-        // THIS CRASHES IF YOU PASS AN EMPTY MESH
-        if (triangleMesh.getNumTriangles() != 0) {
-            bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
+        // If the mesh is empty, clean up and return null
+        if (triangleMesh.getNumTriangles() == 0) {
+            triangleMesh.dispose();
+            modelBuilder.end().dispose(); // Clean up the empty model
+            return null;
         }
 
+        bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
         Model completeModel = modelBuilder.end();
 
-        ChunkMeshData chunkMeshData = new ChunkMeshData(completeModel, triangleMesh, bvhTriangle);
-//        chunkMeshData.generateGameObject(completeModel, "bvhTriangle");
+        return new ChunkMeshData(completeModel, "BvhTriangle", triangleMesh, bvhTriangle);
 
-        return chunkMeshData;
+//        // THIS CRASHES IF YOU PASS AN EMPTY MESH
+//        if (triangleMesh.getNumTriangles() != 0) {
+//            bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
+//        }
+//
+//        Model completeModel = modelBuilder.end();
+//
+//        //        chunkMeshData.generateGameObject(completeModel, "bvhTriangle");
+//
+//        return new ChunkMeshData(completeModel, "BvhTriangle", triangleMesh, bvhTriangle);
     }
 
     private void buildType(Chunk chunk, btTriangleMesh triangleMesh, ModelBuilder modelBuilder, BlockType type) {
