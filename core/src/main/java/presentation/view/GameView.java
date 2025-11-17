@@ -75,13 +75,10 @@ public class GameView implements Viewable{
 
 
     private Stage uiStage;
-    private Table hotbarTable;
     private Container<Label>[] hotbarSlots;
     private Label[] hotbarLabels;
-
     private Drawable slotNormalDrawable;
     private Drawable slotSelectedDrawable;
-    private BitmapFont uiFont;
 
     @Override
     public void createView() {
@@ -184,12 +181,12 @@ public class GameView implements Viewable{
     @SuppressWarnings("unchecked")
     private void setupUI() {
         uiStage = new Stage(new ScreenViewport());
-        uiFont = new BitmapFont();
+        BitmapFont uiFont = new BitmapFont();
 
         slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
         slotSelectedDrawable = createSlotDrawable(Color.WHITE);
 
-        hotbarTable = new Table();
+        Table hotbarTable = new Table();
 
         int HOTBAR_SIZE = 10;
         int SLOT_SIZE = 100;
