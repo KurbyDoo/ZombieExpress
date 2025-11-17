@@ -105,7 +105,7 @@ public class GameView implements Viewable {
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
         entityController.renderZombie();
-        objectRenderer.render(deltaTime, player.getPosition());
+        objectRenderer.render(deltaTime);
     }
 
     @Override
