@@ -9,43 +9,42 @@ public class LoginViewModel {
     private  final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     private String email;
-    private String errorMssage;
+    private String errorMessage;
     private boolean successfulLogin;
 
-    public void loginEmail(String email) {
+    // Setters
+    public void setLoginEmail(String email) {
+        String oldEmail = this.email;
         this.email = email;
+        propertyChangeSupport.firePropertyChange("email", oldEmail, email);
     }
 
     public void setSuccessfulLogin(boolean successfulLogin) {
+        boolean oldSuccessfulLogin = this.successfulLogin;
         this.successfulLogin = successfulLogin;
+        propertyChangeSupport.firePropertyChange("successfulLogin", oldSuccessfulLogin, successfulLogin);
     }
 
-    public void setErrorMssage(String errorMssage) {
-        this.errorMssage = errorMssage;
+    public void setErrorMessage(String errorMessage) {
+        String oldErrorMessage = this.errorMessage;
+        this.errorMessage = errorMessage;
+        propertyChangeSupport.firePropertyChange("errorMessage", oldErrorMessage, errorMessage);
     }
 
-    public String getLoginEmail() {
+    //Getters
+    public String getEmail() {
         return email;
     }
 
-    public String setLoginEmail(String email) {
-        String oldEmail = this.email;
-        this.email = email;
-        return oldEmail;
-    }
-
     public String getErrorMessage() {
-        return errorMssage;
+        return errorMessage;
     }
 
     public boolean isSuccessfulLogin() {
         return successfulLogin;
     }
 
-    public void firePropertyChange() {
-        propertyChangeSupport.firePropertyChange("login", null, this);
-    }
-
+    // PropertyChange listener
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.addPropertyChangeListener(listener);
     }
