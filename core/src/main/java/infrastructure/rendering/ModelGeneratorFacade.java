@@ -7,7 +7,6 @@ import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData
 import application.use_cases.ports.BlockRepository;
 import domain.entities.Chunk;
 import domain.entities.World;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
 public class ModelGeneratorFacade {
     private final World world;
@@ -17,9 +16,9 @@ public class ModelGeneratorFacade {
         chunkMeshBuilder = new ChunkMeshGenerationInteractor(blockRepository, materialRepository);
     }
 
-    public ModelInstance buildModel(Chunk chunk) {
+    public ChunkMeshData buildModel(Chunk chunk) {
         ChunkMeshGenerationInputData inputData = new ChunkMeshGenerationInputData(world, chunk);
         ChunkMeshGenerationOutputData outputData = chunkMeshBuilder.execute(inputData);
-        return outputData.getModel();
+        return outputData.getMeshData();
     }
 }

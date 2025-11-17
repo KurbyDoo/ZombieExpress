@@ -1,13 +1,13 @@
 package application.use_cases.chunk_mesh_generation;
 
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import infrastructure.rendering.ChunkMeshData;
 
 public class ChunkMeshGenerationOutputData {
-    private ModelInstance model;
+    private ChunkMeshData meshData;
 
-    public ChunkMeshGenerationOutputData(ModelInstance model) {
-        this.model = model;
+    public ChunkMeshGenerationOutputData(ChunkMeshData meshData) {
+        this.meshData = meshData;
     }
 
-    public ModelInstance getModel() { return model; }
+    public ChunkMeshData getMeshData() { return meshData; }
 }

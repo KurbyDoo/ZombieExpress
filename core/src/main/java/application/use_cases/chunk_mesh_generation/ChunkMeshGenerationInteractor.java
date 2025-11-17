@@ -47,17 +47,19 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
 
         btBvhTriangleMeshShape bvhTriangle = null;
 
-        // If the mesh is empty, clean up and return null
+
+        // If the mesh is empty, clean up and return empty null
+        ChunkMeshData meshData;
         if (triangleMesh.getNumTriangles() == 0) {
             triangleMesh.dispose();
-            modelBuilder.end().dispose(); // Clean up the empty model
-            return null;
+            modelBuilder.end().dispose();
+            meshData = null;
+        } else {
+            bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
+            Model completeModel = modelBuilder.end();
+            meshData = new ChunkMeshData(completeModel, triangleMesh, bvhTriangle);
         }
 
-        bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
-        Model completeModel = modelBuilder.end();
-
-        ChunkMeshData meshData = new ChunkMeshData(completeModel, triangleMesh, bvhTriangle);
         return new ChunkMeshGenerationOutputData(meshData);
     }
 

@@ -27,10 +27,9 @@ public class ChunkLoader {
         try {
             Chunk chunk;
             for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
-                ChunkMeshData chunkMesh = (ChunkMeshData) meshBuilder.buildModel(chunk);
-                if (chunkMesh != null) {
-                    objectRenderer.add(chunkMesh);
-                }
+                ChunkMeshData chunkMesh = meshBuilder.buildModel(chunk);
+                if (chunkMesh == null) continue;
+                objectRenderer.add(chunkMesh);
             }
         } catch (Exception e) {
             e.printStackTrace();
