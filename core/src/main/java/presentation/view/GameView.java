@@ -79,6 +79,8 @@ public class GameView implements Viewable{
     private Label[] hotbarLabels;
     private Drawable slotNormalDrawable;
     private Drawable slotSelectedDrawable;
+    private Label timeLabel;
+    private float elapsedTime = 0;
 
     @Override
     public void createView() {
@@ -144,6 +146,7 @@ public class GameView implements Viewable{
     public void renderView() {
         float deltaTime = Gdx.graphics.getDeltaTime();
         accumulator += deltaTime;
+        elapsedTime += deltaTime;
 
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;
@@ -163,7 +166,7 @@ public class GameView implements Viewable{
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
         objectRenderer.render(deltaTime);
-
+        refreshTimeLabel();
         refreshHotbarSelection();
         uiStage.act(deltaTime);
         uiStage.draw();
@@ -183,9 +186,18 @@ public class GameView implements Viewable{
         uiStage = new Stage(new ScreenViewport());
         BitmapFont uiFont = new BitmapFont();
 
+        Label.LabelStyle timeStyle = new Label.LabelStyle(uiFont, Color.WHITE);
+        timeLabel = new Label("", timeStyle);
+        timeLabel.setFontScale(2);
+        Table timeTable = new Table();
+        timeTable.setFillParent(true);
+        timeTable.top().left().padTop(10).padLeft(10);
+        timeTable.add(timeLabel);
+        uiStage.addActor(timeTable);
+        refreshTimeLabel();
+
         slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
         slotSelectedDrawable = createSlotDrawable(Color.WHITE);
-
         Table hotbarTable = new Table();
 
         int HOTBAR_SIZE = 10;
@@ -235,6 +247,17 @@ public class GameView implements Viewable{
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
         return new TextureRegionDrawable(new TextureRegion(texture));
+    }
+
+    private void refreshTimeLabel() {
+        if (timeLabel == null) return;
+
+        int totalSeconds = (int) elapsedTime;
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        String text = String.format("Time: %02d:%02d", minutes, seconds);
+        timeLabel.setText(text);
     }
 
     private void refreshHotbarSelection() {
