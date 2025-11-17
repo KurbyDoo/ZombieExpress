@@ -1,6 +1,7 @@
 package domain.entities;
 
 import com.badlogic.gdx.math.Vector3;
+import static domain.entities.ItemTypes.*;
 
 public class Player {
     private final Vector3 position;
@@ -18,8 +19,12 @@ public class Player {
         this.position = new Vector3(startingPosition);
         this.direction = new Vector3(0, 0, -1);
         this.up = new Vector3(Vector3.Y);
-
         this.inventory = new Inventory();
+
+        inventory.addItem(BASEBALL_BAT);
+        inventory.addItem(RUSTY_PISTOL);
+        inventory.addItem(PISTOL_BULLET, 10);
+        inventory.addItem(COAL, 2);
     }
 
     /**

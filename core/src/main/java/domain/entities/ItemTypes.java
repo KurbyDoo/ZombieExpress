@@ -19,8 +19,8 @@ public class ItemTypes {
     public static final MeleeWeapon MASTER_SWORD   = new MeleeWeapon("Master Sword", 50);
 
     // Ranged Weapons
-    public static final RangedWeapon RUSTY_PISTOL   = new RangedWeapon("Rusty Pistol", 15, "Pistol Bullet");
-    public static final RangedWeapon COMBAT_PISTOL  = new RangedWeapon("Combat Pistol", 25, "Pistol Bullet");
-    public static final RangedWeapon TACTICAL_RIFLE = new RangedWeapon("Tactical Rifle", 35, "Rifle Bullet");
-    public static final RangedWeapon GOLDEN_RIFLE   = new RangedWeapon("Golden Rifle", 45, "Rifle Bullet");
+    public static final RangedWeapon RUSTY_PISTOL   = new RangedWeapon("Rusty Pistol", 15, PISTOL_BULLET);
+    public static final RangedWeapon COMBAT_PISTOL  = new RangedWeapon("Combat Pistol", 25, PISTOL_BULLET);
+    public static final RangedWeapon TACTICAL_RIFLE = new RangedWeapon("Tactical Rifle", 35, RIFLE_BULLET);
+    public static final RangedWeapon GOLDEN_RIFLE   = new RangedWeapon("Golden Rifle", 45, RIFLE_BULLET);
 }
