@@ -1,4 +1,4 @@
-package Entity;
+package domain.entities;
 
 public class PlayerSession {
 }

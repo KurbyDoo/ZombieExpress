@@ -1,4 +1,4 @@
-package application.use_cases.PlayerMovement;
+package application.use_cases.player_movement;
 
 import domain.entities.Player;
 import com.badlogic.gdx.math.Vector3;

@@ -1,116 +1,92 @@
-package infrastructure.rendering;
+package application.use_cases.chunk_mesh_generation;
 
 import com.badlogic.gdx.graphics.g3d.Model;
-import domain.entities.BlockType;
+import application.use_cases.ports.BlockRepository;
+import domain.entities.Block;
 import domain.entities.Chunk;
 import domain.entities.World;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
+import infrastructure.rendering.ChunkMeshData;
+import infrastructure.rendering.BlockMaterialRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class GameMeshBuilder {
+public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBoundary {
     private final Vector3 p1 = new Vector3();
     private final Vector3 p2 = new Vector3();
     private final Vector3 p3 = new Vector3();
-    private final World world;
 
-    public GameMeshBuilder(World world) {
-        this.world = world;
+    private final BlockRepository blockRepository;
+    private final BlockMaterialRepository blockMaterialRepository;
+    private final Block air;
+
+    public ChunkMeshGenerationInteractor(BlockRepository blockRepository, BlockMaterialRepository blockMaterialRepository) {
+        this.blockRepository = blockRepository;
+        this.blockMaterialRepository = blockMaterialRepository;
+        air = blockRepository.findByName("AIR").orElseThrow();
     }
 
-    ModelBuilder modelBuilder;
-    ModelInstance modelInstance;
-
-//    public List<ModelInstance> build(World world) {
-//        List<ModelInstance> instances = new ArrayList<>();
-//        for (Chunk chunk : world.getChunks().values()) {
-//            instances.add(build(chunk).getModel());
-//            instances.add(build(chunk));
-//        }
-//        return instances;
-//    }
-
-    private Material getBlockMaterial(BlockType blockType) {
-        switch (blockType) {
-            case GRASS:
-                return new Material(ColorAttribute.createDiffuse(new Color(0.2f, 0.8f, 0.2f, 1f))); // Green
-            case DIRT:
-                return new Material(ColorAttribute.createDiffuse(new Color(0.6f, 0.4f, 0.2f, 1f))); // Brown
-            case STONE:
-                return new Material(ColorAttribute.createDiffuse(new Color(0.5f, 0.5f, 0.5f, 1f))); // Grey
-            default:
-                return new Material(ColorAttribute.createDiffuse(Color.GRAY));
-        }
-    }
-
-    public ChunkMeshData build(Chunk chunk) {
+    @Override
+    public ChunkMeshGenerationOutputData execute(ChunkMeshGenerationInputData inputData) {
+        World world = inputData.getWorld();
+        Chunk chunk = inputData.getChunk();
         ModelBuilder modelBuilder = new ModelBuilder();
         modelBuilder.begin();
         btTriangleMesh triangleMesh = new btTriangleMesh();
-        buildType(chunk, triangleMesh, modelBuilder, BlockType.GRASS);
-        buildType(chunk, triangleMesh, modelBuilder, BlockType.DIRT);
-        buildType(chunk, triangleMesh, modelBuilder, BlockType.STONE);
+
+        for (Block block : blockRepository.findAll()) {
+            if (block.getId() != air.getId()) {
+                buildType(world, chunk, triangleMesh, modelBuilder, block);
+            }
+        }
 
         btBvhTriangleMeshShape bvhTriangle = null;
 
-        // If the mesh is empty, clean up and return null
+
+        // If the mesh is empty, clean up and return empty null
+        ChunkMeshData meshData;
         if (triangleMesh.getNumTriangles() == 0) {
             triangleMesh.dispose();
-            modelBuilder.end().dispose(); // Clean up the empty model
-            return null;
+            modelBuilder.end().dispose();
+            meshData = null;
+        } else {
+            bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
+            Model completeModel = modelBuilder.end();
+            meshData = new ChunkMeshData(completeModel, triangleMesh, bvhTriangle);
         }
 
-        bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
-        Model completeModel = modelBuilder.end();
-
-        return new ChunkMeshData(completeModel, triangleMesh, bvhTriangle);
-
-//        // THIS CRASHES IF YOU PASS AN EMPTY MESH
-//        if (triangleMesh.getNumTriangles() != 0) {
-//            bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
-//        }
-//
-//        Model completeModel = modelBuilder.end();
-//
-//        //        chunkMeshData.generateGameObject(completeModel, "bvhTriangle");
-//
-//        return new ChunkMeshData(completeModel, "BvhTriangle", triangleMesh, bvhTriangle);
+        return new ChunkMeshGenerationOutputData(meshData);
     }
 
-    private void buildType(Chunk chunk, btTriangleMesh triangleMesh, ModelBuilder modelBuilder, BlockType type) {
-        Material material = getBlockMaterial(type);
+
+    private void buildType(World world, Chunk chunk, btTriangleMesh triangleMesh, ModelBuilder modelBuilder, Block type) {
+        Material material = blockMaterialRepository.getMaterial(type);
         MeshPartBuilder meshBuilder = modelBuilder.part(type.toString(), GL20.GL_TRIANGLES, Usage.Position | Usage.Normal, material);
 
         for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
             for (int y = 0; y < Chunk.CHUNK_SIZE; y++) {
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++) {
-                    if (chunk.getBlock(x, y, z) == type) {
-                        buildBlockFaces(meshBuilder, triangleMesh, chunk, x, y, z);
+                    if (chunk.getBlock(x, y, z) == type.getId()) {
+                        buildBlockFaces(world, chunk, triangleMesh, meshBuilder, x, y, z);
                     }
                 }
             }
         }
     }
 
-
-    private void buildBlockFaces(MeshPartBuilder meshBuilder, btTriangleMesh triangleMesh, Chunk chunk, int x, int y, int z) {
+    private void buildBlockFaces(World world, Chunk chunk, btTriangleMesh triangleMesh, MeshPartBuilder meshBuilder, int x, int y, int z) {
         int worldX = x + chunk.getChunkX() * Chunk.CHUNK_SIZE;
         int worldY = y + chunk.getChunkY() * Chunk.CHUNK_SIZE;
         int worldZ = z + chunk.getChunkZ() * Chunk.CHUNK_SIZE;
 
         boolean removeDuplicateVertices = false;
         // Top face (y+)
-        if (world.getBlock(worldX, worldY + 1, worldZ) == BlockType.AIR) {
+        if (world.getBlock(worldX, worldY + 1, worldZ) == air.getId()) {
             meshBuilder
                 .rect(worldX, worldY + 1, worldZ + 1,
                     worldX + 1, worldY + 1, worldZ + 1,
@@ -131,8 +107,9 @@ public class GameMeshBuilder {
                 removeDuplicateVertices);
 
         }
+
         // Bottom face (y-)
-        if (world.getBlock(worldX, worldY - 1, worldZ) == BlockType.AIR) {
+        if (world.getBlock(worldX, worldY - 1, worldZ) == air.getId()) {
             meshBuilder
                 .rect(worldX, worldY, worldZ,
                     worldX + 1, worldY, worldZ,
@@ -151,8 +128,9 @@ public class GameMeshBuilder {
                 p3.set(x, y, z + 1),
                 removeDuplicateVertices);
         }
-//         North face (z+)
-        if (world.getBlock(worldX, worldY, worldZ + 1) == BlockType.AIR) {
+
+        // North face (z+)
+        if (world.getBlock(worldX, worldY, worldZ + 1) == air.getId()) {
             meshBuilder
                 .rect(worldX, worldY, worldZ + 1,
                     worldX + 1, worldY, worldZ + 1,
@@ -174,8 +152,9 @@ public class GameMeshBuilder {
             );
 
         }
+
         // South face (z-)
-        if (world.getBlock(worldX, worldY, worldZ - 1) == BlockType.AIR) {
+        if (world.getBlock(worldX, worldY, worldZ - 1) == air.getId()) {
             meshBuilder
                 .rect(worldX + 1, worldY, worldZ,
                     worldX, worldY, worldZ,
@@ -197,8 +176,9 @@ public class GameMeshBuilder {
             );
 
         }
+
         // East face (x+)
-        if (world.getBlock(worldX + 1, worldY, worldZ) == BlockType.AIR) {
+        if (world.getBlock(worldX + 1, worldY, worldZ) == air.getId()) {
             meshBuilder
                 .rect(worldX + 1, worldY, worldZ + 1,
                     worldX + 1, worldY, worldZ,
@@ -219,8 +199,9 @@ public class GameMeshBuilder {
                 removeDuplicateVertices
             );
         }
+
         // West face (x-)
-        if (world.getBlock(worldX - 1, worldY, worldZ) == BlockType.AIR) {
+        if (world.getBlock(worldX - 1, worldY, worldZ) == air.getId()) {
             meshBuilder
                 .rect(worldX, worldY, worldZ,
                     worldX, worldY, worldZ + 1,
@@ -242,9 +223,4 @@ public class GameMeshBuilder {
             );
         }
     }
-
-    /**
-     * Takes all the triangleMesh faces built from Build to generate a BvhTriangleMeshShape and return it.
-     * @return btBvhTriangleMeshShape
-     */
 }

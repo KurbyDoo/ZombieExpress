@@ -17,7 +17,7 @@ public class Player {
 
     public Player(Vector3 startingPosition) {
         this.position = new Vector3(startingPosition);
-        this.direction = new Vector3(0, 0, -1);
+        this.direction = new Vector3(1, 0, 0);
         this.up = new Vector3(Vector3.Y);
         this.inventory = new Inventory();
 
