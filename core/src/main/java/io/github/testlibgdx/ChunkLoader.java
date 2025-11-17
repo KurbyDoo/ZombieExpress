@@ -2,12 +2,9 @@ package io.github.testlibgdx;
 
 import domain.entities.Chunk;
 
-import java.util.ArrayList;
-
 import infrastructure.rendering.ChunkMeshData;
 import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
-import physics.GameObject;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

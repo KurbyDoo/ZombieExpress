@@ -1,15 +1,11 @@
 package presentation.view;
 
-import com.badlogic.gdx.physics.bullet.collision.Collision;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.physics.bullet.collision.*;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.Player;
 import domain.entities.World;
 import physics.CollisionHandler;
-import physics.GameObject;
+import physics.GameMesh;
 import physics.HitBox;
 import domain.entities.ZombieStorage;
 import presentation.ZombieInstanceUpdater;
@@ -22,17 +18,11 @@ import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
 import application.use_cases.PlayerMovement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.Bullet;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionDispatcher;
-import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld;
-import com.badlogic.gdx.physics.bullet.collision.btDbvtBroadphase;
-import com.badlogic.gdx.physics.bullet.collision.btDefaultCollisionConfiguration;
 import io.github.testlibgdx.ChunkLoader;
 import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldGenerationController;
 
-import static physics.HitBox.ShapeTypes.BOX;
 import static physics.HitBox.ShapeTypes.SPHERE;
 
 public class GameView implements Viewable{
@@ -90,7 +80,7 @@ public class GameView implements Viewable{
         worldGenerationController.generateInitialWorld(8, 4, 32);
         // physics testing
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
-        GameObject red = block.Construct();
+        GameMesh red = block.Construct();
         objectRenderer.add(red);
 
         //test add entities

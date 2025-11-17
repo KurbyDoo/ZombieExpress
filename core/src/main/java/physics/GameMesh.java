@@ -4,9 +4,8 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
-import com.badlogic.gdx.utils.Disposable;
 
-public class GameObject extends ModelInstance {
+public class GameMesh extends ModelInstance {
 
     public Model model;
     public btCollisionShape shape;
@@ -17,7 +16,7 @@ public class GameObject extends ModelInstance {
     public static int COUNTER;
     public int id;
 
-    public GameObject(Model model, btCollisionShape shape){
+    public GameMesh(Model model, btCollisionShape shape){
         super(model);
         this.model = model;
         this.shape = shape;

@@ -2,7 +2,6 @@ package physics;
 
 import com.badlogic.gdx.physics.bullet.collision.*;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.physics.bullet.collision.ContactListener;
 
 
 /**
@@ -26,7 +25,7 @@ public class CollisionHandler implements Disposable {
 
     }
 
-    public void add(GameObject object){
+    public void add(GameMesh object){
         if (object != null){
             object.body.setCollisionFlags(object.body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
             object.body.setUserValue(object.id);
