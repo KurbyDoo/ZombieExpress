@@ -24,6 +24,24 @@ import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
+import io.github.testlibgdx.ChunkLoader;
+import infrastructure.rendering.GameMeshBuilder;
+import infrastructure.rendering.ObjectRenderer;
+import presentation.controllers.WorldGenerationController;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import domain.entities.InventorySlot;
 import presentation.controllers.GameSimulationController;
 import presentation.controllers.WorldSyncController;
 
@@ -55,6 +73,15 @@ public class GameView implements Viewable{
 
     private GameSimulationController gameSimulationController;
 
+
+    private Stage uiStage;
+    private Table hotbarTable;
+    private Container<Label>[] hotbarSlots;
+    private Label[] hotbarLabels;
+
+    private Drawable slotNormalDrawable;
+    private Drawable slotSelectedDrawable;
+    private BitmapFont uiFont;
 
     @Override
     public void createView() {
@@ -113,8 +140,8 @@ public class GameView implements Viewable{
         );
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
+        setupUI();
     }
-
 
     @Override
     public void renderView() {
@@ -128,6 +155,9 @@ public class GameView implements Viewable{
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
 
+            // Handle hotbar numeric key input
+            handleHotbarKeyInput();
+
             gameSimulationController.update(TIME_STEP);
         }
 
@@ -136,6 +166,10 @@ public class GameView implements Viewable{
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
         objectRenderer.render(deltaTime);
+
+        refreshHotbarSelection();
+        uiStage.act(deltaTime);
+        uiStage.draw();
     }
 
 
@@ -145,5 +179,129 @@ public class GameView implements Viewable{
         worldSyncController.dispose();
 
         objectRenderer.dispose();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setupUI() {
+        uiStage = new Stage(new ScreenViewport());
+        uiFont = new BitmapFont();
+
+        slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
+        slotSelectedDrawable = createSlotDrawable(Color.WHITE);
+
+        hotbarTable = new Table();
+
+        int HOTBAR_SIZE = 10;
+        int SLOT_SIZE = 100;
+        hotbarSlots = new Container[HOTBAR_SIZE];
+        hotbarLabels = new Label[HOTBAR_SIZE];
+
+        for (int i = 0; i < HOTBAR_SIZE; i++) {
+            Label.LabelStyle style = new Label.LabelStyle(uiFont, Color.WHITE);
+            Label label = new Label("", style);
+            label.setAlignment(Align.center);
+
+            Container<Label> slotContainer = new Container<>(label);
+            slotContainer.width(SLOT_SIZE).height(SLOT_SIZE);
+            slotContainer.background(slotNormalDrawable);
+
+            hotbarTable.add(slotContainer);
+            hotbarSlots[i] = slotContainer;
+            hotbarLabels[i] = label;
+        }
+
+        hotbarTable.pack();
+        float worldWidth  = uiStage.getViewport().getWorldWidth();
+        //float worldHeight = uiStage.getViewport().getWorldHeight();
+        float x = (worldWidth - hotbarTable.getWidth()) / 2f;
+        float y = 0f;
+
+        hotbarTable.setPosition(x, y);
+        uiStage.addActor(hotbarTable);
+        refreshHotbarSelection();
+    }
+
+    private Drawable createSlotDrawable(Color borderColor) {
+        int size = 16;
+        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+
+        pixmap.setColor(Color.DARK_GRAY);
+        pixmap.fill();
+
+        pixmap.setColor(borderColor);
+        int thickness = 1;
+        pixmap.fillRectangle(0, 0, size, thickness);
+        pixmap.fillRectangle(0, size - thickness, size, thickness);
+        pixmap.fillRectangle(0, 0, thickness, size);
+        pixmap.fillRectangle(size - thickness, 0, thickness, size);
+
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return new TextureRegionDrawable(new TextureRegion(texture));
+    }
+
+    private void refreshHotbarSelection() {
+        if (hotbarSlots == null) return;
+
+        int selected = player.getCurrentSlot();
+
+        for (int i = 0; i < hotbarSlots.length; i++) {
+            if (i == selected) {
+                hotbarSlots[i].background(slotSelectedDrawable);
+            } else {
+                hotbarSlots[i].background(slotNormalDrawable);
+            }
+
+            InventorySlot slot = player.getInventory().getSlot(i);
+
+            if (slot == null || slot.isEmpty()) {
+                hotbarLabels[i].setText("");
+            } else {
+                String baseName = slot.getItem().getName();
+                String labelText;
+                if (slot.getItem().isStackable()) {
+                    labelText = baseName + " x" + slot.getQuantity();
+                } else {
+                    labelText = baseName;
+                }
+                hotbarLabels[i].setText(breakIntoLinesByWords(labelText));
+            }
+        }
+    }
+
+    private String breakIntoLinesByWords(String text) {
+        String[] words = text.split(" ");
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+            sb.append(words[i]);
+            if (i < words.length - 1)
+                sb.append("\n");
+        }
+        return sb.toString();
+    }
+
+    private void handleHotbarKeyInput() {
+        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_1)) {
+            player.setCurrentSlot(0);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_2)) {
+            player.setCurrentSlot(1);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_3)) {
+            player.setCurrentSlot(2);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_4)) {
+            player.setCurrentSlot(3);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_5)) {
+            player.setCurrentSlot(4);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_6)) {
+            player.setCurrentSlot(5);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_7)) {
+            player.setCurrentSlot(6);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_8)) {
+            player.setCurrentSlot(7);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_9)) {
+            player.setCurrentSlot(8);
+        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_0)) {
+            player.setCurrentSlot(9);
+        }
     }
 }
