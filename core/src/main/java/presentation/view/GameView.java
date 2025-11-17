@@ -32,6 +32,9 @@ import infrastructure.rendering.GameMeshBuilder;
 import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldGenerationController;
 
+import static physics.HitBox.ShapeTypes.BOX;
+import static physics.HitBox.ShapeTypes.SPHERE;
+
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
@@ -49,9 +52,9 @@ public class GameView implements Viewable{
 
     private float accumulator;
 
-    private GameObject block;
-
     private CollisionHandler colHandler;
+
+    private HitBox block;
 
     // add EntityController
     private EntityController entityController;
@@ -85,10 +88,10 @@ public class GameView implements Viewable{
         worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
 
         worldGenerationController.generateInitialWorld(8, 4, 32);
-
-
-//        block = (new HitBox("Red", BOX, 30, 600, 30)).Construct();
-//        objectRenderer.add(block);
+        // physics testing
+        block = new HitBox("sphere", SPHERE, 10, 10, 60);
+        GameObject red = block.Construct();
+        objectRenderer.add(red);
 
         //test add entities
 //        Zombie zombie = new Zombie(objectRenderer);
@@ -134,5 +137,6 @@ public class GameView implements Viewable{
     @Override
     public void disposeView() {
         objectRenderer.dispose();
+        block.dispose();
     }
 }

@@ -40,8 +40,9 @@ public class ChunkLoader {
 //                objectRenderer.add(chunkMesh);
 
                 ChunkMeshData chunkMesh = meshBuilder.build(chunk);
-
-                objectRenderer.add(chunkMesh);
+                if (chunkMesh != null) {
+                    objectRenderer.add(chunkMesh);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
