@@ -1,23 +1,12 @@
 package presentation.view;
 
-import domain.entities.Player;
-import domain.entities.World;
-import presentation.controllers.CameraController;
-import presentation.controllers.EntityController;
-import presentation.controllers.FirstPersonCameraController;
-import infrastructure.input_boundary.GameInputAdapter;
-import application.use_cases.ChunkGeneration.ChunkGenerationInteractor;
-import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
-import application.use_cases.PlayerMovement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
-import io.github.testlibgdx.ChunkLoader;
-import infrastructure.rendering.GameMeshBuilder;
-import infrastructure.rendering.ObjectRenderer;
-import presentation.controllers.WorldGenerationController;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -26,9 +15,28 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
+import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.RenderZombie.RenderZombieInteractor;
+import application.use_cases.chunk_generation.ChunkGenerationInteractor;
+import application.use_cases.player_movement.PlayerMovementInputBoundary;
+import application.use_cases.player_movement.PlayerMovementInteractor;
+import application.use_cases.ports.BlockRepository;
+import data_access.InMemoryBlockRepository;
 import domain.entities.InventorySlot;
+import domain.entities.Player;
+import domain.entities.World;
+import domain.entities.ZombieStorage;
+import infrastructure.input_boundary.GameInputAdapter;
+import infrastructure.rendering.*;
+import physics.CollisionHandler;
+import physics.GameMesh;
+import physics.HitBox;
+import presentation.ZombieInstanceUpdater;
+import presentation.controllers.CameraController;
+import presentation.controllers.EntityController;
+import presentation.controllers.FirstPersonCameraController;
+import presentation.controllers.WorldGenerationController;
 
 import static physics.HitBox.ShapeTypes.SPHERE;
 
@@ -37,15 +45,16 @@ public class GameView implements Viewable{
     private final float TIME_STEP = 1.0f / FPS;
 
     public ObjectRenderer objectRenderer;
-    public GameMeshBuilder meshBuilder;
+    public ModelGeneratorFacade meshBuilder;
     public World world;
     private CameraController cameraController;
     private GameInputAdapter gameInputAdapter;
     private ViewCamera camera;
     private ChunkLoader chunkLoader;
     private WorldGenerationController worldGenerationController;
-    private ChunkGenerationInteractor chunkGenerationUseCase;
     private Player player;
+    private BlockRepository blockRepository;
+    private BlockMaterialRepository materialRepository;
 
     private float accumulator;
 
@@ -56,8 +65,6 @@ public class GameView implements Viewable{
     private Drawable slotSelectedDrawable;
     private Label timeLabel;
     private float elapsedTime = 0;
-
-    private GameObject block;
 
     private CollisionHandler colHandler;
 
@@ -84,22 +91,21 @@ public class GameView implements Viewable{
 
         cameraController = new FirstPersonCameraController(camera, player);
 
+        blockRepository = new InMemoryBlockRepository();
+        materialRepository = new LibGDXMaterialRepository();
+
         colHandler = new CollisionHandler();
 
         objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
-        meshBuilder = new GameMeshBuilder(world);
+        meshBuilder = new ModelGeneratorFacade(world, blockRepository, materialRepository);
         chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
-        chunkGenerationUseCase = new ChunkGenerationInteractor();
 
-        worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
-
+        worldGenerationController = new WorldGenerationController(world, chunkLoader, blockRepository);
         worldGenerationController.generateInitialWorld(8, 4, 32);
 
         setupUI();
 
-//        block = (new HitBox("Red", BOX, 30, 600, 30)).Construct();
-//        objectRenderer.add(block);
         // physics testing
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
         GameMesh red = block.Construct();
@@ -156,12 +162,6 @@ public class GameView implements Viewable{
     public void disposeView() {
         objectRenderer.dispose();
         block.dispose();
-//        chunkMeshManager.dispose();
-
-//        collisionWorld.dispose();
-//        broadPhase.dispose();
-//        dispatcher.dispose();
-//        collisionConfig.dispose();
     }
 
     @SuppressWarnings("unchecked")
