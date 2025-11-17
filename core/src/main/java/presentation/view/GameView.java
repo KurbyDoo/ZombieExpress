@@ -142,9 +142,7 @@ public class GameView implements Viewable{
             handleHotbarKeyInput();
 
             // Call entity controller and pass world and entity list
-
         }
-
 
         // BACKGROUND PROCESSING
         chunkLoader.loadChunks();
