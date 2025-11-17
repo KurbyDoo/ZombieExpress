@@ -25,12 +25,8 @@ public class ObjectRenderer {
     public ModelBatch modelBatch;
     public List<ModelInstance> models = new ArrayList<>();
 
-    // testing with a zombie instance
-    public ModelInstance zombieInstance;
-    // add scene attributes (to load models)
+    // Add scene manager (to load models)
     private SceneManager sceneManager;
-//    private SceneAsset sceneAsset;
-//    private Scene scene;
 
     public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
 
@@ -43,12 +39,9 @@ public class ObjectRenderer {
 
         this.camera = camera;
 
-        //set up scene
-//        sceneAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
-//        scene = new Scene(sceneAsset.scene);
+        //set up scene manager
         sceneManager = new SceneManager();
         sceneManager.setShaderProvider(new DefaultShaderProvider());
-//        sceneManager.addScene(scene);
         sceneManager.setCamera(camera);
         sceneManager.setAmbientLight(1f);
     }
@@ -57,21 +50,10 @@ public class ObjectRenderer {
         toAdd.add(modelInstance);
     }
 
-    public void addZombieInstance(ModelInstance zombieInstance) {
-        this.zombieInstance = zombieInstance;
-    } //delete this later
-
-    public void addToSceneManager(Scene scene) { //delete this later
+    public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
-
-//    private void updateSceneManager() {
-//        List<Scene> zombieInstances = zombieMesh.getZombieInstances();
-//        for (Scene zombieInstance : zombieInstances) {
-//            sceneManager.addScene(zombieInstance);
-//        }
-//    }
 
     private void updateRenderList() {
         ModelInstance instance;
@@ -81,29 +63,12 @@ public class ObjectRenderer {
     }
 
     public void render(Float deltaTime, Vector3 playerPos) {
-        //updateSceneManager();
         updateRenderList();
 
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        // Move zombie
-        //zombieInstance.transform.translate(deltaTime*2, 0f, 0f);
-        if (zombieInstance != null) {
-            Vector3 zombiePos = zombieInstance.transform.getTranslation(new Vector3());
-            Vector3 direction = new Vector3(playerPos).sub(zombiePos).nor();
-            float speed = 2f;
-            zombiePos.add(direction.scl(deltaTime * speed));
-            zombieInstance.transform.setTranslation(zombiePos);
-        }
-
-        // render zombie model
-//        Vector3 zombiePos = scene.modelInstance.transform.getTranslation(new Vector3());
-//        Vector3 direction = new Vector3(playerPos).sub(zombiePos).nor();
-//        float speed = 2f;
-//        zombiePos.add(direction.scl(deltaTime * speed));
-//        scene.modelInstance.transform.setTranslation(zombiePos);
-//        //scene.modelInstance.transform.setToTranslation(0, 14f, 0f);
+        // Render scene manager
         sceneManager.update(deltaTime);
         sceneManager.render();
 
@@ -112,8 +77,6 @@ public class ObjectRenderer {
         for (ModelInstance modelInstance : models) {
             modelBatch.render(modelInstance, environment);
         }
-        //render zombie
-        //modelBatch.render(zombieInstance, environment);
 
         modelBatch.end();
     }
@@ -122,6 +85,5 @@ public class ObjectRenderer {
         modelBatch.dispose();
         models.clear();
         sceneManager.dispose();
-//        sceneAsset.dispose();
     }
 }
