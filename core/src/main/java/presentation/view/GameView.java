@@ -38,6 +38,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -77,6 +79,9 @@ public class GameView implements Viewable{
     private Drawable slotSelectedDrawable;
     private Label timeLabel;
     private float elapsedTime = 0;
+    private Label distanceLabel;
+    private float testDamageTimer = 0f; //TODO
+    private Image healthBar;
 
     @Override
     public void createView() {
@@ -148,6 +153,13 @@ public class GameView implements Viewable{
         accumulator += deltaTime;
         elapsedTime += deltaTime;
 
+        //TODO
+        testDamageTimer += deltaTime;
+        if (testDamageTimer >= 3f) {
+            player.takeDamage(10);
+            testDamageTimer = 0f;
+        }
+
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;
             cameraController.updatePrevious();
@@ -160,6 +172,7 @@ public class GameView implements Viewable{
 
             gameSimulationController.update(TIME_STEP);
         }
+        player.updatePassiveHealing(deltaTime);
 
         float alpha = accumulator / TIME_STEP;
 
@@ -167,6 +180,8 @@ public class GameView implements Viewable{
         cameraController.renderCamera(alpha);
         objectRenderer.render(deltaTime);
         refreshTimeLabel();
+        refreshDistanceLabel();
+        refreshHealthBar();
         refreshHotbarSelection();
         uiStage.act(deltaTime);
         uiStage.draw();
@@ -179,6 +194,7 @@ public class GameView implements Viewable{
         worldSyncController.dispose();
 
         objectRenderer.dispose();
+        block.dispose();
     }
 
     @SuppressWarnings("unchecked")
@@ -195,6 +211,16 @@ public class GameView implements Viewable{
         timeTable.add(timeLabel);
         uiStage.addActor(timeTable);
         refreshTimeLabel();
+
+        Label.LabelStyle distanceStyle = new Label.LabelStyle(uiFont, Color.WHITE);
+        distanceLabel = new Label("", distanceStyle);
+        distanceLabel.setFontScale(2);
+        Table distanceTable = new Table();
+        distanceTable.setFillParent(true);
+        distanceTable.top().padTop(10);
+        distanceTable.add(distanceLabel).center();
+        uiStage.addActor(distanceTable);
+        refreshDistanceLabel();
 
         slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
         slotSelectedDrawable = createSlotDrawable(Color.WHITE);
@@ -221,13 +247,34 @@ public class GameView implements Viewable{
 
         hotbarTable.pack();
         float worldWidth  = uiStage.getViewport().getWorldWidth();
-        //float worldHeight = uiStage.getViewport().getWorldHeight();
         float x = (worldWidth - hotbarTable.getWidth()) / 2f;
         float y = 0f;
 
         hotbarTable.setPosition(x, y);
         uiStage.addActor(hotbarTable);
         refreshHotbarSelection();
+
+        Table healthTable = new Table();
+        healthTable.setFillParent(true);
+        healthTable.top().right().padTop(10).padRight(10);
+
+        float healthBarMaxWidth = 260;
+        float healthBarHeight = 30;
+        Drawable redHealth = createBarDrawable(new Color(0.3f, 0, 0, 1), (int) healthBarMaxWidth, (int) healthBarHeight);
+        Drawable greenHealth = createBarDrawable(Color.GREEN, (int) healthBarMaxWidth, (int) healthBarHeight);
+        Drawable healthBorder = createBorderDrawable((int) healthBarMaxWidth, (int) healthBarHeight);
+
+        Image healthBackground = new Image(redHealth);
+        healthBar = new Image(greenHealth);
+        Image healthBorderImage = new Image(healthBorder);
+
+        Stack healthStack = new Stack();
+        healthStack.add(healthBackground);
+        healthStack.add(healthBar);
+        healthStack.add(healthBorderImage);
+
+        healthTable.add(healthStack).width(healthBarMaxWidth).height(healthBarHeight);
+        uiStage.addActor(healthTable);
     }
 
     private Drawable createSlotDrawable(Color borderColor) {
@@ -249,6 +296,31 @@ public class GameView implements Viewable{
         return new TextureRegionDrawable(new TextureRegion(texture));
     }
 
+    private Drawable createBarDrawable(Color color, int width, int height) {
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        pixmap.setColor(color);
+        pixmap.fill();
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return new TextureRegionDrawable(new TextureRegion(texture));
+    }
+
+    private Drawable createBorderDrawable(int width, int height) {
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        pixmap.setColor(new Color(0,0,0,0));
+        pixmap.fill();
+        pixmap.setColor(Color.BLACK);
+        pixmap.fillRectangle(0, height - 3, width, 3);
+        pixmap.fillRectangle(0, 0, width, 3);
+        pixmap.fillRectangle(0, 0, 3, height);
+        pixmap.fillRectangle(width - 3, 0, 3, height);
+
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+        return new TextureRegionDrawable(new TextureRegion(texture));
+    }
+
+
     private void refreshTimeLabel() {
         if (timeLabel == null) return;
 
@@ -260,9 +332,15 @@ public class GameView implements Viewable{
         timeLabel.setText(text);
     }
 
-    private void refreshHotbarSelection() {
-        if (hotbarSlots == null) return;
+    private void refreshDistanceLabel() {
+        Vector3 current = player.getPosition();
+        Vector3 start = player.getStartingPosition();
+        int distance = Math.max(0, (int)(current.x - start.x));
+        String text = String.format("Distance: %d m", distance);
+        distanceLabel.setText(text);
+    }
 
+    private void refreshHotbarSelection() {
         int selected = player.getCurrentSlot();
 
         for (int i = 0; i < hotbarSlots.length; i++) {
@@ -287,6 +365,16 @@ public class GameView implements Viewable{
                 hotbarLabels[i].setText(breakIntoLinesByWords(labelText));
             }
         }
+    }
+
+    private void refreshHealthBar() {
+        int current = player.getCurrentHealth();
+        int max = player.getMaxHealth();
+
+        float ratio = (max > 0) ? (current / (float) max) : 0;
+        if (ratio < 0) ratio = 0;
+        if (ratio > 1) ratio = 1;
+        healthBar.setScaleX(ratio);
     }
 
     private String breakIntoLinesByWords(String text) {

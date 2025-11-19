@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector3;
 import domain.items.Item;
 
 public class Player {
+    private final Vector3 startingPosition;
     private final Vector3 position;
     private final Vector3 direction;
     private final Vector3 up;
@@ -15,7 +16,12 @@ public class Player {
     private final Inventory inventory;
     private int currentSlot = 0;
 
+    private final int maxHealth = 100;
+    private int currentHealth = maxHealth;
+    private float passiveHealTimer = 0;
+
     public Player(Vector3 startingPosition) {
+        this.startingPosition = new Vector3(startingPosition);
         this.position = new Vector3(startingPosition);
         this.direction = new Vector3(1, 0, 0);
         this.up = new Vector3(Vector3.Y);
@@ -59,10 +65,27 @@ public class Player {
         }
     }
 
+    public void updatePassiveHealing(float deltaTime) {
+        if (isDead() || currentHealth >= maxHealth) return;
+        passiveHealTimer += deltaTime;
+        float healInterval = 1; // heal every 1 second
+        int healAmount = 2;        // heal 2 HP each interval
+
+        if (passiveHealTimer >= healInterval) {
+            int intervals = (int) (passiveHealTimer / healInterval);
+            passiveHealTimer -= intervals * healInterval;
+
+            heal(healAmount * intervals);
+        }
+    }
+
+    public Vector3 getStartingPosition() {
+        return new Vector3(startingPosition);
+    }
+
     public Vector3 getPosition() {
         return new Vector3(position);
     }
-
 
     public Vector3 getDirection() {
         return new Vector3(direction);
@@ -78,6 +101,29 @@ public class Player {
 
     public int getCurrentSlot() {
         return currentSlot;
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    public void takeDamage(int amount) {
+        currentHealth -= amount;
+    }
+
+    public void heal(int amount) {
+        currentHealth += amount;
+        if (currentHealth > maxHealth) {
+            currentHealth = maxHealth;
+        }
+    }
+
+    public boolean isDead() {
+        return currentHealth <= 0;
     }
 
     /**
