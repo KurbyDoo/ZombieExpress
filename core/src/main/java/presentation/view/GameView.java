@@ -106,7 +106,7 @@ public class GameView implements Viewable{
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
-        gameInputAdapter = new GameInputAdapter(playerMovementInteractor);
+        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, player);
         Gdx.input.setInputProcessor(gameInputAdapter);
         Gdx.input.setCursorCatched(true);
 
