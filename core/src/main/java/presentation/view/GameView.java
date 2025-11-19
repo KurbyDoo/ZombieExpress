@@ -51,6 +51,28 @@ import presentation.controllers.GameSimulationController;
 import presentation.controllers.WorldSyncController;
 
 import static physics.HitBox.ShapeTypes.BOX;
+import com.badlogic.gdx.math.Vector3;
+import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.RenderZombie.RenderZombieInteractor;
+import application.use_cases.player_movement.PlayerMovementInputBoundary;
+import application.use_cases.player_movement.PlayerMovementInteractor;
+import application.use_cases.ports.BlockRepository;
+import data_access.InMemoryBlockRepository;
+import domain.entities.Player;
+import domain.entities.World;
+import domain.entities.ZombieStorage;
+import infrastructure.input_boundary.GameInputAdapter;
+import infrastructure.input_boundary.UIInputAdapter;
+import infrastructure.rendering.*;
+import physics.CollisionHandler;
+import physics.GameMesh;
+import physics.HitBox;
+import presentation.ZombieInstanceUpdater;
+import presentation.controllers.CameraController;
+import presentation.controllers.EntityController;
+import presentation.controllers.FirstPersonCameraController;
+import presentation.controllers.WorldGenerationController;
+import static physics.HitBox.ShapeTypes.SPHERE;
 
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
@@ -72,19 +94,8 @@ public class GameView implements Viewable{
 
     private float accumulator;
 
-    private Stage uiStage;
-    private Container<Label>[] hotbarSlots;
-    private Label[] hotbarLabels;
-    private Drawable slotNormalDrawable;
-    private Drawable slotSelectedDrawable;
-    private Label timeLabel;
-    private float elapsedTime = 0;
-    private Label distanceLabel;
-    private Image healthBar;
-    private Label ammoCountLabel;
-    private Table ammoCountTable;
-
-//    private float testDamageTimer = 0f;
+    private GameHUD hud;
+    private UIInputAdapter uiInputAdapter;
 
     @Override
     public void createView() {
@@ -98,6 +109,8 @@ public class GameView implements Viewable{
         gameInputAdapter = new GameInputAdapter(playerMovementInteractor);
         Gdx.input.setInputProcessor(gameInputAdapter);
         Gdx.input.setCursorCatched(true);
+
+        uiInputAdapter = new UIInputAdapter(player);
 
         cameraController = new FirstPersonCameraController(camera, player);
 
@@ -143,7 +156,7 @@ public class GameView implements Viewable{
         );
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
-        setupUI();
+        hud = new GameHUD(player);
 
         //test add entities
         Zombie zombie = new Zombie(objectRenderer);
@@ -154,13 +167,6 @@ public class GameView implements Viewable{
     public void renderView() {
         float deltaTime = Gdx.graphics.getDeltaTime();
         accumulator += deltaTime;
-        elapsedTime += deltaTime;
-
-//        testDamageTimer += deltaTime;
-//        if (testDamageTimer >= 3f) {
-//            player.takeDamage(10);
-//            testDamageTimer = 0f;
-//        }
 
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;
@@ -169,8 +175,8 @@ public class GameView implements Viewable{
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
 
-            // Handle hotbar numeric key input
-            handleHotbarKeyInput();
+            // UI inventory input (hotbar keys) – updates Player only
+            uiInputAdapter.pollInput();
 
             gameSimulationController.update(TIME_STEP);
         }
@@ -181,13 +187,10 @@ public class GameView implements Viewable{
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
         objectRenderer.render(deltaTime);
-        refreshTimeLabel();
-        refreshDistanceLabel();
-        refreshHealthBar();
-        refreshAmmoCount();
-        refreshHotbarSelection();
-        uiStage.act(deltaTime);
-        uiStage.draw();
+
+        // HUD
+        hud.update(deltaTime);
+        hud.render();
     }
 
 
@@ -198,241 +201,5 @@ public class GameView implements Viewable{
 
         objectRenderer.dispose();
         block.dispose();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void setupUI() {
-        uiStage = new Stage(new ScreenViewport());
-        BitmapFont uiFont = new BitmapFont();
-        Label.LabelStyle style = new Label.LabelStyle(uiFont, Color.WHITE);
-
-        //Time
-        timeLabel = new Label("", style);
-        timeLabel.setFontScale(2);
-        Table timeTable = new Table();
-        timeTable.setFillParent(true);
-        timeTable.top().left().padTop(10).padLeft(10);
-        timeTable.add(timeLabel);
-        uiStage.addActor(timeTable);
-        refreshTimeLabel();
-
-        //Distance
-        distanceLabel = new Label("", style);
-        distanceLabel.setFontScale(2);
-        Table distanceTable = new Table();
-        distanceTable.setFillParent(true);
-        distanceTable.top().padTop(10);
-        distanceTable.add(distanceLabel).center();
-        uiStage.addActor(distanceTable);
-        refreshDistanceLabel();
-
-        //Hotbar
-        slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
-        slotSelectedDrawable = createSlotDrawable(Color.WHITE);
-        Table hotbarTable = new Table();
-        int HOTBAR_SIZE = 10;
-        int SLOT_SIZE = 100;
-        hotbarSlots = new Container[HOTBAR_SIZE];
-        hotbarLabels = new Label[HOTBAR_SIZE];
-
-        for (int i = 0; i < HOTBAR_SIZE; i++) {
-            Label label = new Label("", style);
-            label.setAlignment(Align.center);
-
-            Container<Label> slotContainer = new Container<>(label);
-            slotContainer.width(SLOT_SIZE).height(SLOT_SIZE);
-            slotContainer.background(slotNormalDrawable);
-
-            hotbarTable.add(slotContainer);
-            hotbarSlots[i] = slotContainer;
-            hotbarLabels[i] = label;
-        }
-
-        hotbarTable.pack();
-        float worldWidth  = uiStage.getViewport().getWorldWidth();
-        float x = (worldWidth - hotbarTable.getWidth()) / 2;
-        float y = 0;
-
-        hotbarTable.setPosition(x, y);
-        uiStage.addActor(hotbarTable);
-        refreshHotbarSelection();
-
-        //Health
-        Table healthTable = new Table();
-        healthTable.setFillParent(true);
-        healthTable.top().right().padTop(10).padRight(10);
-
-        float healthBarMaxWidth = 260;
-        float healthBarHeight = 30;
-        Drawable redHealth = createBarDrawable(new Color(0.3f, 0, 0, 1), (int) healthBarMaxWidth, (int) healthBarHeight);
-        Drawable greenHealth = createBarDrawable(Color.GREEN, (int) healthBarMaxWidth, (int) healthBarHeight);
-        Drawable healthBorder = createBorderDrawable((int) healthBarMaxWidth, (int) healthBarHeight);
-
-        Image healthBackground = new Image(redHealth);
-        healthBar = new Image(greenHealth);
-        Image healthBorderImage = new Image(healthBorder);
-
-        Stack healthStack = new Stack();
-        healthStack.add(healthBackground);
-        healthStack.add(healthBar);
-        healthStack.add(healthBorderImage);
-
-        healthTable.add(healthStack).width(healthBarMaxWidth).height(healthBarHeight);
-        uiStage.addActor(healthTable);
-
-        //Ammo Count
-        ammoCountLabel = new Label("", style);
-        ammoCountLabel.setFontScale(2);
-        ammoCountTable = new Table();
-        ammoCountTable.setFillParent(true);
-        ammoCountTable.bottom().left().padLeft(10).padBottom(105);
-        ammoCountTable.add(ammoCountLabel);
-        uiStage.addActor(ammoCountTable);
-        refreshAmmoCount();
-    }
-
-    private Drawable createSlotDrawable(Color borderColor) {
-        int size = 16;
-        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
-
-        pixmap.setColor(Color.DARK_GRAY);
-        pixmap.fill();
-
-        pixmap.setColor(borderColor);
-        int thickness = 1;
-        pixmap.fillRectangle(0, 0, size, thickness);
-        pixmap.fillRectangle(0, size - thickness, size, thickness);
-        pixmap.fillRectangle(0, 0, thickness, size);
-        pixmap.fillRectangle(size - thickness, 0, thickness, size);
-
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose();
-        return new TextureRegionDrawable(new TextureRegion(texture));
-    }
-
-    private Drawable createBarDrawable(Color color, int width, int height) {
-        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-        pixmap.setColor(color);
-        pixmap.fill();
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose();
-        return new TextureRegionDrawable(new TextureRegion(texture));
-    }
-
-    private Drawable createBorderDrawable(int width, int height) {
-        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-        pixmap.setColor(new Color(0,0,0,0));
-        pixmap.fill();
-        pixmap.setColor(Color.BLACK);
-        pixmap.fillRectangle(0, height - 3, width, 3);
-        pixmap.fillRectangle(0, 0, width, 3);
-        pixmap.fillRectangle(0, 0, 3, height);
-        pixmap.fillRectangle(width - 3, 0, 3, height);
-
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose();
-        return new TextureRegionDrawable(new TextureRegion(texture));
-    }
-
-
-    private void refreshTimeLabel() {
-        if (timeLabel == null) return;
-
-        int totalSeconds = (int) elapsedTime;
-        int minutes = totalSeconds / 60;
-        int seconds = totalSeconds % 60;
-
-        String text = String.format("Time: %02d:%02d", minutes, seconds);
-        timeLabel.setText(text);
-    }
-
-    private void refreshDistanceLabel() {
-        Vector3 current = player.getPosition();
-        Vector3 start = player.getStartingPosition();
-        int distance = Math.max(0, (int)(current.x - start.x));
-        String text = String.format("Distance: %d m", distance);
-        distanceLabel.setText(text);
-    }
-
-    private void refreshHotbarSelection() {
-        int selected = player.getCurrentSlot();
-
-        for (int i = 0; i < hotbarSlots.length; i++) {
-            if (i == selected) {
-                hotbarSlots[i].background(slotSelectedDrawable);
-            } else {
-                hotbarSlots[i].background(slotNormalDrawable);
-            }
-
-            InventorySlot slot = player.getInventory().getSlot(i);
-
-            if (slot == null || slot.isEmpty()) {
-                hotbarLabels[i].setText("");
-            } else {
-                String baseName = slot.getItem().getName();
-                String labelText;
-                if (slot.getItem().isStackable()) {
-                    labelText = baseName + " x" + slot.getQuantity();
-                } else {
-                    labelText = baseName;
-                }
-                hotbarLabels[i].setText(breakIntoLinesByWords(labelText));
-            }
-        }
-    }
-
-    private void refreshAmmoCount() {
-        int pistol = player.getPistolAmmo();
-        int rifle  = player.getRifleAmmo();
-
-        String text = String.format("Pistol Ammo: %d\nRifle Ammo: %d", pistol, rifle);
-        ammoCountLabel.setText(text);
-    }
-
-
-    private void refreshHealthBar() {
-        int current = player.getCurrentHealth();
-        int max = player.getMaxHealth();
-
-        float ratio = (max > 0) ? (current / (float) max) : 0;
-        if (ratio < 0) ratio = 0;
-        if (ratio > 1) ratio = 1;
-        healthBar.setScaleX(ratio);
-    }
-
-    private String breakIntoLinesByWords(String text) {
-        String[] words = text.split(" ");
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < words.length; i++) {
-            sb.append(words[i]);
-            if (i < words.length - 1)
-                sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    private void handleHotbarKeyInput() {
-        if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_1)) {
-            player.setCurrentSlot(0);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_2)) {
-            player.setCurrentSlot(1);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_3)) {
-            player.setCurrentSlot(2);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_4)) {
-            player.setCurrentSlot(3);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_5)) {
-            player.setCurrentSlot(4);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_6)) {
-            player.setCurrentSlot(5);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_7)) {
-            player.setCurrentSlot(6);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_8)) {
-            player.setCurrentSlot(7);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_9)) {
-            player.setCurrentSlot(8);
-        } else if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.NUM_0)) {
-            player.setCurrentSlot(9);
-        }
     }
 }
