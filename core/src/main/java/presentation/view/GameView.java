@@ -80,8 +80,11 @@ public class GameView implements Viewable{
     private Label timeLabel;
     private float elapsedTime = 0;
     private Label distanceLabel;
-    private float testDamageTimer = 0f; //TODO
     private Image healthBar;
+    private Label ammoCountLabel;
+    private Table ammoCountTable;
+
+//    private float testDamageTimer = 0f;
 
     @Override
     public void createView() {
@@ -153,12 +156,11 @@ public class GameView implements Viewable{
         accumulator += deltaTime;
         elapsedTime += deltaTime;
 
-        //TODO
-        testDamageTimer += deltaTime;
-        if (testDamageTimer >= 3f) {
-            player.takeDamage(10);
-            testDamageTimer = 0f;
-        }
+//        testDamageTimer += deltaTime;
+//        if (testDamageTimer >= 3f) {
+//            player.takeDamage(10);
+//            testDamageTimer = 0f;
+//        }
 
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;
@@ -182,6 +184,7 @@ public class GameView implements Viewable{
         refreshTimeLabel();
         refreshDistanceLabel();
         refreshHealthBar();
+        refreshAmmoCount();
         refreshHotbarSelection();
         uiStage.act(deltaTime);
         uiStage.draw();
@@ -201,9 +204,10 @@ public class GameView implements Viewable{
     private void setupUI() {
         uiStage = new Stage(new ScreenViewport());
         BitmapFont uiFont = new BitmapFont();
+        Label.LabelStyle style = new Label.LabelStyle(uiFont, Color.WHITE);
 
-        Label.LabelStyle timeStyle = new Label.LabelStyle(uiFont, Color.WHITE);
-        timeLabel = new Label("", timeStyle);
+        //Time
+        timeLabel = new Label("", style);
         timeLabel.setFontScale(2);
         Table timeTable = new Table();
         timeTable.setFillParent(true);
@@ -212,8 +216,8 @@ public class GameView implements Viewable{
         uiStage.addActor(timeTable);
         refreshTimeLabel();
 
-        Label.LabelStyle distanceStyle = new Label.LabelStyle(uiFont, Color.WHITE);
-        distanceLabel = new Label("", distanceStyle);
+        //Distance
+        distanceLabel = new Label("", style);
         distanceLabel.setFontScale(2);
         Table distanceTable = new Table();
         distanceTable.setFillParent(true);
@@ -222,17 +226,16 @@ public class GameView implements Viewable{
         uiStage.addActor(distanceTable);
         refreshDistanceLabel();
 
+        //Hotbar
         slotNormalDrawable = createSlotDrawable(Color.LIGHT_GRAY);
         slotSelectedDrawable = createSlotDrawable(Color.WHITE);
         Table hotbarTable = new Table();
-
         int HOTBAR_SIZE = 10;
         int SLOT_SIZE = 100;
         hotbarSlots = new Container[HOTBAR_SIZE];
         hotbarLabels = new Label[HOTBAR_SIZE];
 
         for (int i = 0; i < HOTBAR_SIZE; i++) {
-            Label.LabelStyle style = new Label.LabelStyle(uiFont, Color.WHITE);
             Label label = new Label("", style);
             label.setAlignment(Align.center);
 
@@ -247,13 +250,14 @@ public class GameView implements Viewable{
 
         hotbarTable.pack();
         float worldWidth  = uiStage.getViewport().getWorldWidth();
-        float x = (worldWidth - hotbarTable.getWidth()) / 2f;
-        float y = 0f;
+        float x = (worldWidth - hotbarTable.getWidth()) / 2;
+        float y = 0;
 
         hotbarTable.setPosition(x, y);
         uiStage.addActor(hotbarTable);
         refreshHotbarSelection();
 
+        //Health
         Table healthTable = new Table();
         healthTable.setFillParent(true);
         healthTable.top().right().padTop(10).padRight(10);
@@ -275,6 +279,16 @@ public class GameView implements Viewable{
 
         healthTable.add(healthStack).width(healthBarMaxWidth).height(healthBarHeight);
         uiStage.addActor(healthTable);
+
+        //Ammo Count
+        ammoCountLabel = new Label("", style);
+        ammoCountLabel.setFontScale(2);
+        ammoCountTable = new Table();
+        ammoCountTable.setFillParent(true);
+        ammoCountTable.bottom().left().padLeft(10).padBottom(105);
+        ammoCountTable.add(ammoCountLabel);
+        uiStage.addActor(ammoCountTable);
+        refreshAmmoCount();
     }
 
     private Drawable createSlotDrawable(Color borderColor) {
@@ -366,6 +380,15 @@ public class GameView implements Viewable{
             }
         }
     }
+
+    private void refreshAmmoCount() {
+        int pistol = player.getPistolAmmo();
+        int rifle  = player.getRifleAmmo();
+
+        String text = String.format("Pistol Ammo: %d\nRifle Ammo: %d", pistol, rifle);
+        ammoCountLabel.setText(text);
+    }
+
 
     private void refreshHealthBar() {
         int current = player.getCurrentHealth();

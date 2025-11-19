@@ -2,6 +2,7 @@ package domain.player;
 
 import com.badlogic.gdx.math.Vector3;
 import domain.items.Item;
+import static domain.entities.AmmoType.*;
 
 public class Player {
     private final Vector3 startingPosition;
@@ -15,6 +16,8 @@ public class Player {
 
     private final Inventory inventory;
     private int currentSlot = 0;
+    private int pistolAmmo = 0;
+    private int rifleAmmo = 0;
 
     private final int maxHealth = 100;
     private int currentHealth = maxHealth;
@@ -29,8 +32,8 @@ public class Player {
 
         inventory.addItem(BASEBALL_BAT);
         inventory.addItem(RUSTY_PISTOL);
-        inventory.addItem(PISTOL_BULLET, 10);
         inventory.addItem(COAL, 2);
+        addAmmo(PISTOL, 10);
     }
 
     /**
@@ -107,6 +110,14 @@ public class Player {
         return maxHealth;
     }
 
+    public int getPistolAmmo() {
+        return pistolAmmo;
+    }
+
+    public int getRifleAmmo() {
+        return rifleAmmo;
+    }
+
     public int getCurrentHealth() {
         return currentHealth;
     }
@@ -124,6 +135,36 @@ public class Player {
 
     public boolean isDead() {
         return currentHealth <= 0;
+    }
+
+    public void addAmmo(AmmoType type, int amount) {
+        switch (type) {
+            case PISTOL:
+                pistolAmmo += amount;
+                break;
+
+            case RIFLE:
+                rifleAmmo += amount;
+                break;
+        }
+    }
+
+    public boolean consumeAmmo(AmmoType type, int amount) {
+        if (amount <= 0) return false;
+
+        switch (type) {
+            case PISTOL:
+                if (pistolAmmo < amount) return false;
+                pistolAmmo -= amount;
+                return true;
+
+            case RIFLE:
+                if (rifleAmmo < amount) return false;
+                rifleAmmo -= amount;
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**

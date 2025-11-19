@@ -2,14 +2,14 @@ package domain.items;
 
 public class RangedWeapon extends Weapon {
 
-    private final Item ammoType;
+    private final AmmoType ammoType;
 
-    public RangedWeapon(String name, int damage, Item ammoType) {
+    public RangedWeapon(String name, int damage, AmmoType ammoType) {
         super(name, damage);
         this.ammoType = ammoType;
     }
 
-    public Item getAmmoType() {
+    public AmmoType getAmmoType() {
         return ammoType;
     }
 
