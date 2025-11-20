@@ -1,6 +1,7 @@
 package presentation;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
 import domain.entities.ZombieStorage;
 import domain.entities.Zombie;
 import infrastructure.rendering.ObjectRenderer;
@@ -13,7 +14,10 @@ import java.util.List;
 public class ZombieInstanceUpdater {
 //    private ZombieStorage zombieStorage;
     private ObjectRenderer objectRenderer;
-    private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
+//    private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
+//    private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/factory.gltf"));
+    private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/graveyard.gltf"));
+    private boolean created = false;
 
     public ZombieInstanceUpdater(ObjectRenderer objectRenderer) {
         this.objectRenderer = objectRenderer;
@@ -23,11 +27,14 @@ public class ZombieInstanceUpdater {
         // Create a zombie instance and add to ObjectRender
         List<Zombie> zombies = zombieStorage.getZombies();
         for(Zombie zombie : zombies){
-            if (zombie.isRendered()) {
+            if (zombie.isRendered() && !created) {
                 // a scene is a model instance
                 Scene zombieInstance = new Scene(zombieAsset.scene);
-                zombieInstance.modelInstance.transform.setToTranslation(0f, 0f, 0f);
+//                zombieInstance.modelInstance.transform.setToTranslation(-16f, 0f, -16f);
+                zombieInstance.modelInstance.transform.setToTranslation(-16f, 0f, 32f);
+                zombieInstance.modelInstance.transform.rotate(Vector3.Y, 180f);
                 objectRenderer.addToSceneManager(zombieInstance);
+                created = true;
             }
         }
     }

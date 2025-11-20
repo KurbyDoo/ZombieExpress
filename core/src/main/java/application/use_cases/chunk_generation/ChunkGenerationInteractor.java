@@ -52,6 +52,15 @@ public class ChunkGenerationInteractor implements ChunkGenerationInputBoundary {
             }
         }
 
+        if (chunk.getChunkZ() > 0 && chunk.getChunkX() <= 0 && chunk.getChunkY() == 0) {
+            for (int x = 0; x < chunkSize; x++) {
+                for (int z = 0; z < chunkSize; z++) {
+                    chunk.setBlock(x, 0, z,  blockRepository.findByName("AIR").orElseThrow());
+                }
+            }
+        }
+
+
         // generate rails
         if (chunk.getChunkZ() == 0 && chunk.getChunkY() == 0) {
             for (int x = 0; x < chunkSize; x++) {
