@@ -3,6 +3,8 @@ package presentation.view;
 import application.use_cases.EntityGeneration.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import application.use_cases.ports.BlockRepository;
+import application.use_cases.player_movement.PlayerMovementInputBoundary;
+import application.use_cases.player_movement.PlayerMovementInteractor;
 import data_access.InMemoryBlockRepository;
 import domain.entities.Player;
 import domain.entities.World;
@@ -16,40 +18,27 @@ import presentation.controllers.CameraController;
 import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
-import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
-import application.use_cases.PlayerMovement.PlayerMovementInteractor;
-import application.use_cases.chunk_generation.ChunkGenerationInteractor;
-import application.use_cases.player_movement.PlayerMovementInputBoundary;
-import application.use_cases.player_movement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import io.github.testlibgdx.ChunkLoader;
-import infrastructure.rendering.ObjectRenderer;
 import presentation.controllers.WorldController;
-
-import presentation.controllers.WorldGenerationController;
-import application.use_cases.ChunkRadius.*;
-import infrastructure.rendering.ChunkRenderer;
-
 
 import static physics.HitBox.ShapeTypes.SPHERE;
 
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
+    private final int RENDER_RADIUS = 6;
 
     public ObjectRenderer objectRenderer;
-    public ModelGeneratorFacade meshBuilder;
     public World world;
     private CameraController cameraController;
     private GameInputAdapter gameInputAdapter;
     private ViewCamera camera;
-    private ChunkLoader chunkLoader;
-    private WorldGenerationController worldGenerationController;
+
     private Player player;
+
     private WorldController worldController;
-    private ChunkRenderer chunkRenderer;
-    private ChunkRadiusManagerInteractor chunkRadiusManager;
+
     private BlockRepository blockRepository;
     private BlockMaterialRepository materialRepository;
 
@@ -84,14 +73,18 @@ public class GameView implements Viewable{
         materialRepository = new LibGDXMaterialRepository();
 
         colHandler = new CollisionHandler();
-
         objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
-        meshBuilder = new ModelGeneratorFacade(world, blockRepository, materialRepository);
-        chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
 
-        worldGenerationController = new WorldGenerationController(world, chunkLoader, blockRepository);
-        worldGenerationController.generateInitialWorld(8, 4, 32);
+        // --- CHUNK SYSTEM INITIALIZATION (DELEGATED TO WORLD CONTROLLER) ---
+        this.worldController = new WorldController(
+            this.objectRenderer,
+            this.world,
+            this.player,
+            this.blockRepository,
+            this.materialRepository
+        );
+
         // physics testing
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
         GameMesh red = block.Construct();
@@ -108,24 +101,8 @@ public class GameView implements Viewable{
         //entityGenerationInteractor.execute(new EntityGenerationInputData());
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
         entityController.generateZombie();
-        // NEW system for derendering/radius-based loading:
-        chunkRenderer = new ChunkRenderer(meshBuilder, objectRenderer, world);
+        }
 
-    // Radius manager ties domain + generator + renderer together:
-        chunkRadiusManager = new ChunkRadiusManagerInteractor(
-            world,
-            chunkGenerationUseCase,   // generator you already have
-            chunkRenderer,            // renderer output boundary
-            4                        // radius
-        );
-
-
-//        worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
-
-//        worldGenerationController.generateInitialWorld(8, 4, 32);
-        objectRenderer = new ObjectRenderer(camera);
-        worldController = new WorldController(objectRenderer, 4); // 4 chunk radius;
-    }
 
     @Override
     public void renderView() {
@@ -136,25 +113,13 @@ public class GameView implements Viewable{
             accumulator -= TIME_STEP;
             cameraController.updatePrevious();
 
-            // WORLD UPDATES
-            gameInputAdapter.processInput(deltaTime);
-
-            // Call entity controller and pass world and entity list
-
-            // Update chunks based on player position:
-            chunkRadiusManager.execute(player.getPosition());
-            chunkRenderer.render();
-
             // --- GAME LOGIC ---
             // 1. Process player input
             gameInputAdapter.processInput(TIME_STEP);
-            // 2. Update the world
-            worldController.update(player.getPosition());
+
+            // 2. Update the world logic (Chunk Generation/Meshing/Removal)
+            worldController.update();
         }
-
-
-        // BACKGROUND PROCESSING
-        chunkLoader.loadChunks();
 
         float alpha = accumulator / TIME_STEP;
 
@@ -164,8 +129,12 @@ public class GameView implements Viewable{
         objectRenderer.render(deltaTime);
     }
 
+
     @Override
     public void disposeView() {
+        // Dispose world-related components first
+        worldController.dispose();
+
         objectRenderer.dispose();
         block.dispose();
     }

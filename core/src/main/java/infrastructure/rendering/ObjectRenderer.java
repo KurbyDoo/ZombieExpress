@@ -30,9 +30,7 @@ public class ObjectRenderer {
     private SceneManager sceneManager;
 
     public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
-
-    public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
-    public BlockingQueue<ModelInstance> toRemove = new LinkedBlockingQueue<>();
+    public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
     public CollisionHandler colHandler;
 
     public List<GameMesh> models = new ArrayList<>();
@@ -61,23 +59,32 @@ public class ObjectRenderer {
         colHandler.add(obj);
     }
 
+    // Overloaded method for convenience when removing only a ModelInstance
+    public void remove(ModelInstance modelInstance) {
+        if (modelInstance instanceof GameMesh) {
+            remove((GameMesh) modelInstance);
+        } else if (modelInstance != null) {
+            // For general ModelInstances without GameMesh/Collision:
+            // This is kept empty as all chunk-related removals will be GameMesh/ChunkMeshData
+        }
+    }
+
+    // Explicit method for removing a GameMesh
+    public void remove(GameMesh obj) {
+        if (obj != null) {
+            toRemove.add(obj);
+        }
+    }
+
     public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
 
-    public void remove(ModelInstance modelInstance) {
-        if (modelInstance != null) {
-            toRemove.add(modelInstance);
-        }
-    }
 
     private void updateRenderList() {
 
         GameMesh instance;
-        while ((instance = toAdd.poll()) != null){
-        ModelInstance instance;
-
         // Add new models
         while ((instance = toAdd.poll()) != null) {
             models.add(instance);
@@ -87,10 +94,8 @@ public class ObjectRenderer {
         // Remove and dispose old models
         while ((instance = toRemove.poll()) != null) {
             models.remove(instance);
-            // Properly dispose of the model's resources when it's removed
-            if (instance.model != null) {
-                instance.model.dispose();
-            }
+            colHandler.remove(instance.body); // Remove from collision world
+            instance.dispose(); // Dispose the body and shape, the model itself is shared by chunks
         }
     }
 
@@ -126,7 +131,7 @@ public class ObjectRenderer {
 
         modelBatch.begin(camera);
 
-        for (ModelInstance obj : models) {
+        for (GameMesh obj : models) {
             modelBatch.render(obj, environment);
         }
 
@@ -135,22 +140,24 @@ public class ObjectRenderer {
 
     public void dispose() {
 
+        // Remove from collision handler and dispose GameMesh components
         for (GameMesh obj: models){
+            colHandler.remove(obj.body);
             obj.dispose();
         }
 
         colHandler.dispose();
 
+        // ModelBatch itself is disposed
         modelBatch.dispose();
-        for (GameMesh obj : models){
-            obj.modelDispose();
+
+        // Dispose the shared models inside the GameMesh if they were designed to be disposable
+        // ChunkMeshData holds the only unique model which must be disposed.
+        // The list is now empty from the previous loop, but we ensure to dispose all models.
+        for (GameMesh obj : models) {
+            obj.modelDispose(); // Dispose the underlying Model (only unique per ChunkMeshData)
         }
-        // Dispose all models currently in the list
-        for (ModelInstance modelInstance : models) {
-            if (modelInstance.model != null) {
-                modelInstance.model.dispose();
-            }
-        }
+
         models.clear();
         sceneManager.dispose();
 
@@ -158,7 +165,5 @@ public class ObjectRenderer {
         updateRenderList();
         toAdd.clear();
         toRemove.clear();
-
-        modelBatch.dispose();
     }
 }
