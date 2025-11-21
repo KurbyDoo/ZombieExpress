@@ -27,7 +27,7 @@ import static physics.HitBox.ShapeTypes.SPHERE;
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
-    private final int RENDER_RADIUS = 6;
+    private final int RENDER_RADIUS = 6; // The radius in chunks where meshes are visible
 
     public ObjectRenderer objectRenderer;
     public World world;
@@ -48,10 +48,11 @@ public class GameView implements Viewable{
 
     private HitBox block;
 
-    // add EntityController
+    // Entity Management
     private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
     private RenderZombieInteractor renderZombieInteractor;
+    private ZombieInstanceUpdater zombieInstanceUpdater;
 
     @Override
     public void createView() {
@@ -77,12 +78,14 @@ public class GameView implements Viewable{
         world = new World();
 
         // --- CHUNK SYSTEM INITIALIZATION (DELEGATED TO WORLD CONTROLLER) ---
+        // Pass the RENDER_RADIUS here, which will be used to derive the GENERATION_RADIUS + 1
         this.worldController = new WorldController(
             this.objectRenderer,
             this.world,
             this.player,
             this.blockRepository,
-            this.materialRepository
+            this.materialRepository,
+            this.RENDER_RADIUS // Passing the desired render radius
         );
 
         // physics testing
@@ -90,15 +93,14 @@ public class GameView implements Viewable{
         GameMesh red = block.Construct();
         objectRenderer.add(red);
 
-        //test add entities
-//        Zombie zombie = new Zombie(objectRenderer);
-//        zombie.createZombie(); //delete this later
+        // --- ENTITY SYSTEM INITIALIZATION ---
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
-        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
+        zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
 
-        //entityGenerationInteractor.execute(new EntityGenerationInputData());
+        // Initial entity setup
+        // The EntityController will use the ZombieInstanceUpdater to add/remove Scenes from the SceneManager
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
         entityController.generateZombie();
         }

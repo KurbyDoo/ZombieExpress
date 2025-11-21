@@ -27,7 +27,7 @@ public class WorldController implements Disposable {
 
     private final World world;
     private final Player player;
-    private final int RENDER_RADIUS = 6;
+    private final int RENDER_RADIUS; // Removed hardcoded '= 6'
 
     // Use Case Implementations
     private final ChunkGenerationInputBoundary chunkGenerator;
@@ -35,7 +35,6 @@ public class WorldController implements Disposable {
     private final ChunkRadiusManagerInputBoundary chunkRadiusManager;
 
     // Infrastructure/Output Components
-    private final ModelGeneratorFacade meshGeneratorFacade;
     private final ChunkRenderer chunkRenderer;
 
     /**
@@ -46,18 +45,19 @@ public class WorldController implements Disposable {
         World world,
         Player player,
         BlockRepository blockRepository,
-        BlockMaterialRepository materialRepository) {
+        BlockMaterialRepository materialRepository,
+        int renderRadius) { // ADDED: int renderRadius parameter
 
         this.world = world;
         this.player = player;
+        this.RENDER_RADIUS = renderRadius; // ADDED: Assignment
 
         // 1. Initialize Generators (Use Cases)
         this.chunkGenerator = new ChunkGenerationInteractor(blockRepository);
-        this.meshGeneratorFacade = new ModelGeneratorFacade(world, blockRepository, materialRepository);
-        this.chunkMeshGenerator = this.meshGeneratorFacade; // Facade implements the boundary
+        ModelGeneratorFacade meshGeneratorFacade = new ModelGeneratorFacade(world, blockRepository, materialRepository);
+        this.chunkMeshGenerator = meshGeneratorFacade;
 
         // 2. Initialize Renderer (Output Boundary)
-        // Note: ChunkRenderer is Disposable
         this.chunkRenderer = new ChunkRenderer(objectRenderer, this.world);
 
         // 3. Initialize Manager (Interactor)

@@ -81,6 +81,9 @@ public class ObjectRenderer {
         sceneManager.addScene(scene);
     }
 
+    public void removeFromSceneManager(Scene scene) {
+        sceneManager.removeScene(scene);
+    }
 
     private void updateRenderList() {
 
@@ -95,7 +98,11 @@ public class ObjectRenderer {
         while ((instance = toRemove.poll()) != null) {
             models.remove(instance);
             colHandler.remove(instance.body); // Remove from collision world
-            instance.dispose(); // Dispose the body and shape, the model itself is shared by chunks
+            // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
+            instance.dispose();
+
+            // NOTE: Chunk's unique Model disposal (modelDispose) is handled by ChunkRenderer
+            // when it detects a chunk is removed or needs re-meshing.
         }
     }
 
@@ -106,7 +113,6 @@ public class ObjectRenderer {
     public void render(Float deltaTime) {
         updateRenderList();
 
-        // GPT said to implement these idk what they do
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl.glCullFace(GL20.GL_BACK);
@@ -139,30 +145,29 @@ public class ObjectRenderer {
     }
 
     public void dispose() {
+        // First, process any pending additions/removals to ensure they are moved to the 'models' list
+        updateRenderList();
 
-        // Remove from collision handler and dispose GameMesh components
+        // 1. Dispose all models currently in the 'models' list
         for (GameMesh obj: models){
             colHandler.remove(obj.body);
-            obj.dispose();
+            obj.dispose(); // Disposes body/shape/triangle
+
+            // Critical: If it's ChunkMeshData, its unique LibGDX Model must also be disposed.
+            // This catches any chunk that wasn't properly removed via the ChunkRenderer's logic.
+            if (obj instanceof ChunkMeshData) {
+                ((ChunkMeshData) obj).modelDispose();
+            }
         }
+        models.clear(); // Clear the list now that everything is disposed
 
         colHandler.dispose();
 
-        // ModelBatch itself is disposed
+        // ModelBatch and SceneManager must be disposed
         modelBatch.dispose();
-
-        // Dispose the shared models inside the GameMesh if they were designed to be disposable
-        // ChunkMeshData holds the only unique model which must be disposed.
-        // The list is now empty from the previous loop, but we ensure to dispose all models.
-        for (GameMesh obj : models) {
-            obj.modelDispose(); // Dispose the underlying Model (only unique per ChunkMeshData)
-        }
-
-        models.clear();
         sceneManager.dispose();
 
-        // Drain queues and dispose any remaining
-        updateRenderList();
+        // Queues should now be empty after updateRenderList, but we clear them defensively
         toAdd.clear();
         toRemove.clear();
     }
