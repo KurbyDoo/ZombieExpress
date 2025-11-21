@@ -21,7 +21,30 @@ This folder contains comprehensive architectural research and recommendations fo
 
 **Start here for**: Understanding the current problems and overall solution strategy
 
-### 2. [ARCHITECTURE_DIAGRAMS.md](ARCHITECTURE_DIAGRAMS.md)
+### 2. [PHYSICS_ENTITY_INTERACTION.md](PHYSICS_ENTITY_INTERACTION.md) ⭐ NEW
+**Bidirectional physics-entity interaction architecture (26KB)**
+
+**Contents**:
+- **Problem Statement**: How physics simulation results update entities
+- **Current State Analysis**: btCollisionWorld limitations
+- **Architectural Patterns**: Event-driven, Synchronization Manager, Command Pattern
+- **Recommended Architecture**: Hybrid event-driven with sync manager
+- **Entity Ownership Model**: Kinematic vs dynamic entities
+- **Collision Event Handling**: Event-driven pattern for collision response
+- **Update Order**: Sync sequence (to physics, simulate, from physics)
+- **Migration from btCollisionWorld**: Step-by-step migration plan
+- **Complete Code Examples**: Full game loop implementation
+
+**Start here for**: Understanding how physics updates entity positions while maintaining Clean Architecture
+
+**Key Insight**: 
+> Physics and entities don't directly communicate. PhysicsSyncManager in the presentation layer:
+> - Syncs kinematic entities → physics (before simulation)
+> - Syncs dynamic entities ← physics (after simulation)  
+> - Interprets collision events and applies to entities
+> - Entity owns its state; physics is just a position calculator
+
+### 3. [ARCHITECTURE_DIAGRAMS.md](ARCHITECTURE_DIAGRAMS.md)
 **Visual architecture representations (15KB)**
 
 **Contents**:
@@ -69,11 +92,28 @@ This folder contains comprehensive architectural research and recommendations fo
 3. View **Dependency Flow** diagram in `ARCHITECTURE_DIAGRAMS.md`
 4. Review code comments in `GameMesh.java` and `CollisionHandler.java` (see below)
 
+### For Understanding Physics-Entity Bidirectional Flow: ⭐ NEW
+1. Read **Problem Statement** in `PHYSICS_ENTITY_INTERACTION.md`
+2. Read **Architectural Patterns** comparison in `PHYSICS_ENTITY_INTERACTION.md`
+3. Read **Recommended Architecture** (hybrid approach) in `PHYSICS_ENTITY_INTERACTION.md`
+4. Review **Entity Ownership Model** (kinematic vs dynamic) in `PHYSICS_ENTITY_INTERACTION.md`
+5. Study **Complete Flow** code example in `PHYSICS_ENTITY_INTERACTION.md`
+
+**Key Question Answered**: How do physics simulation results (new positions after collisions) update entities while maintaining Clean Architecture principles?
+
+**Answer**: PhysicsSyncManager in presentation layer:
+- Before physics: Syncs kinematic entities → physics bodies
+- Run physics: Simulation calculates new positions
+- After physics: Syncs dynamic entities ← physics bodies
+- Entities never know about Bullet Physics; physics never directly modifies entities
+
 ### For Implementing the Solution:
 1. Read **Recommended Target Architecture** in `ARCHITECTURE_CONSOLIDATION_PLAN.md`
-2. View **Target State Diagram** in `ARCHITECTURE_DIAGRAMS.md`
-3. Review all examples in `IMPLEMENTATION_EXAMPLES.md` in order
-4. Follow the **Implementation Roadmap** (6 phases) in `ARCHITECTURE_CONSOLIDATION_PLAN.md`
+2. Read **Bidirectional Sync Manager** in `PHYSICS_ENTITY_INTERACTION.md`
+3. View **Target State Diagram** in `ARCHITECTURE_DIAGRAMS.md`
+4. Review all examples in `IMPLEMENTATION_EXAMPLES.md` in order
+5. Review **Complete Flow** example in `PHYSICS_ENTITY_INTERACTION.md`
+6. Follow the **Implementation Roadmap** (6 phases) in `ARCHITECTURE_CONSOLIDATION_PLAN.md`
 
 ## 💻 Code Comments
 

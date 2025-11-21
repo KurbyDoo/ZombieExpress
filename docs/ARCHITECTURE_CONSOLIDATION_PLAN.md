@@ -4,6 +4,8 @@
 
 This document provides a comprehensive analysis of the current ZombieExpress architecture and recommendations for consolidating three disparate systems (collision, mesh rendering, scene-based rendering) into two unified systems that properly integrate with the entity layer.
 
+**⚠️ IMPORTANT UPDATE**: For detailed analysis of the **bidirectional physics-entity interaction** (how physics simulation results update entity positions), see [PHYSICS_ENTITY_INTERACTION.md](PHYSICS_ENTITY_INTERACTION.md). This addresses the critical architectural challenge of maintaining Clean Architecture when physics needs to reposition entities after collisions.
+
 ## Current State Analysis
 
 ### Three Existing Systems
