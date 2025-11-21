@@ -10,8 +10,8 @@ public class LoadPlayerDataInteractor {
         this.dataAccess = dataAccess;
     }
 
-    public PlayerSession load(String uid, String email) {
-        return dataAccess.loadPlayerData(uid, email);
+    public PlayerSession load(String email, String uid) {
+        return dataAccess.loadPlayerData(email, uid);
 
     }
 }

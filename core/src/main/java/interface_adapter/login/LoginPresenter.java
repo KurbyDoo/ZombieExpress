@@ -25,7 +25,7 @@ public class LoginPresenter implements LoginOutputBoundary {
         PlayerSession session = null;
 
         if (loadPlayerDataInteractor != null) {
-            session = loadPlayerDataInteractor.load(data.getUid(), data.getEmail());
+            session = loadPlayerDataInteractor.load(data.getEmail(), data.getUid());
             if (session == null) {
                 System.out.println("WARNING: Failed to load player session");
                 return;
