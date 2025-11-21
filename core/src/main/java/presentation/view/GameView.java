@@ -22,6 +22,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import presentation.controllers.WorldController;
 
+import static physics.HitBox.ShapeTypes.BOX;
 import static physics.HitBox.ShapeTypes.SPHERE;
 
 public class GameView implements Viewable{
@@ -89,8 +90,10 @@ public class GameView implements Viewable{
         );
 
         // physics testing
-        block = new HitBox("sphere", SPHERE, 10, 10, 60);
+        block = new HitBox("box", BOX, 3, 3, 3);
         GameMesh red = block.Construct();
+        red.transform.setToTranslation(10f, 100f, 10f);
+        red.body.setWorldTransform(red.transform);
         objectRenderer.add(red);
 
         // --- ENTITY SYSTEM INITIALIZATION ---

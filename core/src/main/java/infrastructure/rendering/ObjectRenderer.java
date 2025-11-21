@@ -77,7 +77,7 @@ public class ObjectRenderer {
     }
 
     public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
-        System.out.println("Zombie added to scene.");
+//        System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
 
@@ -129,16 +129,9 @@ public class ObjectRenderer {
         sceneManager.update(deltaTime);
         sceneManager.render();
 
-        // Movement Update
-        final float delta = Math.min(1f / 30f, Gdx.graphics.getDeltaTime());
-        for (GameMesh obj : models){
-            if (obj.moving){
-                obj.transform.trn(0f, -delta, 0f);
-                obj.body.setWorldTransform(obj.transform);
-            }
-        }
+        // gravity
 
-        colHandler.checkCollision();
+        colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
 
         modelBatch.begin(camera);
 
