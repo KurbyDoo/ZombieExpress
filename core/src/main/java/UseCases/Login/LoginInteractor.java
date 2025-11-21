@@ -1,5 +1,8 @@
 package UseCases.Login;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class LoginInteractor implements LoginInputBoundary {
     private final LoginDataAccessInterface userDataAccess;
     private final LoginOutputBoundary presenter;
@@ -14,13 +17,15 @@ public class LoginInteractor implements LoginInputBoundary {
             presenter.loginFailed("Email or password is empty");
             return;
         }
-        String uid = userDataAccess.login(email, password);
+        String json = userDataAccess.login(email, password);
 
-        if (uid != null){
-            LoginOutputData data = new LoginOutputData(email, uid);
-            presenter.loginSuccess(data);
-        }else{
+        if (json == null){
             presenter.loginFailed("Invalid email or password");
+            return;
         }
+        JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+        String uid = obj.get("localId").getAsString();
+        LoginOutputData data = new LoginOutputData(email, uid);
+        presenter.loginSuccess(data);
     }
 }

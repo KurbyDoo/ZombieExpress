@@ -1,6 +1,6 @@
-// TODO: Add PropertyChangeSupport to notify the LoginView when state changes.
-
 package interface_adapter.login;
+import domain.entities.PlayerSession;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -11,6 +11,7 @@ public class LoginViewModel {
     private String email;
     private String errorMessage;
     private boolean successfulLogin;
+    private PlayerSession playerSession;
 
     // Setters
     public void setLoginEmail(String email) {
@@ -31,6 +32,12 @@ public class LoginViewModel {
         propertyChangeSupport.firePropertyChange("errorMessage", oldErrorMessage, errorMessage);
     }
 
+    public void setPlayerSession(PlayerSession playerSession) {
+        PlayerSession oldPlayerSession = this.playerSession;
+        this.playerSession = playerSession;
+        propertyChangeSupport.firePropertyChange("playerSession", oldPlayerSession, playerSession);
+    }
+
     //Getters
     public String getEmail() {
         return email;
@@ -42,6 +49,10 @@ public class LoginViewModel {
 
     public boolean isSuccessfulLogin() {
         return successfulLogin;
+    }
+
+    public PlayerSession getPlayerSession() {
+        return playerSession;
     }
 
     // PropertyChange listener

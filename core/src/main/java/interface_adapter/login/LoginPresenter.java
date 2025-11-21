@@ -14,25 +14,28 @@ public class LoginPresenter implements LoginOutputBoundary {
         this.loadPlayerDataInteractor = loadPlayerDataInteractor;
     }
 
-    // TODO: need to set the success and fail status and notify the UI(javaSwing) to update
     @Override
     public void loginSuccess(LoginOutputData data) {
+        // Update the login status
         viewModel.setSuccessfulLogin(true);
         viewModel.setErrorMessage(null);
         viewModel.setLoginEmail(data.getEmail());
 
-        if (loadPlayerDataInteractor != null) {
-            PlayerSession session = loadPlayerDataInteractor.load(data.getUid(), data.getEmail());
-            System.out.println("Loaded UID = " + session.getUid());
-            System.out.println("Highest score = " + session.getHeightScore());
-        }
+        // Load player's data
+        PlayerSession session = null;
 
-        System.out.println("success = " + viewModel.isSuccessfulLogin());
-        System.out.println("error = " + viewModel.getErrorMessage());
-        System.out.println("email = " + viewModel.getEmail());
-        PlayerSession session = loadPlayerDataInteractor.load(data.getUid(), data.getEmail());
-        System.out.println("Loaded UID = " + session.getUid());
-        System.out.println("Highest score = " + session.getHeightScore());
+        if (loadPlayerDataInteractor != null) {
+            session = loadPlayerDataInteractor.load(data.getUid(), data.getEmail());
+            if (session == null) {
+                System.out.println("WARNING: Failed to load player session");
+                return;
+            }
+        }
+        viewModel.setPlayerSession(session);
+
+        System.out.println("Login success = " + viewModel.isSuccessfulLogin());
+        System.out.println("Error message = " + viewModel.getErrorMessage());
+        System.out.println("Email = " + viewModel.getEmail());
     }
 
     @Override

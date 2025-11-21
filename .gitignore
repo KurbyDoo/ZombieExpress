@@ -155,7 +155,7 @@ Thumbs.db
 /.kotlin/
 /assets/assets.txt
 
-# Firebase
+# Firebase key
 core/src/main/resources/serviceAccountKey.json
 serviceAccountKey.json
 serviceAccountKey

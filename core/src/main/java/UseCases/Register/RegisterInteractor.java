@@ -25,6 +25,7 @@ public class RegisterInteractor implements RegisterInputBoundary{
 
         if (uid == null){
             presenter.registerFail("Email is invalid");
+            return;
         }
 
         presenter.registerSuccess(new RegisterOutputData(email, uid));
