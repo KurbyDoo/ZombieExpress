@@ -2,6 +2,39 @@ package domain.entities;
 
 import com.badlogic.gdx.math.Vector3;
 
+/**
+ * CLEAN ARCHITECTURE - EXCELLENT EXAMPLE:
+ * 
+ * The Player entity demonstrates proper domain layer design:
+ * - Pure business logic (movement, rotation, inventory management)
+ * - No dependencies on frameworks (except Vector3, which is acceptable as a value type)
+ * - Methods describe WHAT the player does, not HOW it's rendered or collides
+ * 
+ * CURRENT ARCHITECTURE ALIGNMENT:
+ * This is exactly how entities should be designed in the target architecture.
+ * 
+ * RECOMMENDATION:
+ * Player should remain unchanged. The two-system architecture should be built around it:
+ * 
+ * 1. Rendering System:
+ *    - PlayerRenderAdapter tracks Player.position and updates a Scene or ModelInstance
+ *    - Could render first-person hands/weapons or third-person character model
+ *    - Player entity never knows about this
+ * 
+ * 2. Collision System:
+ *    - PlayerCollisionAdapter tracks Player.position and updates a btRigidBody
+ *    - Handles collision with world geometry, enemies, items
+ *    - Collision results feed back to Player via game logic (not directly)
+ *    - Player entity never knows about Bullet physics
+ * 
+ * 3. Updater Layer Flow:
+ *    - Game logic calls Player.updatePosition() (domain operation)
+ *    - EntityUpdater observes position change
+ *    - EntityUpdater updates both PlayerRenderAdapter and PlayerCollisionAdapter
+ *    - Maintains separation of concerns
+ * 
+ * This is the pattern that should be applied to ALL entities (Zombie, Chunk terrain, Items, etc.)
+ */
 public class Player {
     private final Vector3 position;
     private final Vector3 direction;

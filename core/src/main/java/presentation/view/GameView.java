@@ -25,29 +25,61 @@ import presentation.controllers.WorldGenerationController;
 
 import static physics.HitBox.ShapeTypes.SPHERE;
 
+/**
+ * CLEAN ARCHITECTURE NOTE: 
+ * According to the requirement, GameView should act as the main class for dependency injection,
+ * not Main.java or ViewManager.java. This is currently being followed correctly.
+ * 
+ * ARCHITECTURAL ASSESSMENT:
+ * GameView currently serves as:
+ * 1. Dependency injection container (GOOD - per requirement)
+ * 2. Main game loop coordinator (GOOD)
+ * 3. Direct instantiation of infrastructure components (ACCEPTABLE but could be improved with factories)
+ * 
+ * ISSUES IDENTIFIED:
+ * 1. Three rendering/collision systems are visible here:
+ *    - CollisionHandler + GameMesh (btCollisionObject-based, will migrate to btRigidBody)
+ *    - ModelGeneratorFacade + ChunkLoader (chunk mesh rendering via ModelInstance)
+ *    - SceneManager (entity rendering via .gltf Scene objects)
+ * 
+ * 2. Missing abstraction: No unified "Entity" concept that spans both rendering and collision
+ * 
+ * 3. The "updater" layer concept (ZombieInstanceUpdater) exists but is incomplete:
+ *    - Only handles zombie rendering updates
+ *    - Does not handle collision mesh synchronization
+ *    - Should be generalized to handle all entities
+ */
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
 
+    // SYSTEM 1: Rendering infrastructure (mixed ModelBatch + SceneManager)
     public ObjectRenderer objectRenderer;
     public ModelGeneratorFacade meshBuilder;
+    
     public World world;
     private CameraController cameraController;
     private GameInputAdapter gameInputAdapter;
     private ViewCamera camera;
+    
+    // SYSTEM 2: Chunk-based mesh rendering
     private ChunkLoader chunkLoader;
     private WorldGenerationController worldGenerationController;
+    
     private Player player;
     private BlockRepository blockRepository;
     private BlockMaterialRepository materialRepository;
 
     private float accumulator;
 
+    // SYSTEM 3: Collision system (currently uses btCollisionObject, will migrate to btRigidBody)
     private CollisionHandler colHandler;
 
+    // ARCHITECTURAL NOTE: This is test collision object, demonstrates direct GameMesh usage
     private HitBox block;
 
-    // add EntityController
+    // PARTIAL SOLUTION: EntityController + ZombieInstanceUpdater represent the start of the "updater" pattern
+    // However, this is specific to zombies and not generalized to all entities
     private EntityController entityController;
     private EntityGenerationInteractor entityGenerationInteractor;
     private RenderZombieInteractor renderZombieInteractor;
@@ -71,8 +103,13 @@ public class GameView implements Viewable{
         blockRepository = new InMemoryBlockRepository();
         materialRepository = new LibGDXMaterialRepository();
 
+        // ARCHITECTURAL ISSUE: CollisionHandler is created here but passed to ObjectRenderer
+        // This couples rendering and collision at initialization
+        // RECOMMENDATION: Keep these separate - create both independently and coordinate via updater layer
         colHandler = new CollisionHandler();
 
+        // ARCHITECTURAL ISSUE: ObjectRenderer depends on CollisionHandler
+        // This violates separation of concerns
         objectRenderer = new ObjectRenderer(camera, colHandler);
         world = new World();
         meshBuilder = new ModelGeneratorFacade(world, blockRepository, materialRepository);
@@ -80,20 +117,23 @@ public class GameView implements Viewable{
 
         worldGenerationController = new WorldGenerationController(world, chunkLoader, blockRepository);
         worldGenerationController.generateInitialWorld(8, 4, 32);
-        // physics testing
+        
+        // ARCHITECTURAL NOTE: Test physics object using GameMesh
+        // Demonstrates System #1 (collision) and System #2 (mesh rendering) coupling
         block = new HitBox("sphere", SPHERE, 10, 10, 60);
         GameMesh red = block.Construct();
-        objectRenderer.add(red);
+        objectRenderer.add(red);  // Single call adds to BOTH rendering and collision
 
-        //test add entities
-//        Zombie zombie = new Zombie(objectRenderer);
-//        zombie.createZombie(); //delete this later
+        // ARCHITECTURAL NOTE: Entity system demonstration
+        // Uses System #3 (scene-based rendering) separately from collision
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
+        
+        // GOOD PATTERN: ZombieInstanceUpdater is the "updater" layer concept
+        // ISSUE: Only works for zombies, needs to be generalized
         ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
 
-        //entityGenerationInteractor.execute(new EntityGenerationInputData());
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
         entityController.generateZombie();
     }
