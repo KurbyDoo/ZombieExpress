@@ -19,6 +19,29 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+/**
+ * RESEARCH NOTE: DUAL RENDERING SYSTEM ARCHITECTURE
+ * ================================================
+ * This class currently manages TWO separate rendering pipelines:
+ * 
+ * 1. MODEL INSTANCE RENDERING (for chunks):
+ *    - Uses: ModelBatch + ModelInstance
+ *    - Purpose: Renders voxel chunk meshes with SOLID COLOR materials
+ *    - Data flow: Chunk -> ChunkMeshGenerationInteractor -> ChunkMeshData (extends GameMesh) -> ModelBatch
+ *    - Materials: LibGDXMaterialRepository provides ColorAttribute-based materials
+ *    - Limitation: NO TEXTURE SUPPORT - only solid colors per block type
+ * 
+ * 2. SCENE RENDERING (for textured models):
+ *    - Uses: SceneManager + Scene
+ *    - Purpose: Renders GLTF models (zombies, decorations) with FULL TEXTURE SUPPORT
+ *    - Data flow: GLTF file -> SceneAsset -> Scene -> SceneManager
+ *    - Materials: Embedded in GLTF files with texture references
+ *    - Benefit: Full PBR materials, textures, and complex model support
+ * 
+ * CONSOLIDATION GOAL:
+ * Convert chunk rendering to use Scene objects instead of ModelInstance so both
+ * systems use SceneManager, enabling texture mapping on voxel chunks.
+ */
 public class ObjectRenderer {
     public Environment environment;
 
@@ -40,13 +63,17 @@ public class ObjectRenderer {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
+        // RESEARCH NOTE: ModelBatch is used for chunk rendering (ModelInstance-based)
+        // CONSOLIDATION: After migration, this could be removed if all rendering uses SceneManager
         modelBatch = new ModelBatch();
 
         this.camera = camera;
 
         this.colHandler = colHandler;
 
-        //set up scene manager
+        // RESEARCH NOTE: SceneManager handles GLTF-based Scene objects
+        // CONSOLIDATION TARGET: This should become the ONLY rendering system
+        // It already supports the environment lighting needed for both chunks and models
         sceneManager = new SceneManager();
         sceneManager.setShaderProvider(new DefaultShaderProvider());
         sceneManager.setCamera(camera);
@@ -88,7 +115,11 @@ public class ObjectRenderer {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        // Render scene manager
+        // RESEARCH NOTE: RENDERING PIPELINE SPLIT
+        // ========================================
+        // Currently TWO separate render calls:
+        
+        // 1. Render textured models (zombies) via SceneManager
         sceneManager.update(deltaTime);
         sceneManager.render();
 
@@ -103,6 +134,9 @@ public class ObjectRenderer {
 
         colHandler.checkCollision();
 
+        // 2. Render chunks via ModelBatch (solid color materials only)
+        // CONSOLIDATION: This entire section should be replaced with SceneManager rendering
+        // after chunks are converted to Scene objects with texture support
         modelBatch.begin(camera);
 
         for (ModelInstance obj : models) {
