@@ -95,16 +95,16 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                     0, 1, 0);
 
             // Generate individual TriangleMeshes.
-            triangleMesh.addTriangle(
-                p1.set(x, y + 1, z + 1),
-                p2.set(x + 1, y + 1, z + 1),
-                p3.set(x + 1, y + 1, z),
-                removeDuplicateVertices);
-            triangleMesh.addTriangle(
-                p1.set(x, y + 1, z + 1),
-                p2.set(x + 1, y + 1, z),
-                p3.set(x, y + 1, z),
-                removeDuplicateVertices);
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY + 1, worldZ + 1),
+                    p2.set(worldX + 1, worldY + 1, worldZ + 1),
+                    p3.set(worldX + 1, worldY + 1, worldZ),
+                    removeDuplicateVertices);
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY + 1, worldZ + 1),
+                    p2.set(worldX + 1, worldY + 1, worldZ),
+                    p3.set(worldX, worldY + 1, worldZ),
+                    removeDuplicateVertices);
 
         }
 
@@ -117,16 +117,17 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                     worldX, worldY, worldZ + 1,
                     0, -1, 0);
 
-            triangleMesh.addTriangle(
-                p1.set(x, y, z),
-                p2.set(x + 1, y, z),
-                p3.set(x + 1, y, z + 1),
-                removeDuplicateVertices);
-            triangleMesh.addTriangle(
-                p1.set(x, y, z),
-                p2.set(x + 1, y, z + 1),
-                p3.set(x, y, z + 1),
-                removeDuplicateVertices);
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY, worldZ),
+                    p2.set(worldX + 1, worldY, worldZ),
+                    p3.set(worldX + 1, worldY, worldZ + 1),
+                    removeDuplicateVertices);
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY, worldZ),
+                    p2.set(worldX + 1, worldY, worldZ + 1),
+                    p3.set(worldX, worldY, worldZ + 1),
+                    removeDuplicateVertices);
+
         }
 
         // North face (z+)
@@ -138,18 +139,18 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                     worldX, worldY + 1, worldZ + 1,
                     0, 0, 1);
 
-            triangleMesh.addTriangle(
-                p1.set(x, y, z + 1),
-                p2.set(x + 1, y, z + 1),
-                p3.set(x + 1, y + 1, z + 1),
-                removeDuplicateVertices
-            );
-            triangleMesh.addTriangle(
-                p1.set(x, y, z + 1),
-                p2.set(x + 1, y + 1, z + 1),
-                p3.set(x, y + 1, z + 1),
-                removeDuplicateVertices
-            );
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY, worldZ + 1),
+                    p2.set(worldX + 1, worldY, worldZ + 1),
+                    p3.set(worldX + 1, worldY + 1, worldZ + 1),
+                    removeDuplicateVertices
+                );
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY, worldZ + 1),
+                    p2.set(worldX + 1, worldY + 1, worldZ + 1),
+                    p3.set(worldX, worldY + 1, worldZ + 1),
+                    removeDuplicateVertices
+                );
 
         }
 
@@ -162,18 +163,18 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                     worldX + 1, worldY + 1, worldZ,
                     0, 0, -1);
 
-            triangleMesh.addTriangle(
-                p1.set(x + 1, y, z),
-                p2.set(x, y, z),
-                p3.set(x, y + 1, z),
-                removeDuplicateVertices
-            );
-            triangleMesh.addTriangle(
-                p1.set(x + 1, y, z),
-                p2.set(x, y + 1, z),
-                p3.set(x + 1, y + 1, z),
-                removeDuplicateVertices
-            );
+                triangleMesh.addTriangle(
+                    p1.set(worldX + 1, worldY, worldZ),
+                    p2.set(worldX, worldY, worldZ),
+                    p3.set(worldX, worldY + 1, worldY),
+                    removeDuplicateVertices
+                );
+                triangleMesh.addTriangle(
+                    p1.set(worldX + 1, worldY, worldZ),
+                    p2.set(worldX, worldY + 1, worldZ),
+                    p3.set(worldX + 1, worldY + 1, worldZ),
+                    removeDuplicateVertices
+                );
 
         }
 
@@ -186,18 +187,19 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                     worldX + 1, worldY + 1, worldZ + 1,
                     1, 0, 0);
 
-            triangleMesh.addTriangle(
-                p1.set(x + 1, y, z + 1),
-                p2.set(x + 1, y, z),
-                p3.set(x + 1, y + 1, z),
-                removeDuplicateVertices
-            );
-            triangleMesh.addTriangle(
-                p1.set(x + 1, y, z + 1),
-                p2.set(x + 1, y + 1, z),
-                p3.set(x + 1, y + 1, z + 1),
-                removeDuplicateVertices
-            );
+                triangleMesh.addTriangle(
+                    p1.set(worldX + 1, worldY, worldZ + 1),
+                    p2.set(worldX + 1, worldY, worldZ),
+                    p3.set(worldX + 1, worldY + 1, worldZ),
+                    removeDuplicateVertices
+                );
+                triangleMesh.addTriangle(
+                    p1.set(worldX + 1, worldY,  worldZ+ 1),
+                    p2.set(worldX + 1, worldY + 1, worldZ),
+                    p3.set(worldX + 1, worldY + 1, worldZ + 1),
+                    removeDuplicateVertices
+                );
+
         }
 
         // West face (x-)
@@ -208,19 +210,18 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                     worldX, worldY + 1, worldZ + 1,
                     worldX, worldY + 1, worldZ,
                     -1, 0, 0);
-
-            triangleMesh.addTriangle(
-                p1.set(x, y, z),
-                p2.set(x, y, z + 1),
-                p3.set(x, y + 1, z + 1),
-                removeDuplicateVertices
-            );
-            triangleMesh.addTriangle(
-                p1.set(x, y, z),
-                p2.set(x, y + 1, z + 1),
-                p3.set(x, y + 1, z),
-                removeDuplicateVertices
-            );
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY, worldZ),
+                    p2.set(worldX, worldY, worldZ + 1),
+                    p3.set(worldX, worldY + 1, worldZ + 1),
+                    removeDuplicateVertices
+                );
+                triangleMesh.addTriangle(
+                    p1.set(worldX, worldY, worldZ),
+                    p2.set(worldX, worldY + 1, worldZ + 1),
+                    p3.set(worldX, worldY + 1, worldZ),
+                    removeDuplicateVertices
+                );
         }
     }
 }

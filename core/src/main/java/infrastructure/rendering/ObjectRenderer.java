@@ -130,7 +130,6 @@ public class ObjectRenderer {
         sceneManager.render();
 
         // gravity
-
         colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
 
         modelBatch.begin(camera);
