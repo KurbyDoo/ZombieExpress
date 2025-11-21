@@ -134,7 +134,8 @@ public class ObjectRenderer {
 
         modelBatch.begin(camera);
 
-        for (GameMesh obj : models) {
+        for (ModelInstance obj : models) {
+            ((GameMesh)obj).body.getWorldTransform(obj.transform);
             modelBatch.render(obj, environment);
         }
 
