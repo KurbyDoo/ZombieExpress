@@ -85,7 +85,12 @@ public class ObjectRenderer {
         Gdx.gl.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl.glCullFace(GL20.GL_BACK);
 
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glViewport(
+            0,
+            0,
+            Gdx.graphics.getBackBufferWidth(),  // Use physical width
+            Gdx.graphics.getBackBufferHeight() // Use physical height
+        );
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Render scene manager
