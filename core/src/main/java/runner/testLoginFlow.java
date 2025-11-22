@@ -2,9 +2,9 @@ package runner;
 
 import UseCases.Login.*;
 import UseCases.PlayerData.LoadPlayerDataInteractor;
-import data_access.firebase.FirebaseInitializer;
-import data_access.firebase.FirebaseLoginRegisterDataAccess;
-import data_access.firebase.FirebasePlayerDataAccess;
+import data_access.Firebase.FirebaseInitializer;
+import data_access.Firebase.FirebaseLoginRegisterDataAccess;
+import data_access.Firebase.FirebasePlayerDataAccess;
 import interface_adapter.login.*;
 
 public class testLoginFlow {

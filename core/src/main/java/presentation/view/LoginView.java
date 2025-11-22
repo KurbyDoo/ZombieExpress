@@ -2,8 +2,7 @@ package presentation.view;
 
 import UseCases.PlayerData.LoadPlayerDataInteractor;
 import UseCases.Register.RegisterInteractor;
-import data_access.login.MockLoginRegisterDataAccess;
-import data_access.firebase.FirebaseLoginRegisterDataAccess;
+import data_access.Firebase.FirebaseLoginRegisterDataAccess;
 import domain.entities.PlayerSession;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;

@@ -1,7 +1,7 @@
 package runner;
 
 import UseCases.Login.*;
-import data_access.login.FirebaseAuthManager;
+import data_access.mockLogic.login.MockfirebaseAuthManager;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -13,7 +13,7 @@ public class testLogin {
         LoginViewModel vm = new LoginViewModel();
         LoginPresenter presenter = new LoginPresenter(vm, null);
 
-        LoginDataAccessInterface firebaseDAO = new FirebaseAuthManager();
+        LoginDataAccessInterface firebaseDAO = new MockfirebaseAuthManager();
         LoginInteractor interactor = new LoginInteractor(firebaseDAO, presenter);
         LoginController controller = new LoginController(interactor);
 
