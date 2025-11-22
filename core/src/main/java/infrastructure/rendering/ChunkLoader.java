@@ -29,7 +29,7 @@ public class ChunkLoader {
             for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
                 ChunkMeshData chunkMesh = meshBuilder.buildModel(chunk);
                 if (chunkMesh == null) continue;
-                objectRenderer.add(chunkMesh);
+                objectRenderer.add(chunkMesh); // rendering the model but somehow the rigidbody is not working??
             }
         } catch (Exception e) {
             e.printStackTrace();
