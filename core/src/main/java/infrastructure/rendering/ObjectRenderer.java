@@ -13,6 +13,9 @@ import physics.GameMesh;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
+import com.badlogic.gdx.graphics.Color;
+import net.mgsx.gltf.scene3d.shaders.PBRShaderProvider;
+import net.mgsx.gltf.scene3d.shaders.PBRShaderConfig;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +43,26 @@ public class ObjectRenderer {
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
 
+        // --- FOG COLOR (Simple) ---
+        // Sets the color that distant objects fade into (light blue)
+        Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
+        environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
+
         modelBatch = new ModelBatch();
 
         this.camera = camera;
+        // fog gradient logiv
+        this.camera.far = 100f;
+        this.camera.near = 0.1f;
+        this.camera.update();
 
         this.colHandler = colHandler;
 
         //set up scene manager
         sceneManager = new SceneManager();
+
+        sceneManager.setShaderProvider(new PBRShaderProvider(new PBRShaderConfig()));
+
         sceneManager.setShaderProvider(new DefaultShaderProvider());
         sceneManager.setCamera(camera);
         sceneManager.setAmbientLight(1f);
@@ -123,6 +138,9 @@ public class ObjectRenderer {
             Gdx.graphics.getBackBufferWidth(),  // Use physical width
             Gdx.graphics.getBackBufferHeight() // Use physical height
         );
+        // --- SKY BACKGROUND ---
+        // Sets the background color to light sky blue (0.5f, 0.7f, 1.0f)
+        Gdx.gl.glClearColor(0.5f, 0.7f, 1.0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Render scene manager
