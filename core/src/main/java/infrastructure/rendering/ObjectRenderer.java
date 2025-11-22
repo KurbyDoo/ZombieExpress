@@ -3,14 +3,20 @@ package infrastructure.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
+    public Environment environment;
+
     private SceneManager sceneManager;
     private CollisionHandler colHandler;
 
@@ -19,6 +25,15 @@ public class ObjectRenderer {
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
+
+        this.environment = new Environment();
+        // Sky/Fog Color (Light Blue)
+        Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
+        this.environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        this.environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
+        DirectionalLight light = new DirectionalLight();
+        light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
+        this.environment.add(light);
 
         //set up scene manager
         sceneManager = new SceneManager();
@@ -73,6 +88,9 @@ public class ObjectRenderer {
             Gdx.graphics.getBackBufferWidth(),  // Use physical width
             Gdx.graphics.getBackBufferHeight() // Use physical height
         );
+        // --- SKY BACKGROUND ---
+        // Sets the background color to light sky blue (0.5f, 0.7f, 1.0f)
+        Gdx.gl.glClearColor(0.5f, 0.7f, 1.0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Render scene manager
