@@ -2,8 +2,6 @@ package io.github.testlibgdx.lwjgl3;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-//import com.badlogic.gdx.backends.lwjgl3.HdpiMode;
-//import java.awt.GraphicsEnvironment;
 import io.github.testlibgdx.Main;
 
 /** Launches the desktop (LWJGL3) application. */
