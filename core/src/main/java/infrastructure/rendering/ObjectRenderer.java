@@ -64,6 +64,10 @@ public class ObjectRenderer {
         sceneManager.addScene(scene);
     }
 
+    public void removeFromSceneManager(Scene scene) {
+        sceneManager.removeScene(scene);
+    }
+
     private void updateRenderList() {
 
         GameMesh instance;
