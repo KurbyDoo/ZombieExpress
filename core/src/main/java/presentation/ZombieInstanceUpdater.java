@@ -1,6 +1,8 @@
 package presentation;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
+import domain.entities.Entity;
 import domain.entities.ZombieStorage;
 import domain.entities.Zombie;
 import infrastructure.rendering.ObjectRenderer;
@@ -8,22 +10,28 @@ import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ZombieInstanceUpdater {
-//    private ZombieStorage zombieStorage;
+    //    private ZombieStorage zombieStorage;
     private ObjectRenderer objectRenderer;
+    private ZombieStorage zombieStorage;
     private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
+    private Boolean zombieAdded = false; // To prevent infinitely adding zombie to the world
 
-    public ZombieInstanceUpdater(ObjectRenderer objectRenderer) {
+    public ZombieInstanceUpdater(ObjectRenderer objectRenderer, ZombieStorage zombieStorage) {
         this.objectRenderer = objectRenderer;
+        this.zombieStorage = zombieStorage;
     }
 
-    public void updateRenderList(ZombieStorage zombieStorage) {
+    public void updateRenderList() {
         // Create a zombie instance and add to ObjectRender
         List<Zombie> zombies = zombieStorage.getZombies();
-        for(Zombie zombie : zombies){
-            if (zombie.isRendered()) {
+        for (Zombie zombie : zombies) {
+            if (zombie.isVisible() && !zombieAdded) {
+                zombieAdded = true;
                 // a scene is a model instance
                 Scene zombieInstance = new Scene(zombieAsset.scene);
                 zombieInstance.modelInstance.transform.setToTranslation(0f, 0f, 0f);

@@ -97,7 +97,7 @@ public class GameView implements Viewable{
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
-        zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
+        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer, zombieStorage);
 
         // Initial entity setup
         // The EntityController will use the ZombieInstanceUpdater to add/remove Scenes from the SceneManager

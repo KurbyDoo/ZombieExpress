@@ -24,7 +24,7 @@ public class RenderZombieInteractor implements RenderZombieInputBoundary {
     public void execute(RenderZombieInputData inputData) {
         List<Zombie> zombies = zombieStorage.getZombies();
         for (Zombie zombie : zombies) {
-            zombie.setRendered(true);
+            zombie.setVisible(true);
         }
     }
 }

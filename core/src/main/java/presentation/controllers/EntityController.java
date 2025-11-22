@@ -31,6 +31,6 @@ public class EntityController {
     public void renderZombie() {
         RenderZombieInputData inputData = new RenderZombieInputData();
         renderZombieUseCase.execute(inputData);
-        zombieInstanceUpdater.updateRenderList(zombieStorage);
+        zombieInstanceUpdater.updateRenderList();
     }
 }
