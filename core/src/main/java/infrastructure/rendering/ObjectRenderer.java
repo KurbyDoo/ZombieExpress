@@ -30,7 +30,7 @@ public class ObjectRenderer {
     private SceneManager sceneManager;
 
     public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
-
+    public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
     public CollisionHandler colHandler;
 
     public List<GameMesh> models = new ArrayList<>();
@@ -59,18 +59,51 @@ public class ObjectRenderer {
         colHandler.add(obj);
     }
 
+    // Overloaded method for convenience when removing only a ModelInstance
+    public void remove(ModelInstance modelInstance) {
+        if (modelInstance instanceof GameMesh) {
+            remove((GameMesh) modelInstance);
+        } else if (modelInstance != null) {
+            // For general ModelInstances without GameMesh/Collision:
+            // This is kept empty as all chunk-related removals will be GameMesh/ChunkMeshData
+        }
+    }
+
+    // Explicit method for removing a GameMesh
+    public void remove(GameMesh obj) {
+        if (obj != null) {
+            toRemove.add(obj);
+        }
+    }
+
     public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
         System.out.println("Zombie added to scene.");
         sceneManager.addScene(scene);
     }
 
+    public void removeFromSceneManager(Scene scene) {
+        sceneManager.removeScene(scene);
+    }
+
     private void updateRenderList() {
 
         GameMesh instance;
-        while ((instance = toAdd.poll()) != null){
+        // Add new models
+        while ((instance = toAdd.poll()) != null) {
             models.add(instance);
         }
 
+
+        // Remove and dispose old models
+        while ((instance = toRemove.poll()) != null) {
+            models.remove(instance);
+            colHandler.remove(instance.body); // Remove from collision world
+            // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
+            instance.dispose();
+
+            // NOTE: Chunk's unique Model disposal (modelDispose) is handled by ChunkRenderer
+            // when it detects a chunk is removed or needs re-meshing.
+        }
     }
 
 //    public void addMeshData(ChunkMeshData data) {
@@ -80,7 +113,6 @@ public class ObjectRenderer {
     public void render(Float deltaTime) {
         updateRenderList();
 
-        // GPT said to implement these idk what they do
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl.glCullFace(GL20.GL_BACK);
@@ -110,7 +142,7 @@ public class ObjectRenderer {
 
         modelBatch.begin(camera);
 
-        for (ModelInstance obj : models) {
+        for (GameMesh obj : models) {
             modelBatch.render(obj, environment);
         }
 
@@ -118,18 +150,30 @@ public class ObjectRenderer {
     }
 
     public void dispose() {
+        // First, process any pending additions/removals to ensure they are moved to the 'models' list
+        updateRenderList();
 
+        // 1. Dispose all models currently in the 'models' list
         for (GameMesh obj: models){
-            obj.dispose();
+            colHandler.remove(obj.body);
+            obj.dispose(); // Disposes body/shape/triangle
+
+            // Critical: If it's ChunkMeshData, its unique LibGDX Model must also be disposed.
+            // This catches any chunk that wasn't properly removed via the ChunkRenderer's logic.
+            if (obj instanceof ChunkMeshData) {
+                ((ChunkMeshData) obj).modelDispose();
+            }
         }
+        models.clear(); // Clear the list now that everything is disposed
 
         colHandler.dispose();
 
+        // ModelBatch and SceneManager must be disposed
         modelBatch.dispose();
-        for (GameMesh obj : models){
-            obj.modelDispose();
-        }
-        models.clear();
         sceneManager.dispose();
+
+        // Queues should now be empty after updateRenderList, but we clear them defensively
+        toAdd.clear();
+        toRemove.clear();
     }
 }

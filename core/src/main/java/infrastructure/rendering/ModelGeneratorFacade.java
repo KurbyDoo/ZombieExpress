@@ -8,12 +8,18 @@ import application.use_cases.ports.BlockRepository;
 import domain.entities.Chunk;
 import domain.entities.World;
 
-public class ModelGeneratorFacade {
+public class ModelGeneratorFacade implements ChunkMeshGenerationInputBoundary {
     private final World world;
     private final ChunkMeshGenerationInputBoundary chunkMeshBuilder;
     public ModelGeneratorFacade(World world, BlockRepository blockRepository, BlockMaterialRepository materialRepository) {
         this.world = world;
-        chunkMeshBuilder = new ChunkMeshGenerationInteractor(blockRepository, materialRepository);
+        this.chunkMeshBuilder = new ChunkMeshGenerationInteractor(blockRepository, materialRepository);
+    }
+
+    // New method to implement the boundary interface
+    @Override
+    public ChunkMeshGenerationOutputData execute(ChunkMeshGenerationInputData inputData) {
+        return chunkMeshBuilder.execute(inputData);
     }
 
     public ChunkMeshData buildModel(Chunk chunk) {

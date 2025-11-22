@@ -3,6 +3,7 @@ package domain.entities;
 import com.badlogic.gdx.math.Vector3;
 
 import java.util.HashMap;
+import java.util.Set;
 
 public class World {
     private final int worldDepthChunks = 20;
@@ -43,4 +44,21 @@ public class World {
     public int getWorldDepthChunks() {
         return worldDepthChunks;
     }
+
+    public boolean hasChunk(int x, int y, int z) {
+        return chunks.containsKey(new Vector3(x, y, z));
+    }
+
+    public void removeChunk(int x, int y, int z) {
+        chunks.remove(new Vector3(x, y, z));
+    }
+
+    public Set<Vector3> getChunkPositions() {
+        return chunks.keySet();
+    }
+
+    public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
+        return chunks.get(new Vector3(chunkX, chunkY, chunkZ));
+    }
+
 }
