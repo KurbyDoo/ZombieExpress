@@ -166,7 +166,7 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
                 triangleMesh.addTriangle(
                     p1.set(worldX + 1, worldY, worldZ),
                     p2.set(worldX, worldY, worldZ),
-                    p3.set(worldX, worldY + 1, worldY),
+                    p3.set(worldX, worldY + 1, worldZ),
                     removeDuplicateVertices
                 );
                 triangleMesh.addTriangle(

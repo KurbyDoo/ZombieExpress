@@ -92,7 +92,7 @@ public class GameView implements Viewable{
         // physics testing
         block = new HitBox("box", BOX, 3, 3, 3);
         GameMesh red = block.Construct();
-        red.transform.setToTranslation(-16f, 100, -16f);
+        red.transform.setToTranslation(10f, 100, 89f);
         red.body.setWorldTransform(red.transform);
         objectRenderer.add(red);
 
