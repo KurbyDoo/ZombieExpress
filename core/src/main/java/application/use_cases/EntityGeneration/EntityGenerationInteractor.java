@@ -17,7 +17,7 @@ public class EntityGenerationInteractor implements EntityGenerationInputBoundary
     public void execute(EntityGenerationInputData inputData) {
         // generate a new zombie at position 0,0,0
         Vector3 position = new Vector3(0f, 0f, 0f);
-        Zombie zombie = new Zombie(position);
+        Zombie zombie = new Zombie(0, position, true);
         //zombie.setRendered(true);
         zombieStorage.addZombie(zombie);
 

@@ -91,7 +91,7 @@ public class GameView implements Viewable{
         ZombieStorage zombieStorage = new ZombieStorage();
         entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
         renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
-        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer);
+        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer, zombieStorage);
 
         //entityGenerationInteractor.execute(new EntityGenerationInputData());
         entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
