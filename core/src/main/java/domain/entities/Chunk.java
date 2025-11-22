@@ -17,6 +17,10 @@ public class Chunk {
         this.chunkCoordinates = chunkCoordinates;
     }
 
+    public Vector3 getPosition() {
+        return chunkCoordinates;
+    }
+
 
     public short getBlock(int x, int y, int z) {
         return blocks[x][y][z];

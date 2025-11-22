@@ -13,6 +13,7 @@ buildscript {
 plugins {
   id "application"
 }
+ext.gdxVersion = '1.13.1'
 apply plugin: 'io.github.fourlastor.construo'
 
 
