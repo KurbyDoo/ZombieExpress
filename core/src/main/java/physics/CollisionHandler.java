@@ -52,7 +52,7 @@ public class CollisionHandler implements Disposable {
 
     public void remove(btCollisionObject body) {
         if (body != null) {
-            collisionWorld.removeCollisionObject(body);
+            dynamicsWorld.removeCollisionObject(body);
         }
     }
 
