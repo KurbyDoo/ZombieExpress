@@ -23,7 +23,7 @@ public class IdToMeshStorage implements MeshStorage {
     }
 
     public void addMesh(int id, GameMesh mesh) {
-        if (meshStorage.containsKey(id)) return;
+        if (mesh == null || meshStorage.containsKey(id)) return;
         meshesToLoad.add(mesh);
         meshStorage.put(id, mesh);
     }
@@ -37,7 +37,10 @@ public class IdToMeshStorage implements MeshStorage {
     }
 
     public void removeMesh(int id) {
-        meshesToUnload.add(meshStorage.get(id));
+        GameMesh mesh = meshStorage.get(id);
+        if (mesh != null) {
+            meshesToUnload.add(mesh);
+        }
         meshStorage.remove(id);
     }
 

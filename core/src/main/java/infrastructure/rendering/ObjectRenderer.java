@@ -70,7 +70,7 @@ public class ObjectRenderer {
 
         // Sync physics transforms to scene transforms for dynamic objects
         for (GameMesh mesh : meshStorage.getAllMeshes()) {
-            if (mesh != null && !mesh.getIsStatic()) {
+            if (mesh != null && !mesh.getIsStatic() && mesh.getScene() != null) {
                 // Update the scene's model instance transform from the physics body's world transform
                 mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
             }
