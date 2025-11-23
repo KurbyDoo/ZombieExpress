@@ -14,7 +14,8 @@ public class ObjectContactListener extends ContactListener  {
 
     @Override
     public boolean onContactAdded(int userValue0, int partId0, int index0, int userValue1, int partId1, int index1){
-        System.out.println("Objects collided");
+        // TODO: Implement object interaction logic here
+        // Note: This is called frequently during collisions - avoid expensive operations or logging
         return true;
     }
 
