@@ -57,7 +57,9 @@ public class IdToMeshStorage implements MeshStorage {
     @Override
     public void getRenderables(Array<Renderable> array, Pool<Renderable> pool) {
         for (GameMesh mesh : meshStorage.values()) {
-            mesh.getScene().modelInstance.getRenderables(array, pool);
+            if (mesh != null && mesh.getScene() != null) {
+                mesh.getScene().modelInstance.getRenderables(array, pool);
+            }
         }
     }
 

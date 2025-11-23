@@ -13,6 +13,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
+    private static final float PHYSICS_TIMESTEP = 1f / 60f; // 60 FPS physics updates
+    
     private SceneManager sceneManager;
     private MeshStorage meshStorage;
 
@@ -69,26 +71,31 @@ public class ObjectRenderer {
     }
 
 
+    /**
+     * Syncs physics transform to scene transform for a dynamic mesh.
+     * This must be called after physics simulation to update the visual representation.
+     */
+    private void syncMeshTransform(GameMesh mesh) {
+        if (mesh != null && !mesh.getIsStatic() && mesh.getScene() != null) {
+            // Update the scene's model instance transform from the physics body's world transform
+            mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
+        }
+    }
+
     public void render(Float deltaTime) {
         updateRenderList();
 
         // Physics simulation - must happen before rendering
-        colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
+        colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, PHYSICS_TIMESTEP);
 
         // Sync physics transforms to scene transforms for dynamic objects
         // Check both activeMeshes (chunks, hitboxes) and meshStorage (entities)
         for (GameMesh mesh : activeMeshes) {
-            if (mesh != null && !mesh.getIsStatic() && mesh.getScene() != null) {
-                // Update the scene's model instance transform from the physics body's world transform
-                mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
-            }
+            syncMeshTransform(mesh);
         }
         
         for (GameMesh mesh : meshStorage.getAllMeshes()) {
-            if (mesh != null && !mesh.getIsStatic() && mesh.getScene() != null) {
-                // Update the scene's model instance transform from the physics body's world transform
-                mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
-            }
+            syncMeshTransform(mesh);
         }
 
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
