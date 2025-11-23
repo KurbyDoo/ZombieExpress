@@ -12,13 +12,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
     private SceneManager sceneManager;
+    private CollisionHandler colHandler;
+    private MeshStorage meshStorage;
 
-    public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
-    public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
-    public CollisionHandler colHandler;
+    private BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
+    private BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
+        this.meshStorage = meshStorage;
 
         //set up scene manager
         sceneManager = new SceneManager();
@@ -82,11 +84,18 @@ public class ObjectRenderer {
         // gravity
         colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
 
+
+        for (GameMesh mesh : meshStorage.getAllMeshes()) {
+            if (mesh != null && !mesh.getIsStatic()) {
+                // Update the scene's model instance transform from the physics body's world transform
+                mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
+            }
+        }
 //        modelBatch.begin(camera);
 
-//        for (GameMesh obj : models) {
+//        for (GameMesh mesh : mesh) {
 //            if (obj == null) continue;
-//            obj.body.getWorldTransform(obj.getModelInstance().transform);
+//            obj.body.getWorldTransform(obj.getScene().modelInstance.transform);
 //            modelBatch.render(obj.getModelInstance(), environment);
 //        }
 

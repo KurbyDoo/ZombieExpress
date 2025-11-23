@@ -99,6 +99,7 @@ public class GameView implements Viewable{
         GameMesh red = block.construct();
 //        red.getScene().modelInstance.transform.setToTranslation(10.5f, 100, 90.5f);
 //        red.body.setWorldTransform(red.getScene().modelInstance.transform);
+        meshStorage.addMesh(-1, red);
         objectRenderer.add(red);
 
 //        ZombieStorage zombieStorage = new ZombieStorage();

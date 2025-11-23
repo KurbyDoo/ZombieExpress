@@ -21,10 +21,12 @@ public class GameMesh {
         this.scene = scene;
         this.id = id;
         this.body = body;
+        isStatic = false;
 
         // LINK TO AUTO UPDATE
-        motionState = new btDefaultMotionState(scene.modelInstance.transform);
-        this.body.setMotionState(motionState);
+//        motionState = new btDefaultMotionState(scene.modelInstance.transform);
+//        this.body.setMotionState(motionState);
+        motionState = body.getMotionState();
     }
 
     public void setChunkMeshData(ChunkMeshData chunkMeshData) {
