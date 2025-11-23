@@ -13,6 +13,7 @@ import java.util.Map;
 public class LibGDXMaterialRepository implements BlockMaterialRepository {
     private final Map<Short, Material> materials = new HashMap<>();
 
+    // TODO: Fix colours
     public LibGDXMaterialRepository() {
         // Grass (Green)
         materials.put((short)1, createPBRMaterial(new Color(0.2f, 0.8f, 0.2f, 1f)));

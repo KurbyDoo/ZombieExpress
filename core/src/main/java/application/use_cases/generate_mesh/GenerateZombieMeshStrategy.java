@@ -19,7 +19,7 @@ public class GenerateZombieMeshStrategy implements GenerateMeshStrategy {
 
         HitBox hitBox = new HitBox(String.valueOf(inputData.getId()), HitBox.ShapeTypes.BOX, 1, 1, 1);
         GameMesh mesh = hitBox.construct();
-        mesh.setScene(zombieScene);
+//        mesh.setScene(zombieScene);
         return mesh;
     }
 }

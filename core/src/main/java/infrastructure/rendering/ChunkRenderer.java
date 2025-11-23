@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkRenderer implements RenderRadiusManagerOutputBoundary, Disposable {
-
     private final ObjectRenderer objectRenderer;
 
     private final Map<Vector3, GameMesh> activeChunks;
@@ -32,16 +31,17 @@ public class ChunkRenderer implements RenderRadiusManagerOutputBoundary, Disposa
 
         removeChunk(chunkPos);
 
-        Scene scene = new Scene(meshData.model);
+        Scene scene = new Scene(meshData.getModel());
 
         btRigidBody.btRigidBodyConstructionInfo info =
-            new btRigidBody.btRigidBodyConstructionInfo(0, null, meshData.shape, Vector3.Zero);
+            new btRigidBody.btRigidBodyConstructionInfo(0, null, meshData.getShape(), Vector3.Zero);
         btRigidBody body = new btRigidBody(info);
         info.dispose();
 
         int dummyId = chunkPos.hashCode();
         GameMesh gameMesh = new GameMesh(dummyId, scene, body);
         gameMesh.setStatic(true);
+        gameMesh.setChunkMeshData(meshData);
 
         activeChunks.put(chunkPos, gameMesh);
         rawDataReferences.put(chunkPos, meshData);
@@ -56,15 +56,10 @@ public class ChunkRenderer implements RenderRadiusManagerOutputBoundary, Disposa
 
     private void removeChunk(Vector3 chunkPos) {
         GameMesh mesh = activeChunks.remove(chunkPos);
-        ChunkMeshData data = rawDataReferences.remove(chunkPos);
+        rawDataReferences.remove(chunkPos);
 
         if (mesh != null) {
             objectRenderer.remove(mesh);
-            mesh.dispose();
-        }
-
-        if (data != null) {
-            data.dispose();
         }
     }
 

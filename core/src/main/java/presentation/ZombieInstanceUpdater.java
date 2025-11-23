@@ -32,17 +32,17 @@ public class ZombieInstanceUpdater {
 
     public void updateRenderList() {
         // Create a zombie instance and add to ObjectRender
-        List<Zombie> zombies = zombieStorage.getZombies();
-        for (Zombie zombie : zombies) {
-            if (zombie.isVisible() && !zombieAdded) {
-                zombieAdded = true;
-                // a scene is a model instance
-                Scene zombieInstance = new Scene(zombieAsset.scene);
-                zombieInstance.modelInstance.transform.setToTranslation(0, 16f, 0);
-//                zombieInstance.modelInstance.transform.setToTranslation(-16f, 0f, 32f);
-//                zombieInstance.modelInstance.transform.rotate(Vector3.Y, 180f);
-                objectRenderer.addToSceneManager(zombieInstance);
-            }
-        }
+//        List<Zombie> zombies = zombieStorage.getZombies();
+//        for (Zombie zombie : zombies) {
+//            if (zombie.isVisible() && !zombieAdded) {
+//                zombieAdded = true;
+//                // a scene is a model instance
+//                Scene zombieInstance = new Scene(zombieAsset.scene);
+//                zombieInstance.modelInstance.transform.setToTranslation(0, 16f, 0);
+////                zombieInstance.modelInstance.transform.setToTranslation(-16f, 0f, 32f);
+////                zombieInstance.modelInstance.transform.rotate(Vector3.Y, 180f);
+//                objectRenderer.addToSceneManager(zombieInstance);
+//            }
+//        }
     }
 }

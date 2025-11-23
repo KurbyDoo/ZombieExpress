@@ -55,7 +55,7 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
         } else {
             btBvhTriangleMeshShape bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
             Model completeModel = modelBuilder.end();
-            meshData = new ChunkMeshData(completeModel, bvhTriangle);
+            meshData = new ChunkMeshData(completeModel, bvhTriangle, triangleMesh);
         }
 
         return new ChunkMeshGenerationOutputData(meshData);

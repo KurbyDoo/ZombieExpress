@@ -97,8 +97,8 @@ public class GameView implements Viewable{
         // physics testing
         block = new HitBox("box", BOX, 1, 1, 1);
         GameMesh red = block.construct();
-        red.getScene().modelInstance.transform.setToTranslation(10.5f, 100, 90.5f);
-        red.body.setWorldTransform(red.getScene().modelInstance.transform);
+//        red.getScene().modelInstance.transform.setToTranslation(10.5f, 100, 90.5f);
+//        red.body.setWorldTransform(red.getScene().modelInstance.transform);
         objectRenderer.add(red);
 
 //        ZombieStorage zombieStorage = new ZombieStorage();

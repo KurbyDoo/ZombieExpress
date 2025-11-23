@@ -31,21 +31,17 @@ import application.use_cases.ports.BlockRepository;
  * This acts as a service layer, delegating to use cases and infrastructure components.
  */
 public class WorldSyncController implements Disposable {
-
     private final World world;
     private final Player player;
     private final int RENDER_RADIUS; // Removed hardcoded '= 6'
 
-    // Use Case Implementations
     private final GenerateChunkInputBoundary chunkGenerator;
     private final ChunkMeshGenerationInputBoundary chunkMeshGenerator;
     private final RenderRadiusManagerInputBoundary renderRadiusManager;
 
-    // Infrastructure/Output Components
     private final ChunkRenderer chunkRenderer;
 
     private final EntityStorage entityStorage;
-
     private final MeshFactory meshFactory;
     private final MeshStorage meshStorage;
 
@@ -68,16 +64,13 @@ public class WorldSyncController implements Disposable {
         this.player = player;
         this.RENDER_RADIUS = renderRadius;
 
-        // 1. Initialize Generators (Use Cases)
         // TODO: Move these to game view
         this.chunkGenerator = new GenerateChunkInteractor(blockRepository, entityFactory);
         ModelGeneratorFacade meshGeneratorFacade = new ModelGeneratorFacade(world, blockRepository, materialRepository);
         this.chunkMeshGenerator = meshGeneratorFacade;
 
-        // 2. Initialize Renderer (Output Boundary)
         this.chunkRenderer = new ChunkRenderer(objectRenderer);
 
-        // 3. Initialize Manager (Interactor)
         this.renderRadiusManager = new RenderRadiusManagerInteractor();
 
         this.entityStorage = entityStorage;
@@ -101,12 +94,7 @@ public class WorldSyncController implements Disposable {
         // Generate chunks
         for (Vector3 pos : radiusData.getChunksToGenerate()) {
             GenerateChunkOutputData outputData = chunkGenerator.execute(new GenerateChunkInputData(pos, world));
-//            Chunk chunk = outputData.getNewChunk();
             world.addChunk(pos, outputData.getNewChunk());
-            // add test zombie to all chunks
-//            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
-//            GenerateZombieInputData zombie = new GenerateZombieInputData(pos, chunk);
-//            entityFactory.create(zombie);
             chunkRenderer.onChunkCreated(pos);
         }
 

@@ -2,7 +2,6 @@ package infrastructure.rendering;
 
 import application.use_cases.generate_mesh.GenerateMeshInputData;
 import application.use_cases.generate_mesh.GenerateMeshStrategy;
-import domain.entities.EntityFactory;
 import domain.entities.EntityType;
 import physics.GameMesh;
 

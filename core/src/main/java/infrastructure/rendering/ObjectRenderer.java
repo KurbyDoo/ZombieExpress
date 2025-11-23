@@ -3,37 +3,19 @@ package infrastructure.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import physics.CollisionHandler;
 import physics.GameMesh;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
-import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
-//    public PerspectiveCamera camera;
-//    public ModelBatch modelBatch;
-
-
-    // Add scene manager (to load models)
     private SceneManager sceneManager;
 
     public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
     public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
     public CollisionHandler colHandler;
-
-//    public List<GameMesh> models = new ArrayList<>();
-
-    private MeshStorage meshStorage;
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
@@ -46,69 +28,34 @@ public class ObjectRenderer {
         light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
         sceneManager.environment.add(light);
 
-//        sceneManager.setShaderProvider(new DefaultShaderProvider());
-//        sceneManager.setAmbientLight(1f);
-
-//        Environment environment = new Environment();
-//        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-//        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
-//        sceneManager.setE
-
-//        this.meshStorage = meshStorage;
         sceneManager.getRenderableProviders().add(meshStorage);
     }
 
-    public void add(GameMesh obj) {
-        toAdd.add(obj);
-        colHandler.add(obj);
+    public void add(GameMesh mesh) {
+        toAdd.add(mesh);
     }
 
     // Explicit method for removing a GameMesh
-    public void remove(GameMesh obj) {
-        if (obj != null) {
-            toRemove.add(obj);
+    public void remove(GameMesh mesh) {
+        if (mesh != null) {
+            toRemove.add(mesh);
         }
-    }
-
-    public void addToSceneManager(Scene scene) { //To add model instances to the scene manager
-//        System.out.println("Zombie added to scene.");
-//        sceneManager.addScene(scene);
-    }
-
-    public void removeFromSceneManager(Scene scene) {
-//        sceneManager.removeScene(scene);
     }
 
     private void updateRenderList() {
         GameMesh mesh;
         // Add new models
         while ((mesh = toAdd.poll()) != null) {
-//            models.add(instance);
             sceneManager.addScene(mesh.getScene());
+            colHandler.add(mesh);
         }
-
-//        for (GameMesh mesh : meshStorage.getMeshesToLoad()) {
-//            addToSceneManager(mesh.getScene());
-//        }
-//
-//        for (GameMesh mesh : meshStorage.getMeshesToUnload()) {
-//            removeFromSceneManager(mesh.getScene());
-//        }
-//
-//        meshStorage.getMeshesToLoad().clear();
-//        meshStorage.getMeshesToUnload().clear();
-
 
         // Remove and dispose old models
         while ((mesh = toRemove.poll()) != null) {
-//            models.remove(mesh);
             sceneManager.removeScene(mesh.getScene());
             colHandler.remove(mesh.body); // Remove from collision world
             // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
             mesh.dispose();
-
-            // NOTE: Chunk's unique Model disposal (modelDispose) is handled by ChunkRenderer
-            // when it detects a chunk is removed or needs re-meshing.
         }
     }
 
