@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -17,6 +19,9 @@ public class ObjectRenderer {
     public BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
     public BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
     public CollisionHandler colHandler;
+    
+    // Track all active meshes for physics sync
+    private final List<GameMesh> activeMeshes = new ArrayList<>();
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
@@ -50,12 +55,14 @@ public class ObjectRenderer {
         while ((mesh = toAdd.poll()) != null) {
             sceneManager.addScene(mesh.getScene());
             colHandler.add(mesh);
+            activeMeshes.add(mesh); // Track for physics sync
         }
 
         // Remove and dispose old models
         while ((mesh = toRemove.poll()) != null) {
             sceneManager.removeScene(mesh.getScene());
             colHandler.remove(mesh.body); // Remove from collision world
+            activeMeshes.remove(mesh); // Stop tracking
             // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
             mesh.dispose();
         }
@@ -69,6 +76,14 @@ public class ObjectRenderer {
         colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
 
         // Sync physics transforms to scene transforms for dynamic objects
+        // Check both activeMeshes (chunks, hitboxes) and meshStorage (entities)
+        for (GameMesh mesh : activeMeshes) {
+            if (mesh != null && !mesh.getIsStatic() && mesh.getScene() != null) {
+                // Update the scene's model instance transform from the physics body's world transform
+                mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
+            }
+        }
+        
         for (GameMesh mesh : meshStorage.getAllMeshes()) {
             if (mesh != null && !mesh.getIsStatic() && mesh.getScene() != null) {
                 // Update the scene's model instance transform from the physics body's world transform
@@ -125,6 +140,7 @@ public class ObjectRenderer {
 //        }
 //        models.clear(); // Clear the list now that everything is disposed
 
+        activeMeshes.clear(); // Clear tracked meshes
         colHandler.dispose();
 
         // ModelBatch and SceneManager must be disposed
