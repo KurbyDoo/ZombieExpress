@@ -116,7 +116,7 @@ public class HitBox implements Disposable {
 
         int numericId = id.hashCode();
 
-        return new GameMesh(numericId, scene, body);
+        return new GameMesh(numericId, scene, body, motionState);
     }
 
     @Override

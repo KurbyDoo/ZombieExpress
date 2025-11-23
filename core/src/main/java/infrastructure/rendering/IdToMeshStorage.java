@@ -38,7 +38,7 @@ public class IdToMeshStorage implements MeshStorage {
 
     public void removeMesh(int id) {
         meshesToUnload.add(meshStorage.get(id));
-        collisionHandler.remove(meshStorage.get(id).body);
+        collisionHandler.remove(meshStorage.get(id).getBody());
         meshStorage.remove(id);
     }
 
@@ -60,7 +60,13 @@ public class IdToMeshStorage implements MeshStorage {
     @Override
     public void getRenderables(Array<Renderable> array, Pool<Renderable> pool) {
         for (GameMesh mesh : meshStorage.values()) {
-            mesh.getScene().modelInstance.getRenderables(array, pool);
+            if (mesh.getScene() != null) {
+                mesh.getScene().modelInstance.getRenderables(array, pool);
+            }
+
+            if (mesh.isShowHitbox() && mesh.getHitboxInstance() != null) {
+                mesh.getHitboxInstance().getRenderables(array, pool);
+            }
         }
     }
 }

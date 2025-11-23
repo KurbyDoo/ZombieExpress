@@ -13,14 +13,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ObjectRenderer {
     private SceneManager sceneManager;
     private CollisionHandler colHandler;
-    private MeshStorage meshStorage;
 
     private BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
     private BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
-        this.meshStorage = meshStorage;
 
         //set up scene manager
         sceneManager = new SceneManager();
@@ -55,7 +53,7 @@ public class ObjectRenderer {
         // Remove and dispose old models
         while ((mesh = toRemove.poll()) != null) {
             sceneManager.removeScene(mesh.getScene());
-            colHandler.remove(mesh.body); // Remove from collision world
+            colHandler.remove(mesh.getBody()); // Remove from collision world
             // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
             mesh.dispose();
         }
@@ -83,13 +81,6 @@ public class ObjectRenderer {
 
         // gravity
         colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
-
-        for (GameMesh mesh : meshStorage.getAllMeshes()) {
-            if (mesh != null && !mesh.getIsStatic()) {
-                // Update the scene's model instance transform from the physics body's world transform
-                mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
-            }
-        }
     }
 
     public void dispose() {

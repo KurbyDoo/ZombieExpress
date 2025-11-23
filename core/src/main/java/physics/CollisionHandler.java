@@ -38,15 +38,14 @@ public class CollisionHandler implements Disposable {
 
     public void add(GameMesh object) {
         if (object != null){
-            object.body.setCollisionFlags(object.body.getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
-            object.body.setUserValue(object.id);
+            object.getBody().setCollisionFlags(object.getBody().getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
+            object.getBody().setUserValue(object.id);
 
             if (object.getIsStatic()) {
-                dynamicsWorld.addRigidBody(object.body, GROUND_FLAG, ALL_FLAG);
+                dynamicsWorld.addRigidBody(object.getBody(), GROUND_FLAG, ALL_FLAG);
             } else{
-                dynamicsWorld.addRigidBody(object.body, OBJECT_FLAG, GROUND_FLAG); //for non world objects
+                dynamicsWorld.addRigidBody(object.getBody(), OBJECT_FLAG, GROUND_FLAG); //for non world objects
             }
-
         }
     }
 

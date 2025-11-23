@@ -1,56 +1,55 @@
 package application.use_cases.generate_mesh;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
-import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
-import domain.entities.Entity;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import physics.GameMesh;
+import physics.MeshMotionState;
 
 public class GenerateZombieMeshStrategy implements GenerateMeshStrategy {
-    // TODO: Dispose asset on game close
     private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
 
     @Override
     public GameMesh execute(GenerateMeshInputData inputData) {
         Scene zombieScene = new Scene(zombieAsset.scene);
-        Entity entity = inputData.getEntity();
-        zombieScene.modelInstance.transform.setToTranslation(entity.getPosition());
+        ModelInstance modelInstance = zombieScene.modelInstance;
 
         BoundingBox bbox = new BoundingBox();
-        zombieScene.modelInstance.calculateBoundingBox(bbox);
+        modelInstance.calculateBoundingBox(bbox);
         Vector3 dimensions = new Vector3();
         bbox.getDimensions(dimensions);
+        dimensions.scl(0.5f);
 
-        btCollisionShape shape = new btBoxShape(dimensions.scl(0.5f));
+        Vector3 visualOffset = new Vector3(0, -dimensions.y, 0);
+        modelInstance.transform.setToTranslation(inputData.getEntity().getPosition());
 
-        float mass = 10f; // Example: 10kg
+        btCollisionShape shape = new btBoxShape(dimensions);
+        float mass = 1f;
         Vector3 localInertia = new Vector3();
         shape.calculateLocalInertia(mass, localInertia);
-        // TODO: This doesnt work for some reason
-        // THIS IS VERY STRANGE, if i remove the code below all zombies get teleported to the origin
-        // IF i remove the update loop in the object renderer, all the zombies float
-        // but the code below is supposed to make them auto sync
-        float halfHeight = dimensions.y / 2f;
-        Matrix4 centerOfMassOffset = new Matrix4().setToTranslation(0, -halfHeight, 0);
-        btMotionState motionState = new btDefaultMotionState(zombieScene.modelInstance.transform, centerOfMassOffset);
+
+        MeshMotionState motionState = new MeshMotionState(modelInstance.transform, visualOffset);
 
         btRigidBody.btRigidBodyConstructionInfo info =
-            new btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia);
+            new btRigidBody.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
         btRigidBody body = new btRigidBody(info);
-        body.setMotionState(motionState);
-        info.dispose();
 
+        body.setMotionState(motionState);
+        body.setActivationState(Collision.DISABLE_DEACTIVATION);
         body.setAngularFactor(new Vector3(0, 1, 0));
 
-        return new GameMesh(inputData.getId(), zombieScene, body);
+        info.dispose();
+
+        GameMesh mesh = new GameMesh(inputData.getId(), zombieScene, body, motionState);
+        mesh.setShowHitbox(true);
+        return mesh;
     }
 }

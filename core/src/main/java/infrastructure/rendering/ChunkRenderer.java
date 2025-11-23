@@ -39,7 +39,7 @@ public class ChunkRenderer implements RenderRadiusManagerOutputBoundary, Disposa
         info.dispose();
 
         int dummyId = chunkPos.hashCode();
-        GameMesh gameMesh = new GameMesh(dummyId, scene, body);
+        GameMesh gameMesh = new GameMesh(dummyId, scene, body, null);
         gameMesh.setStatic(true);
         gameMesh.setChunkMeshData(meshData);
 
