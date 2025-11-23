@@ -87,7 +87,6 @@ public class GameView implements Viewable{
     public ObjectRenderer objectRenderer;
     public World world;
     private CameraController cameraController;
-    private HeldItemController heldItemController;
     private GameInputAdapter gameInputAdapter;
     private InventoryInputAdapter inventoryInputAdapter;
     private PickUpInputAdapter  pickupInputAdapter;
@@ -122,6 +121,7 @@ public class GameView implements Viewable{
         //TESTING
         pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new Vector3(5, 16, 0)));
         pickupStorage.addPickup(new WorldPickup(ItemTypes.WOOD_LOG, new Vector3(15, 16, 0)));
+        pickupStorage.addPickup(new WorldPickup(ItemTypes.OIL_BARREL, new Vector3(25, 16, 0)));
 
         PickupInteractor pickupInteractor = new PickupInteractor(pickupStorage);
         PickupController pickupController = new PickupController(player, pickupInteractor);
@@ -178,7 +178,6 @@ public class GameView implements Viewable{
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
         hud = new GameHUD(player, pickupController);
-        //heldItemController = new HeldItemController(player, objectRenderer);
 
         // TESTING === CREATE VISUAL + PHYSICS FOR EACH PICKUP ===
         for (WorldPickup pickup : pickupStorage.getAll()) {
@@ -225,7 +224,6 @@ public class GameView implements Viewable{
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        //heldItemController.updateHeldItem();
         syncPickupVisuals();
         objectRenderer.render(deltaTime);
 

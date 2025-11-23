@@ -13,15 +13,15 @@ public class ItemPickupSceneFactory {
 
     private static final SceneAsset coalAsset = new GLTFLoader().load(Gdx.files.internal("models/items/fuels/coal/coal.gltf"));
     private static final SceneAsset woodLogAsset = new GLTFLoader().load(Gdx.files.internal("models/items/fuels/wood_log/wood_log.gltf"));
-    // private static SceneAsset oilBarrelAsset = gltfLoader.load(Gdx.files.internal("models/items/fuels/oil_barrel/oil_barrel.gltf"));
+    private static final SceneAsset oilBarrelAsset = new GLTFLoader().load(Gdx.files.internal("models/items/fuels/oil_barrel/oil_barrel.gltf"));
 
     private ItemPickupSceneFactory() {}
 
     private static float getScaleForItemName(String name) {
         switch (name) {
-            case "Coal": return 3;
+            case "Coal": return 3.3f;
             case "Wood Log": return 0.3f;
-            // case "Oil Barrel": return 1.8f;
+            case "Oil Barrel": return 1.6f;
             default: return 1;
         }
     }
@@ -29,29 +29,9 @@ public class ItemPickupSceneFactory {
     private static SceneAsset getAssetForItemName(String name) {
         switch (name) {
             case "Coal": return coalAsset;
-            case "Wood Log": return woodLogAsset;
-            // case "Oil Barrel": return oilBarrelAsset;
-            default: return coalAsset;
+            case "Oil Barrel": return oilBarrelAsset;
+            default: return woodLogAsset;
         }
-    }
-
-    public static float getHeldScaleForItemName(String name) {
-        switch (name) {
-            case "Coal":return 1f;
-            case "Wood Log":
-                return 0.1f;
-            default: return 0f;
-        }
-    }
-
-    public static Scene createHeldSceneForItem(Item item) {
-        String name = item.getName();
-        SceneAsset asset = getAssetForItemName(name);
-        Scene scene = new Scene(asset.scene);
-
-        float scale = getHeldScaleForItemName(name);
-        scene.modelInstance.transform.scale(scale, scale, scale);
-        return scene;
     }
 
     /**

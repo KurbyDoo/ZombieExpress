@@ -11,9 +11,8 @@ public class ItemTypes {
 
     // Melee Weapons
     public static final MeleeWeapon BASEBALL_BAT = new MeleeWeapon("Baseball Bat", 10);
-    public static final MeleeWeapon KATANA   = new MeleeWeapon("Katana", 20);
-    public static final MeleeWeapon TOMAHAWK_AXE   = new MeleeWeapon("Tomahawk Axe", 30);
-    public static final MeleeWeapon MASTER_SWORD   = new MeleeWeapon("Master Sword", 50);
+    public static final MeleeWeapon KATANA   = new MeleeWeapon("Katana", 30);
+    public static final MeleeWeapon TOMAHAWK_AXE   = new MeleeWeapon("Tomahawk Axe", 40);
 
     // Ranged Weapons
     public static final RangedWeapon RUSTY_PISTOL   = new RangedWeapon("Rusty Pistol", 15, AmmoType.PISTOL);

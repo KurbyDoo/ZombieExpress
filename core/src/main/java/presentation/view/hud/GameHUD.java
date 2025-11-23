@@ -25,8 +25,9 @@ public class GameHUD {
             new DistanceHudElement(uiStage, mainStyle, player),
             new HealthHudElement(uiStage, player),
             new AmmoHudElement(uiStage, mainStyle, player),
+            new HeldItemHudElement(uiStage, player),
             new HotbarHudElement(uiStage, style, player),
-            new PickupPromptHudElement(uiStage, largeStyle, pickupController)
+            new PickupPromptHudElement(uiStage, largeStyle, pickupController),
         };
     }
 

@@ -30,9 +30,9 @@ public class Player {
         this.up = new Vector3(Vector3.Y);
         this.inventory = new Inventory();
 
-        inventory.addItem(BASEBALL_BAT);
-        inventory.addItem(RUSTY_PISTOL);
-        inventory.addItem(COAL, 2);
+//        inventory.addItem(BASEBALL_BAT);
+//        inventory.addItem(RUSTY_PISTOL);
+//        inventory.addItem(COAL, 2);
         addAmmo(PISTOL, 10);
     }
 
