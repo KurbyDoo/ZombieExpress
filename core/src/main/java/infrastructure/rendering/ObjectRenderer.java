@@ -84,53 +84,21 @@ public class ObjectRenderer {
         // gravity
         colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
 
-
         for (GameMesh mesh : meshStorage.getAllMeshes()) {
             if (mesh != null && !mesh.getIsStatic()) {
                 // Update the scene's model instance transform from the physics body's world transform
                 mesh.body.getWorldTransform(mesh.getScene().modelInstance.transform);
             }
         }
-//        modelBatch.begin(camera);
-
-//        for (GameMesh mesh : mesh) {
-//            if (obj == null) continue;
-//            obj.body.getWorldTransform(obj.getScene().modelInstance.transform);
-//            modelBatch.render(obj.getModelInstance(), environment);
-//        }
-
-//        for (GameMesh obj : meshStorage.getMeshes()) {
-//            obj.body.getWorldTransform(obj.transform);
-//            modelBatch.render(obj, environment);
-//        }
-
-//        modelBatch.end();
     }
 
     public void dispose() {
         // First, process any pending additions/removals to ensure they are moved to the 'models' list
         updateRenderList();
 
-        // 1. Dispose all models currently in the 'models' list
-//        for (GameMesh obj: models){
-//            colHandler.remove(obj.body);
-//            obj.dispose(); // Disposes body/shape/triangle
-
-            // Critical: If it's ChunkMeshData, its unique LibGDX Model must also be disposed.
-            // This catches any chunk that wasn't properly removed via the ChunkRenderer's logic.
-//            if (obj instanceof ChunkMeshData) {
-//                obj.modelDispose();
-//            }
-//        }
-//        models.clear(); // Clear the list now that everything is disposed
-
         colHandler.dispose();
-
-        // ModelBatch and SceneManager must be disposed
-//        modelBatch.dispose();
         sceneManager.dispose();
 
-        // Queues should now be empty after updateRenderList, but we clear them defensively
         toAdd.clear();
         toRemove.clear();
     }

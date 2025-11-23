@@ -1,6 +1,7 @@
 package application.use_cases.generate_mesh;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
@@ -35,7 +36,12 @@ public class GenerateZombieMeshStrategy implements GenerateMeshStrategy {
         Vector3 localInertia = new Vector3();
         shape.calculateLocalInertia(mass, localInertia);
         // TODO: This doesnt work for some reason
-        btMotionState motionState = new btDefaultMotionState(zombieScene.modelInstance.transform);
+        // THIS IS VERY STRANGE, if i remove the code below all zombies get teleported to the origin
+        // IF i remove the update loop in the object renderer, all the zombies float
+        // but the code below is supposed to make them auto sync
+        float halfHeight = dimensions.y / 2f;
+        Matrix4 centerOfMassOffset = new Matrix4().setToTranslation(0, -halfHeight, 0);
+        btMotionState motionState = new btDefaultMotionState(zombieScene.modelInstance.transform, centerOfMassOffset);
 
         btRigidBody.btRigidBodyConstructionInfo info =
             new btRigidBody.btRigidBodyConstructionInfo(mass, null, shape, localInertia);

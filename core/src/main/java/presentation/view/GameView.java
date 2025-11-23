@@ -74,6 +74,8 @@ public class GameView implements Viewable{
         materialRepository = new LibGDXMaterialRepository();
 
         // --- ENTITY SYSTEM INITIALIZATION ---
+        colHandler = new CollisionHandler();
+
 //        GenerateChunkMeshStrategy chunkMeshStrategy = new GenerateChunkMeshStrategy(blockRepository, materialRepository, world);
 
         GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
@@ -84,13 +86,12 @@ public class GameView implements Viewable{
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .build();
 
-        MeshStorage meshStorage = new IdToMeshStorage();
+        MeshStorage meshStorage = new IdToMeshStorage(colHandler);
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
             .register(EntityType.ZOMBIE, zombieMeshStrategy)
             .build();
 
         // --- MESH + COL ---
-        colHandler = new CollisionHandler();
         objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
         world = new World();
 
@@ -100,7 +101,7 @@ public class GameView implements Viewable{
 //        red.getScene().modelInstance.transform.setToTranslation(10.5f, 100, 90.5f);
 //        red.body.setWorldTransform(red.getScene().modelInstance.transform);
         meshStorage.addMesh(-1, red);
-        objectRenderer.add(red);
+//        objectRenderer.add(red);
 
 //        ZombieStorage zombieStorage = new ZombieStorage();
 //        entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);

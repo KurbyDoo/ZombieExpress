@@ -3,6 +3,7 @@ package infrastructure.rendering;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import physics.CollisionHandler;
 import physics.GameMesh;
 
 import java.util.*;
@@ -11,17 +12,20 @@ public class IdToMeshStorage implements MeshStorage {
     private final Map<Integer, GameMesh> meshStorage;
     private final Set<GameMesh> meshesToLoad;
     private final Set<GameMesh> meshesToUnload;
+    private final CollisionHandler collisionHandler;
 
-    public IdToMeshStorage() {
+    public IdToMeshStorage(CollisionHandler collisionHandler) {
         meshStorage = new HashMap<>();
         meshesToLoad = new HashSet<>();
         meshesToUnload = new HashSet<>();
+        this.collisionHandler = collisionHandler;
     }
 
     public void addMesh(int id, GameMesh mesh) {
         if (meshStorage.containsKey(id)) return;
         meshesToLoad.add(mesh);
         meshStorage.put(id, mesh);
+        collisionHandler.add(mesh);
     }
 
     public boolean hasMesh(int id) {
@@ -34,6 +38,7 @@ public class IdToMeshStorage implements MeshStorage {
 
     public void removeMesh(int id) {
         meshesToUnload.add(meshStorage.get(id));
+        collisionHandler.remove(meshStorage.get(id).body);
         meshStorage.remove(id);
     }
 
