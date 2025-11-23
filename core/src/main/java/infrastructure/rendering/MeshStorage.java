@@ -3,6 +3,7 @@ package infrastructure.rendering;
 import com.badlogic.gdx.graphics.g3d.RenderableProvider;
 import physics.GameMesh;
 
+import java.util.Collection;
 import java.util.Set;
 
 public interface MeshStorage extends RenderableProvider {
@@ -12,4 +13,5 @@ public interface MeshStorage extends RenderableProvider {
     GameMesh getMesh(int id);
     Set<GameMesh> getMeshesToLoad();
     Set<GameMesh> getMeshesToUnload();
+    Collection<GameMesh> getAllMeshes();
 }

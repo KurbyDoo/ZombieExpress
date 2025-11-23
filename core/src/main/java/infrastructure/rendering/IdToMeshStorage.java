@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 import physics.GameMesh;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -55,5 +56,10 @@ public class IdToMeshStorage implements MeshStorage {
         for (GameMesh mesh : meshStorage.values()) {
             mesh.getScene().modelInstance.getRenderables(array, pool);
         }
+    }
+
+    @Override
+    public Collection<GameMesh> getAllMeshes() {
+        return meshStorage.values();
     }
 }
