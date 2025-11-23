@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import com.badlogic.gdx.utils.Disposable;
+import infrastructure.rendering.ChunkMeshData;
 import net.mgsx.gltf.scene3d.scene.Scene;
 
 public class GameMesh {
@@ -15,6 +17,7 @@ public class GameMesh {
     private Scene scene;
     private boolean isStatic;
     private btMotionState motionState;
+    private ChunkMeshData chunkMeshData;
 
     public final btRigidBody body;
     public btCollisionShape shape;
@@ -32,10 +35,17 @@ public class GameMesh {
         this.body.setMotionState(motionState);
     }
 
+    public void setChunkMeshData(ChunkMeshData chunkMeshData) {
+        this.chunkMeshData = chunkMeshData;
+    }
+
     public void dispose () {
         body.dispose();
         if (motionState != null) {
             motionState.dispose();
+        }
+        if (chunkMeshData != null) {
+            chunkMeshData.dispose();
         }
     }
 

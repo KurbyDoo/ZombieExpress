@@ -42,6 +42,7 @@ public class ChunkRenderer implements RenderRadiusManagerOutputBoundary, Disposa
         int dummyId = chunkPos.hashCode();
         GameMesh gameMesh = new GameMesh(dummyId, scene, body);
         gameMesh.setStatic(true);
+        gameMesh.setChunkMeshData(meshData);
 
         activeChunks.put(chunkPos, gameMesh);
         rawDataReferences.put(chunkPos, meshData);
@@ -56,15 +57,11 @@ public class ChunkRenderer implements RenderRadiusManagerOutputBoundary, Disposa
 
     private void removeChunk(Vector3 chunkPos) {
         GameMesh mesh = activeChunks.remove(chunkPos);
-        ChunkMeshData data = rawDataReferences.remove(chunkPos);
+        rawDataReferences.remove(chunkPos);
 
         if (mesh != null) {
             objectRenderer.remove(mesh);
-            mesh.dispose();
-        }
-
-        if (data != null) {
-            data.dispose();
+            // Don't dispose here - let ObjectRenderer handle disposal after removing from scene
         }
     }
 

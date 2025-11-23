@@ -104,11 +104,8 @@ public class ObjectRenderer {
 //            models.remove(mesh);
             sceneManager.removeScene(mesh.getScene());
             colHandler.remove(mesh.body); // Remove from collision world
-            // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
+            // GameMesh.dispose() handles body, motionState, and ChunkMeshData (if present)
             mesh.dispose();
-
-            // NOTE: Chunk's unique Model disposal (modelDispose) is handled by ChunkRenderer
-            // when it detects a chunk is removed or needs re-meshing.
         }
     }
 
