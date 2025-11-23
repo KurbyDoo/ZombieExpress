@@ -4,7 +4,7 @@ import domain.items.Item;
 
 public class Inventory {
 
-    public static final int MAX_SLOTS = 10;
+    private static final int MAX_SLOTS = 10;
     private final InventorySlot[] slots = new InventorySlot[MAX_SLOTS];
 
     public Inventory() {

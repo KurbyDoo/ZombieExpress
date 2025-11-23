@@ -25,11 +25,8 @@ public class GameInputAdapter extends InputAdapter {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.Q) {
-            player.drop();
-            return true;
-        }
-        return super.keyDown(keycode);
+        keys.put(keycode, keycode);
+        return true;
     }
 
     @Override

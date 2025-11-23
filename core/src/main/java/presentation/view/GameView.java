@@ -56,22 +56,27 @@ import application.use_cases.EntityGeneration.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInteractor;
+import application.use_cases.pickup.PickupInteractor;
 import application.use_cases.ports.BlockRepository;
 import data_access.InMemoryBlockRepository;
-import domain.entities.Player;
-import domain.entities.World;
-import domain.entities.ZombieStorage;
-import infrastructure.input_boundary.GameInputAdapter;
-import infrastructure.input_boundary.UIInputAdapter;
+import domain.entities.*;
+import net.mgsx.gltf.scene3d.scene.Scene;
+import infrastructure.input_boundary.*;
 import infrastructure.rendering.*;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import physics.HitBox;
 import presentation.ZombieInstanceUpdater;
-import presentation.controllers.CameraController;
-import presentation.controllers.EntityController;
-import presentation.controllers.FirstPersonCameraController;
-import presentation.controllers.WorldGenerationController;
+import presentation.controllers.*;
+import presentation.view.hud.GameHUD;
+
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Iterator;
+
+import static physics.HitBox.ShapeTypes.BOX;
 import static physics.HitBox.ShapeTypes.SPHERE;
 
 public class GameView implements Viewable{
@@ -82,7 +87,10 @@ public class GameView implements Viewable{
     public ObjectRenderer objectRenderer;
     public World world;
     private CameraController cameraController;
+    private HeldItemController heldItemController;
     private GameInputAdapter gameInputAdapter;
+    private InventoryInputAdapter inventoryInputAdapter;
+    private PickUpInputAdapter  pickupInputAdapter;
     private ViewCamera camera;
 
     private Player player;
@@ -91,11 +99,16 @@ public class GameView implements Viewable{
 
     private BlockRepository blockRepository;
     private BlockMaterialRepository materialRepository;
+    private final PickupStorage pickupStorage = new PickupStorage();
 
     private float accumulator;
 
     private GameHUD hud;
-    private UIInputAdapter uiInputAdapter;
+    private float testDamageTimer = 0f;
+    private GameMesh coalMesh;
+
+    private final Map<WorldPickup, GameMesh> pickupMeshes = new HashMap<>();
+    private final Map<WorldPickup, Scene> pickupScenes = new HashMap<>();
 
     @Override
     public void createView() {
@@ -106,11 +119,19 @@ public class GameView implements Viewable{
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
+        //TESTING
+        pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new Vector3(5, 16, 0)));
+        pickupStorage.addPickup(new WorldPickup(ItemTypes.WOOD_LOG, new Vector3(15, 16, 0)));
+
+        PickupInteractor pickupInteractor = new PickupInteractor(pickupStorage);
+        PickupController pickupController = new PickupController(player, pickupInteractor);
+
         gameInputAdapter = new GameInputAdapter(playerMovementInteractor, player);
         Gdx.input.setInputProcessor(gameInputAdapter);
         Gdx.input.setCursorCatched(true);
 
-        uiInputAdapter = new UIInputAdapter(player);
+        inventoryInputAdapter = new InventoryInputAdapter(player);
+        pickupInputAdapter = new PickUpInputAdapter(pickupController);
 
         cameraController = new FirstPersonCameraController(camera, player);
 
@@ -156,7 +177,24 @@ public class GameView implements Viewable{
         );
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
-        hud = new GameHUD(player);
+        hud = new GameHUD(player, pickupController);
+        //heldItemController = new HeldItemController(player, objectRenderer);
+
+        // TESTING === CREATE VISUAL + PHYSICS FOR EACH PICKUP ===
+        for (WorldPickup pickup : pickupStorage.getAll()) {
+            // 1) Physics / debug: red HitBox mesh
+            HitBox hitBox = new HitBox("pickupHitbox", BOX, 2, 2, 2);
+            GameMesh mesh = hitBox.Construct();
+            mesh.transform.setToTranslation(pickup.getPosition());
+            mesh.moving = false; // so ObjectRenderer doesn't drop it each frame
+            objectRenderer.add(mesh);
+            pickupMeshes.put(pickup, mesh);
+
+            // 2) Visual model: load from assets
+            Scene scene = ItemPickupSceneFactory.createSceneForPickup(pickup);
+            objectRenderer.addToSceneManager(scene);
+            pickupScenes.put(pickup, scene);
+        }
 
         //test add entities
         Zombie zombie = new Zombie(objectRenderer);
@@ -175,17 +213,20 @@ public class GameView implements Viewable{
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
 
-            // UI inventory input (hotbar keys) – updates Player only
-            uiInputAdapter.pollInput();
+            inventoryInputAdapter.pollInput();
+            pickupInputAdapter.pollInput();
 
             gameSimulationController.update(TIME_STEP);
         }
+
         player.updatePassiveHealing(deltaTime);
 
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
+        //heldItemController.updateHeldItem();
+        syncPickupVisuals();
         objectRenderer.render(deltaTime);
 
         // HUD
@@ -201,5 +242,33 @@ public class GameView implements Viewable{
 
         objectRenderer.dispose();
         block.dispose();
+    }
+
+    private void syncPickupVisuals() {
+        Set<WorldPickup> current = new HashSet<>(pickupStorage.getAll());
+
+        Iterator<Map.Entry<WorldPickup, GameMesh>> itMesh = pickupMeshes.entrySet().iterator();
+        while (itMesh.hasNext()) {
+            Map.Entry<WorldPickup, GameMesh> entry = itMesh.next();
+            WorldPickup pickup = entry.getKey();
+            GameMesh mesh = entry.getValue();
+
+            if (!current.contains(pickup)) {
+                objectRenderer.models.remove(mesh);
+                // colHandler.remove(mesh); //  if we ever add collider removal
+                itMesh.remove();
+            }
+        }
+
+        Iterator<Map.Entry<WorldPickup, Scene>> itScene = pickupScenes.entrySet().iterator();
+        while (itScene.hasNext()) {
+            Map.Entry<WorldPickup, Scene> entry = itScene.next();
+            WorldPickup pickup = entry.getKey();
+            Scene scene = entry.getValue();
+            if (!current.contains(pickup)) {
+                objectRenderer.removeScene(scene);
+                itScene.remove();
+            }
+        }
     }
 }

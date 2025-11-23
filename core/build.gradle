@@ -7,6 +7,7 @@ dependencies {
   api "com.github.mgsx-dev.gdx-gltf:gltf:$gltfVersion"
 
   implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
   runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
   api "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
 
