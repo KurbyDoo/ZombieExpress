@@ -36,7 +36,7 @@ public class GenerateZombieMeshStrategy implements GenerateMeshStrategy {
         Vector3 localInertia = new Vector3();
         shape.calculateLocalInertia(mass, localInertia);
 
-        MeshMotionState motionState = new MeshMotionState(modelInstance.transform, visualOffset);
+        MeshMotionState motionState = new MeshMotionState(modelInstance.transform, visualOffset, inputData.getEntity());
 
         btRigidBody.btRigidBodyConstructionInfo info =
             new btRigidBody.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);

@@ -23,7 +23,7 @@ public class ObjectRenderer {
         //set up scene manager
         sceneManager = new SceneManager();
         sceneManager.setCamera(camera);
-        sceneManager.setAmbientLight(0.4f);
+        sceneManager.setAmbientLight(0.1f);
         DirectionalLight light = new DirectionalLight();
         light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
         sceneManager.environment.add(light);

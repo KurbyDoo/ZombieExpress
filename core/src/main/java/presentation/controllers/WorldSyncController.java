@@ -6,6 +6,7 @@ import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputData;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData;
 import application.use_cases.generate_mesh.GenerateMeshInputData;
 import application.use_cases.render_radius.RenderRadiusOutputData;
+import application.use_cases.update_entity.EntityBehaviourSystem;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -24,6 +25,9 @@ import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
 import application.use_cases.ports.BlockRepository;
+
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -44,6 +48,8 @@ public class WorldSyncController implements Disposable {
     private final EntityStorage entityStorage;
     private final MeshFactory meshFactory;
     private final MeshStorage meshStorage;
+
+    private RenderRadiusOutputData radiusData;
 
     /**
      * Creates and wires together all world components using provided dependencies.
@@ -83,11 +89,11 @@ public class WorldSyncController implements Disposable {
      * Updates the world state based on the player's current position, triggering
      * chunk generation, meshing, and de-rendering.
      */
-    public void update() {
+    public void loadUpdate() {
         Vector3 playerPosition = player.getPosition();
 
         // Find chunks to update
-        RenderRadiusOutputData radiusData = renderRadiusManager.execute(
+        radiusData = renderRadiusManager.execute(
             new RenderRadiusManagerInputData(playerPosition, world, RENDER_RADIUS)
         );
 
@@ -119,13 +125,14 @@ public class WorldSyncController implements Disposable {
 
             }
         }
+    }
 
-        // TODO: Update game logic for all entities that are not in chunks about to be unloaded
-        for (Vector3 pos : radiusData.getChunksToUpdate()) {
+    public Set<Vector3> getActiveChunkPositions() {
+        // Return the list of chunks currently loaded/updating
+        return radiusData.getChunksToUpdate();
+    }
 
-
-        }
-
+    public void unloadUpdate() {
         // Unload Chunks
         for (Vector3 pos : radiusData.getChunksToUnload()) {
             chunkRenderer.onChunkRemoved(pos);

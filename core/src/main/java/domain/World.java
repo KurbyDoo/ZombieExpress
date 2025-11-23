@@ -1,8 +1,11 @@
 package domain;
 
 import com.badlogic.gdx.math.Vector3;
+import domain.entities.Entity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 public class World {
@@ -66,5 +69,13 @@ public class World {
 
     public Chunk getChunk(Vector3 pos) {
         return chunks.get(pos);
+    }
+
+    public List<Integer> getEntitiesInChunks(Set<Vector3> activeChunks) {
+        ArrayList<Integer> result = new ArrayList<>();
+        for (Vector3 pos : activeChunks) {
+            result.addAll(getChunk(pos).getEntityIds());
+        }
+        return result;
     }
 }

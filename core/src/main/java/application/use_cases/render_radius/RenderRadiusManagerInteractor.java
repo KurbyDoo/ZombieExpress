@@ -35,6 +35,7 @@ public class RenderRadiusManagerInteractor implements RenderRadiusManagerInputBo
 
         // Only update when we move to a new chunk.
         if (currentChunkX == lastChunkX && currentChunkZ == lastChunkZ) {
+            result.getChunksToUpdate().addAll(renderedChunks);
             return result;
         }
 

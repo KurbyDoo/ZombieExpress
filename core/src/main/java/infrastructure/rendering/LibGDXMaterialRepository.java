@@ -16,7 +16,7 @@ public class LibGDXMaterialRepository implements BlockMaterialRepository {
     // TODO: Fix colours
     public LibGDXMaterialRepository() {
         // Grass (Green)
-        materials.put((short)1, createPBRMaterial(new Color(0.2f, 0.8f, 0.2f, 1f)));
+        materials.put((short)1, createPBRMaterial(new Color(0.2f, 1f, 0.2f, 1f)));
 
         // Dirt (Brown)
         materials.put((short)2, createPBRMaterial(new Color(0.6f, 0.4f, 0.2f, 1f)));
@@ -31,15 +31,9 @@ public class LibGDXMaterialRepository implements BlockMaterialRepository {
     private Material createPBRMaterial(Color color) {
         Material mat = new Material();
 
-        // 1. The Color (Albedo) - Critical for PBR
         mat.set(PBRColorAttribute.createBaseColorFactor(color));
-
-        // 2. Metallic (0 = dielectric/plastic/wood/dirt, 1 = metal)
         mat.set(PBRFloatAttribute.createMetallic(0.0f));
-
-        // 3. Roughness (0 = smooth mirror, 1 = matte/rough)
-        // Set to 1.0f for dirt/stone so it doesn't look like wet plastic
-        mat.set(PBRFloatAttribute.createRoughness(1.0f));
+        mat.set(PBRFloatAttribute.createRoughness(1f));
 
         return mat;
     }

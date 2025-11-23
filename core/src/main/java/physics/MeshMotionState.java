@@ -3,15 +3,20 @@ package physics;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import domain.entities.Entity;
 
 public class MeshMotionState extends btMotionState {
     private final Matrix4 visualTransform;
     private Matrix4 hitboxTransform;
     private final Vector3 offset;
+    private final Entity entity; // <--- ADD THIS
 
-    public MeshMotionState(Matrix4 visualTransform, Vector3 offset) {
+    private final Vector3 tempPos = new Vector3();
+
+    public MeshMotionState(Matrix4 visualTransform, Vector3 offset, Entity entity) {
         this.visualTransform = visualTransform;
         this.offset = offset;
+        this.entity = entity;
     }
 
     public void setHitboxTransform(Matrix4 hitboxTransform) {
@@ -32,5 +37,9 @@ public class MeshMotionState extends btMotionState {
 
         visualTransform.set(worldTrans);
         visualTransform.translate(offset);
+
+        worldTrans.getTranslation(tempPos);
+        tempPos.add(offset);
+        entity.setPosition(tempPos);
     }
 }
