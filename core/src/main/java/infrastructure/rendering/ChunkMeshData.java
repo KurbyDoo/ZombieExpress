@@ -2,25 +2,21 @@ package infrastructure.rendering;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.physics.bullet.collision.btBvhTriangleMeshShape;
-import com.badlogic.gdx.physics.bullet.collision.btTriangleMesh;
-import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import physics.GameMesh;
+import com.badlogic.gdx.utils.Disposable;
 
-public class ChunkMeshData extends GameMesh {
+public class ChunkMeshData implements Disposable {
+    public final Model model;
 
-    final private btTriangleMesh triangle;
+    public final btBvhTriangleMeshShape shape;
 
-    public ChunkMeshData(Model model, btTriangleMesh triangle, btBvhTriangleMeshShape shape, float mass){
-        super(model, shape, mass);
-        this.triangle = triangle;
-        this.moving = false; // delete later
+    public ChunkMeshData(Model model, btBvhTriangleMeshShape shape) {
+        this.model = model;
+        this.shape = shape;
     }
 
-    /**
-     * WE MUST DISPOSE WHEN DE-RENDERING UNLOADING A CHUNK
-     */
+    @Override
     public void dispose() {
-        super.dispose();
-        triangle.dispose();
+        model.dispose();
+        shape.dispose();
     }
 }

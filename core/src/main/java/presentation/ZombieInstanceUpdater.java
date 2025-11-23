@@ -38,10 +38,11 @@ public class ZombieInstanceUpdater {
                 zombieAdded = true;
                 // a scene is a model instance
                 Scene zombieInstance = new Scene(zombieAsset.scene);
-//                zombieInstance.modelInstance.transform.setToTranslation(-16f, 0f, -16f);
+                zombieInstance.modelInstance.transform.setToTranslation(0, 16f, 0);
 //                zombieInstance.modelInstance.transform.setToTranslation(-16f, 0f, 32f);
 //                zombieInstance.modelInstance.transform.rotate(Vector3.Y, 180f);
-                objectRenderer.addToSceneManager(zombieInstance);}
+                objectRenderer.addToSceneManager(zombieInstance);
+            }
         }
     }
 }

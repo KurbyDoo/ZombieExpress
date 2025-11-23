@@ -1,7 +1,7 @@
 package presentation.controllers;
 
-import application.use_cases.EntityGeneration.EntityGenerationInputData;
-import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.zombie_generation.EntityGenerationInputData;
+import application.use_cases.zombie_generation.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.ZombieStorage;

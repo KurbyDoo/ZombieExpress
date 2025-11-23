@@ -1,29 +1,29 @@
 package presentation.view;
 
-import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.RenderZombie.RenderZombieInteractor;
+import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
+import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
 import application.use_cases.ports.BlockRepository;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInteractor;
+import data_access.EntityStorage;
 import data_access.InMemoryBlockRepository;
-import domain.entities.Player;
-import domain.entities.World;
+import domain.entities.EntityFactory;
+import domain.entities.EntityType;
+import domain.entities.IdToEntityStorage;
+import domain.player.Player;
+import domain.World;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import physics.HitBox;
-import domain.entities.ZombieStorage;
-import presentation.ZombieInstanceUpdater;
 import infrastructure.rendering.*;
 import presentation.controllers.CameraController;
-import presentation.controllers.EntityController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import presentation.controllers.WorldController;
+import presentation.controllers.WorldSyncController;
 
 import static physics.HitBox.ShapeTypes.BOX;
-import static physics.HitBox.ShapeTypes.SPHERE;
 
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
@@ -38,7 +38,7 @@ public class GameView implements Viewable{
 
     private Player player;
 
-    private WorldController worldController;
+    private WorldSyncController worldSyncController;
 
     private BlockRepository blockRepository;
     private BlockMaterialRepository materialRepository;
@@ -50,14 +50,13 @@ public class GameView implements Viewable{
     private HitBox block;
 
     // Entity Management
-    private EntityController entityController;
-    private EntityGenerationInteractor entityGenerationInteractor;
-    private RenderZombieInteractor renderZombieInteractor;
-    private ZombieInstanceUpdater zombieInstanceUpdater;
+//    private EntityController entityController;
+//    private EntityGenerationInteractor entityGenerationInteractor;
+//    private RenderZombieInteractor renderZombieInteractor;
+//    private ZombieInstanceUpdater zombieInstanceUpdater;
 
     @Override
     public void createView() {
-
         Vector3 startingPosition = new Vector3(0, 16f, 0);
         player = new Player(startingPosition);
 
@@ -74,39 +73,59 @@ public class GameView implements Viewable{
         blockRepository = new InMemoryBlockRepository();
         materialRepository = new LibGDXMaterialRepository();
 
+        // --- ENTITY SYSTEM INITIALIZATION ---
+//        GenerateChunkMeshStrategy chunkMeshStrategy = new GenerateChunkMeshStrategy(blockRepository, materialRepository, world);
+
+        GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
+        GenerateZombieMeshStrategy zombieMeshStrategy = new GenerateZombieMeshStrategy();
+
+        EntityStorage entityStorage = new IdToEntityStorage();
+        EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
+            .register(EntityType.ZOMBIE, zombieGenerateStrategy)
+            .build();
+
+        MeshStorage meshStorage = new IdToMeshStorage();
+        MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
+            .register(EntityType.ZOMBIE, zombieMeshStrategy)
+            .build();
+
+        // --- MESH + COL ---
         colHandler = new CollisionHandler();
-        objectRenderer = new ObjectRenderer(camera, colHandler);
+        objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
         world = new World();
 
-        // --- CHUNK SYSTEM INITIALIZATION (DELEGATED TO WORLD CONTROLLER) ---
-        // Pass the RENDER_RADIUS here, which will be used to derive the GENERATION_RADIUS + 1
-        this.worldController = new WorldController(
-            this.objectRenderer,
-            this.world,
-            this.player,
-            this.blockRepository,
-            this.materialRepository,
-            this.RENDER_RADIUS // Passing the desired render radius
-        );
-
         // physics testing
-        block = new HitBox("box", BOX, 3, 3, 3);
-        GameMesh red = block.Construct();
-        red.transform.setToTranslation(10f, 100, 89f);
-        red.body.setWorldTransform(red.transform);
+        block = new HitBox("box", BOX, 1, 1, 1);
+        GameMesh red = block.construct();
+        red.getScene().modelInstance.transform.setToTranslation(10.5f, 100, 90.5f);
+        red.body.setWorldTransform(red.getScene().modelInstance.transform);
         objectRenderer.add(red);
 
-        // --- ENTITY SYSTEM INITIALIZATION ---
-        ZombieStorage zombieStorage = new ZombieStorage();
-        entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
-        renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
-        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer, zombieStorage);
+//        ZombieStorage zombieStorage = new ZombieStorage();
+//        entityGenerationInteractor = new EntityGenerationInteractor(zombieStorage);
+//        renderZombieInteractor = new RenderZombieInteractor(zombieStorage);
+//        ZombieInstanceUpdater zombieInstanceUpdater = new ZombieInstanceUpdater(objectRenderer, zombieStorage);
 
         // Initial entity setup
         // The EntityController will use the ZombieInstanceUpdater to add/remove Scenes from the SceneManager
-        entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
-        entityController.generateZombie();
-        }
+//        entityController = new EntityController(entityGenerationInteractor, renderZombieInteractor, zombieStorage, zombieInstanceUpdater);
+//        entityController.generateZombie();
+
+
+        // --- CHUNK SYSTEM INITIALIZATION ---
+        worldSyncController = new WorldSyncController(
+            objectRenderer,
+            world,
+            player,
+            entityFactory,
+            entityStorage,
+            meshFactory,
+            meshStorage,
+            blockRepository,
+            materialRepository,
+            RENDER_RADIUS
+        );
+    }
 
 
     @Override
@@ -123,14 +142,14 @@ public class GameView implements Viewable{
             gameInputAdapter.processInput(TIME_STEP);
 
             // 2. Update the world logic (Chunk Generation/Meshing/Removal)
-            worldController.update();
+            worldSyncController.update();
         }
 
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        entityController.renderZombie();
+//        entityController.renderZombie();
         objectRenderer.render(deltaTime);
     }
 
@@ -138,7 +157,7 @@ public class GameView implements Viewable{
     @Override
     public void disposeView() {
         // Dispose world-related components first
-        worldController.dispose();
+        worldSyncController.dispose();
 
         objectRenderer.dispose();
         block.dispose();

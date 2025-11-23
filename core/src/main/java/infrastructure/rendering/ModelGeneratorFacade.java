@@ -5,8 +5,8 @@ import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputData;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInteractor;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData;
 import application.use_cases.ports.BlockRepository;
-import domain.entities.Chunk;
-import domain.entities.World;
+import domain.Chunk;
+import domain.World;
 
 public class ModelGeneratorFacade implements ChunkMeshGenerationInputBoundary {
     private final World world;

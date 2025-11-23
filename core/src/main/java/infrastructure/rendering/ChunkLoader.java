@@ -1,6 +1,6 @@
 package infrastructure.rendering;
 
-import domain.entities.Chunk;
+import domain.Chunk;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,15 +24,15 @@ public class ChunkLoader {
     }
 
     public void loadChunks() {
-        try {
-            Chunk chunk;
-            for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
-                ChunkMeshData chunkMesh = meshBuilder.buildModel(chunk);
-                if (chunkMesh == null) continue;
-                objectRenderer.add(chunkMesh); // rendering the model but somehow the rigidbody is not working??
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Chunk chunk;
+//            for (int i = 0; i < BUFFER_SIZE && ((chunk = chunksToLoad.poll()) != null); i++) {
+//                ChunkMeshData chunkMesh = meshBuilder.buildModel(chunk);
+//                if (chunkMesh == null) continue;
+//                objectRenderer.add(chunkMesh);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 }

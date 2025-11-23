@@ -1,7 +1,7 @@
 package application.use_cases.chunk_mesh_generation;
 
-import domain.entities.Chunk;
-import domain.entities.World;
+import domain.Chunk;
+import domain.World;
 
 public class ChunkMeshGenerationInputData {
     private final World world;

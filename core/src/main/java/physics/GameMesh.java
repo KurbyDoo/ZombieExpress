@@ -6,47 +6,63 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
+import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import net.mgsx.gltf.scene3d.scene.Scene;
 
-public class GameMesh extends ModelInstance {
-
-    public Model model;
+public class GameMesh {
+//    public Model model;
+    private Scene scene;
+    private boolean isStatic;
+    private btMotionState motionState;
 
     public final btRigidBody body;
-    public boolean moving = true;
+    public btCollisionShape shape;
 
-    private final Vector3 localInertia = new Vector3();
-    public  btCollisionShape shape;
-    public float mass;
-
-
-    public static int COUNTER;
     public int id;
 
-    public GameMesh(Model model, btCollisionShape shape, float mass){
-        super(model);
-        this.model = model;
-        this.shape = shape;
-        this.mass = mass;
-        COUNTER++;
-        id += COUNTER;
+    public GameMesh(int id, Scene scene, btRigidBody body) {
+        this.scene = scene;
+        this.id = id;
+        this.body = body;
+//        this.isStatic = true;
 
-        if (mass > 0f)
-            shape.calculateLocalInertia(mass, localInertia);
-        else
-            localInertia.set(0, 0, 0);
-
-        this.body = new btRigidBody(mass, null, shape, localInertia);
+        // LINK TO AUTO UPDATE
+        motionState = new btDefaultMotionState(scene.modelInstance.transform);
+        this.body.setMotionState(motionState);
     }
 
     public void dispose () {
         body.dispose();
-        shape.dispose();
+        if (motionState != null) {
+            motionState.dispose();
+        }
     }
+
+    public void setStatic(boolean isStatic) {
+        this.isStatic = isStatic;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public boolean getIsStatic() {
+        return isStatic;
+    }
+
+//    public ModelInstance getModelInstance() {
+//        return modelInstance;
+//    }
 
     /**
      * Might be needed since model is disposed at the very end separately from the body & shape.
      */
-    public void modelDispose(){
-        model.dispose();
-    }
+//    public void modelDispose(){
+//        model.dispose();
+//    }
 }
