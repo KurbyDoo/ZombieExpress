@@ -2,9 +2,9 @@ package application.use_cases.chunk_mesh_generation;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import application.use_cases.ports.BlockRepository;
-import domain.entities.Block;
-import domain.entities.Chunk;
-import domain.entities.World;
+import domain.Block;
+import domain.Chunk;
+import domain.World;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import infrastructure.rendering.ChunkMeshData;
 import infrastructure.rendering.BlockMaterialRepository;
+import physics.GameMesh;
 
 
 public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBoundary {
@@ -45,9 +46,6 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
             }
         }
 
-        btBvhTriangleMeshShape bvhTriangle = null;
-
-
         // If the mesh is empty, clean up and return empty null
         ChunkMeshData meshData;
         if (triangleMesh.getNumTriangles() == 0) {
@@ -55,9 +53,9 @@ public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBo
             modelBuilder.end().dispose();
             meshData = null;
         } else {
-            bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
+            btBvhTriangleMeshShape bvhTriangle = new btBvhTriangleMeshShape(triangleMesh, true);
             Model completeModel = modelBuilder.end();
-            meshData = new ChunkMeshData(completeModel, triangleMesh, bvhTriangle, 0f);
+            meshData = new ChunkMeshData(completeModel, bvhTriangle, triangleMesh);
         }
 
         return new ChunkMeshGenerationOutputData(meshData);

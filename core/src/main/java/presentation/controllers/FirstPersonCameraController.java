@@ -1,6 +1,6 @@
 package presentation.controllers;
 
-import domain.entities.Player;
+import domain.player.Player;
 import com.badlogic.gdx.graphics.Camera;
 
 public class FirstPersonCameraController extends CameraController {

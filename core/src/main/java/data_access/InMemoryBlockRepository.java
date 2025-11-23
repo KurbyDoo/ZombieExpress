@@ -1,7 +1,7 @@
 package data_access;
 
 import application.use_cases.ports.BlockRepository;
-import domain.entities.Block;
+import domain.Block;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;

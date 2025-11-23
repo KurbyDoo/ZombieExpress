@@ -1,6 +1,6 @@
 package application.use_cases.player_movement;
 
-import domain.entities.Player;
+import domain.player.Player;
 import com.badlogic.gdx.math.Vector3;
 
 public class PlayerMovementInteractor implements PlayerMovementInputBoundary {

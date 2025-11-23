@@ -8,7 +8,7 @@ public class Zombie extends Entity {
     private float Health = 100f;
 
     public Zombie(Integer id, Vector3 position, boolean isVisible) {
-        super(id, position, isVisible);  // pass data to Entity
+        super(id, EntityType.ZOMBIE, position, isVisible);  // pass data to Entity
     }
 
     public float getSpeed() { return speed; }

@@ -1,7 +1,7 @@
 package presentation.controllers;
 
-import application.use_cases.EntityGeneration.EntityGenerationInputData;
-import application.use_cases.EntityGeneration.EntityGenerationInteractor;
+import application.use_cases.zombie_generation.EntityGenerationInputData;
+import application.use_cases.zombie_generation.EntityGenerationInteractor;
 import application.use_cases.RenderZombie.RenderZombieInputData;
 import application.use_cases.RenderZombie.RenderZombieInteractor;
 import domain.entities.ZombieStorage;
@@ -29,8 +29,8 @@ public class EntityController {
     }
 
     public void renderZombie() {
-        RenderZombieInputData inputData = new RenderZombieInputData();
-        renderZombieUseCase.execute(inputData);
-        zombieInstanceUpdater.updateRenderList();
+//        RenderZombieInputData inputData = new RenderZombieInputData();
+//        renderZombieUseCase.execute(inputData);
+//        zombieInstanceUpdater.updateRenderList();
     }
 }

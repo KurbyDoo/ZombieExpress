@@ -1,6 +1,6 @@
 package application.use_cases.ports;
 
-import domain.entities.Block;
+import domain.Block;
 import java.util.Collection;
 import java.util.Optional;
 
