@@ -1,5 +1,9 @@
 package UseCases.Login;
 
+/**
+ * pack the successful login data and pass them to presenter
+ */
+
 public class LoginOutputData {
     private final String uid;
     private final String email;

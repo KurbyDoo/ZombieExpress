@@ -2,7 +2,7 @@ package presentation.view;
 
 import UseCases.Login.LoginInteractor;
 import UseCases.PlayerData.LoadPlayerDataInteractor;
-import data_access.login.MockLoginRegisterDataAccess;
+import data_access.Firebase.FirebaseLoginRegisterDataAccess;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
@@ -18,7 +18,11 @@ public class RegisterView extends JFrame implements PropertyChangeListener{
 
     private RegisterViewModel viewModel;
     private RegisterController controller;
-    private MockLoginRegisterDataAccess mockUserDB;
+    // private MockLoginRegisterDataAccess mockUserDB;
+    // I use the mockUserDB to test the mock Register logic but now we need to use the real
+    // data access(firebase)
+
+    private FirebaseLoginRegisterDataAccess firebaseAuth;
     private final LoadPlayerDataInteractor loadPlayer;
 
     private final JTextField emailField = new JTextField(20);
@@ -27,11 +31,12 @@ public class RegisterView extends JFrame implements PropertyChangeListener{
     private final JButton registerButton = new JButton("Create Account");
     private final JLabel messageLabel = new JLabel("");
 
-    public RegisterView(RegisterController  controller, RegisterViewModel viewModel, MockLoginRegisterDataAccess mockUserDB,
+    public RegisterView(RegisterController  controller, RegisterViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
                         LoadPlayerDataInteractor loadPlayer) {
         this.controller = controller;
         this.viewModel = viewModel;
-        this.mockUserDB = mockUserDB;
+        //this.mockUserDB = mockUserDB;
+        this.firebaseAuth = firebaseAuth;
         this.loadPlayer = loadPlayer;
 
         viewModel.addPropertyChangeListener(this);
@@ -85,11 +90,11 @@ public class RegisterView extends JFrame implements PropertyChangeListener{
                         LoginPresenter presenter = new LoginPresenter(viewModel,loadPlayer);
 
                         LoginInteractor loginInteractor = new LoginInteractor(
-                            mockUserDB, presenter
+                            firebaseAuth, presenter
                         );
                         LoginController loginController = new LoginController(loginInteractor);
 
-                        new LoginView(loginController, viewModel, mockUserDB, loadPlayer);
+                        new LoginView(loginController, viewModel, firebaseAuth, loadPlayer);
                         dispose();
                     });
 

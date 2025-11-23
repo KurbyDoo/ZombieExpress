@@ -1,10 +1,9 @@
-// TODO: Implement PropertyChangeListener in this class to refresh UI when ViewModel updates.
-
 package presentation.view;
 
 import UseCases.PlayerData.LoadPlayerDataInteractor;
 import UseCases.Register.RegisterInteractor;
-import data_access.login.MockLoginRegisterDataAccess;
+import data_access.Firebase.FirebaseLoginRegisterDataAccess;
+import domain.entities.PlayerSession;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
 import interface_adapter.register.RegisterController;
@@ -19,7 +18,10 @@ import java.beans.PropertyChangeListener;
 public class LoginView extends JFrame implements PropertyChangeListener {
     private LoginViewModel viewModel;
     private LoginController controller;
-    private final MockLoginRegisterDataAccess mockUserDB;
+
+    // private final MockLoginRegisterDataAccess mockUserDB;
+
+    private FirebaseLoginRegisterDataAccess firebaseAuth;
     private final LoadPlayerDataInteractor loadPlayer;
 
     private final JButton goRegister = new JButton("Create Account");
@@ -28,11 +30,12 @@ public class LoginView extends JFrame implements PropertyChangeListener {
     private final JButton loginButton = new JButton("Login");
     private final JLabel messageLabel = new JLabel("");
 
-    public LoginView(LoginController loginController, LoginViewModel viewModel, MockLoginRegisterDataAccess mockUserDB,
+    public LoginView(LoginController loginController, LoginViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
                      LoadPlayerDataInteractor loadPlayer) {
         this.controller = loginController;
         this.viewModel = viewModel;
-        this.mockUserDB = mockUserDB;
+        // this.mockUserDB = mockUserDB;
+        this.firebaseAuth = firebaseAuth;
         this.loadPlayer = loadPlayer;
 
         viewModel.addPropertyChangeListener(this);
@@ -73,11 +76,10 @@ public class LoginView extends JFrame implements PropertyChangeListener {
         goRegister.addActionListener(e -> {
             RegisterViewModel viewModel = new RegisterViewModel();
             RegisterPresenter presenter = new RegisterPresenter(viewModel);
-            RegisterInteractor interactor = new RegisterInteractor(mockUserDB, presenter);
+            RegisterInteractor interactor = new RegisterInteractor(firebaseAuth, presenter);
             RegisterController controller = new RegisterController(interactor);
 
-            new RegisterView(controller, viewModel, mockUserDB, loadPlayer);
-
+            new RegisterView(controller, viewModel, firebaseAuth, loadPlayer);
             dispose();
         });
     }
@@ -98,12 +100,17 @@ public class LoginView extends JFrame implements PropertyChangeListener {
                 }
                 break;
 
-            case "email":
-                String email = (String) event.getNewValue();
+            case "playerSession":
+                PlayerSession session = (PlayerSession) event.getNewValue();
+
+                System.out.println("   Player data updated!");
+                System.out.println("   UID = " + session.getUid());
+                System.out.println("   Highest score = " + session.getHeightScore());
+
+                JOptionPane.showMessageDialog(this,
+                    "Welcome back!\nHigh Score: " + session.getHeightScore());
+
                 break;
         }
+        }
     }
-}
-
-// TODO: Update Swing UI components based on new ViewModel state.
-
