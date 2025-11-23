@@ -23,8 +23,9 @@ public class GameMesh {
         this.body = body;
 
         // LINK TO AUTO UPDATE
-        motionState = new btDefaultMotionState(scene.modelInstance.transform);
-        this.body.setMotionState(motionState);
+        // Reuse the motion state if the body already has one (prevents memory leak)
+        // Otherwise, leave it as null (static objects with mass=0 don't need motion states)
+        motionState = body.getMotionState();
     }
 
     public void setChunkMeshData(ChunkMeshData chunkMeshData) {
