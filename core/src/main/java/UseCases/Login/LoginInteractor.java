@@ -1,6 +1,22 @@
 package UseCases.Login;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+/**
+ * Interactor for the login use case
+ *
+ * Implements the core business logic for authenticating a user:
+ * - Validates credentials
+ * - Calls the authentication data-access interface
+ * - Parses returned authentication data
+ * - Notifies the presenter of sucdcess login or failure
+ */
 public class LoginInteractor implements LoginInputBoundary {
+
+    /**
+     * Attempts to authenticate a user given email and password
+     */
     private final LoginDataAccessInterface userDataAccess;
     private final LoginOutputBoundary presenter;
 
@@ -13,14 +29,18 @@ public class LoginInteractor implements LoginInputBoundary {
         if (email == null || email.isEmpty() || password == null || password.isEmpty()){
             presenter.loginFailed("Email or password is empty");
             return;
-        }
-        String uid = userDataAccess.login(email, password);
+        }// blank input
+        String json = userDataAccess.login(email, password);// Call DataAccess to log in to Firebase
 
-        if (uid != null){
-            LoginOutputData data = new LoginOutputData(email, uid);
-            presenter.loginSuccess(data);
-        }else{
+        // Judge whether the login failed
+        if (json == null){
             presenter.loginFailed("Invalid email or password");
+            return;
         }
+        JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
+        String uid = obj.get("localId").getAsString();
+        LoginOutputData data = new LoginOutputData(email, uid);
+        presenter.loginSuccess(data);
+        // login successfully, call presenter handle success case
     }
 }
