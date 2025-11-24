@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.utils.IntIntMap;
+import domain.player.Player;
 
 public class GameInputAdapter extends InputAdapter {
     private final IntIntMap keys = new IntIntMap();
@@ -15,9 +16,11 @@ public class GameInputAdapter extends InputAdapter {
     private int lastMouseY = -1;
     private float currentDeltaX = 0;
     private float currentDeltaY = 0;
+    private final Player player;
 
-    public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor) {
+    public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, Player player) {
         this.playerMovementInteractor = playerMovementInteractor;
+        this.player = player;
     }
 
     @Override
