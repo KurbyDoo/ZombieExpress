@@ -3,6 +3,7 @@ package application.use_cases.chunk_mesh_generation;
 import application.use_cases.ports.BlockRepository;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
@@ -14,13 +15,15 @@ import domain.Block;
 import domain.Chunk;
 import domain.World;
 import infrastructure.rendering.ChunkMeshData;
-// NEW IMPORTS
 import infrastructure.rendering.TexturedBlockMaterialRepository;
 
 public class ChunkTexturedMeshGeneration implements ChunkMeshGenerationInputBoundary {
     private final Vector3 p1 = new Vector3();
     private final Vector3 p2 = new Vector3();
     private final Vector3 p3 = new Vector3();
+
+    private static final Color GRASS_COLOR = new Color(0.52f * 0.5f, 1.0f, 0.36f * 0.5f, 1.0f);
+
 
     private final BlockRepository blockRepository;
     // CHANGE: Use the specific implementation to access texture regions
@@ -41,9 +44,6 @@ public class ChunkTexturedMeshGeneration implements ChunkMeshGenerationInputBoun
         modelBuilder.begin();
         btTriangleMesh triangleMesh = new btTriangleMesh();
 
-        // Optimization Note: With a Texture Atlas, you technically only need ONE 'part'
-        // for the whole chunk instead of one per Block Type.
-        // However, keeping your current loop structure works fine for now.
         for (Block block : blockRepository.findAll()) {
             if (block.getId() != air.getId()) {
                 buildType(world, chunk, triangleMesh, modelBuilder, block);
@@ -67,11 +67,15 @@ public class ChunkTexturedMeshGeneration implements ChunkMeshGenerationInputBoun
     private void buildType(World world, Chunk chunk, btTriangleMesh triangleMesh, ModelBuilder modelBuilder, Block type) {
         Material material = blockMaterialRepository.getMaterial(type);
 
+        long attributes = VertexAttributes.Usage.Position |
+            VertexAttributes.Usage.Normal |
+            VertexAttributes.Usage.TextureCoordinates |
+            VertexAttributes.Usage.ColorUnpacked;
         // CHANGE: Added Usage.TextureCoordinates so the mesh accepts UV data
         MeshPartBuilder meshBuilder = modelBuilder.part(
             type.toString(),
             GL20.GL_TRIANGLES,
-            VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates,
+            attributes,
             material
         );
 
@@ -93,11 +97,16 @@ public class ChunkTexturedMeshGeneration implements ChunkMeshGenerationInputBoun
         int worldZ = z + chunk.getChunkZ() * Chunk.CHUNK_SIZE;
 
         boolean removeDuplicateVertices = false;
+        meshBuilder.setColor(Color.WHITE);
 
         // Top face (y+)
         if (world.getBlock(worldX, worldY + 1, worldZ) == air.getId()) {
             // CHANGE: Set UV Range for Top Face
             meshBuilder.setUVRange(blockMaterialRepository.getTextureRegion(type, TexturedBlockMaterialRepository.BlockFace.TOP));
+
+            if (type.getId() == 1) {
+                meshBuilder.setColor(GRASS_COLOR);
+            }
 
             meshBuilder.rect(worldX, worldY + 1, worldZ + 1,
                 worldX + 1, worldY + 1, worldZ + 1,
@@ -117,6 +126,8 @@ public class ChunkTexturedMeshGeneration implements ChunkMeshGenerationInputBoun
                 p3.set(worldX, worldY + 1, worldZ),
                 removeDuplicateVertices);
         }
+
+        meshBuilder.setColor(Color.WHITE);
 
         // Bottom face (y-)
         if (world.getBlock(worldX, worldY - 1, worldZ) == air.getId()) {

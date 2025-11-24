@@ -53,6 +53,18 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
 
                     String type = getBlockByHeight(height, worldY);
                     chunk.setBlock(x, h, z, blockRepository.findByName(type).orElseThrow());
+
+                    // Add random zombie
+                    if (worldY == height + 3 && (worldX * worldX + worldZ * worldZ) > 100 * 100) {
+                        double zombieNoise = PerlinNoise.perlin(
+                            worldX * scaleFactor * 10, 100f, worldZ * scaleFactor * 10
+                        );
+//                        System.out.println(zombieNoise);
+                        if (zombieNoise > 0.85){
+                            Vector3 pos = new Vector3(worldX, worldY, worldZ);
+                            entityFactory.create(new GenerateZombieInputData(pos, chunk));
+                        }
+                    }
                 }
             }
         }
@@ -74,10 +86,10 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             }
         }
 
-        if (chunk.getChunkY() == 1) {
-            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
-            entityFactory.create(new GenerateZombieInputData(pos, chunk));
-        }
+//        if (chunk.getChunkY() == 1) {
+//            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
+//            entityFactory.create(new GenerateZombieInputData(pos, chunk));
+//        }
 
         return new GenerateChunkOutputData(chunk);
     }

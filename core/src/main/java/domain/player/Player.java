@@ -8,8 +8,8 @@ public class Player {
     private final Vector3 direction;
     private final Vector3 up;
 
-    private final float movementSpeed = 1.0f;
-    private final float sprintSpeed = movementSpeed * 50;
+    private final float movementSpeed = 5.0f;
+    private final float sprintSpeed = movementSpeed * 5;
     private final float rotationSpeed = 0.2f;
 
     private final Inventory inventory;

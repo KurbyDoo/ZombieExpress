@@ -28,6 +28,6 @@ public class ZombieBehaviour implements EntityBehaviour {
             tempDir.z * MOVE_SPEED
         );
 
-        context.physics.lookAt(entity.getID(), context.player.getPosition());
+        context.physics.lookAt(entity.getID(), entity.getPosition().sub(tempDir));
     }
 }

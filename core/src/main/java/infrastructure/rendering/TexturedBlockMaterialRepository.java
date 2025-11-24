@@ -34,7 +34,8 @@ public class TexturedBlockMaterialRepository implements BlockMaterialRepository 
         this.splits = TextureRegion.split(texture, 16, 16);
 
         // FETCH TEXTURE FROM MAP
-        mapBlock((short)1, getRegion(28, 21), getRegion(28, 5), getRegion(6, 17));
+//        mapBlock((short)1, getRegion(28, 21), getRegion(28, 5), getRegion(6, 17)); // FAKE GRASS (MOSS)
+        mapBlock((short)1, getRegion(9, 17), getRegion(28, 5), getRegion(6, 17));
         mapBlock((short)2, getRegion(28, 5), getRegion(28, 5), getRegion(28, 5));
         mapBlock((short)3, getRegion(1, 0), getRegion(1, 0), getRegion(1, 0));
     }
