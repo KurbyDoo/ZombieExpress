@@ -10,30 +10,21 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import net.mgsx.gltf.scene3d.scene.SceneManager;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
     public Environment environment;
-
     private SceneManager sceneManager;
     private CollisionHandler colHandler;
+    private PerspectiveCamera camera;
 
     private BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
     private BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
-
-        this.environment = new Environment();
-        // Sky/Fog Color (Light Blue)
-        Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
-        this.environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        this.environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
-        DirectionalLight light = new DirectionalLight();
-        light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
-        this.environment.add(light);
+        this.camera = camera;
 
         //set up scene manager
         sceneManager = new SceneManager();
@@ -42,6 +33,14 @@ public class ObjectRenderer {
         DirectionalLight light = new DirectionalLight();
         light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
         sceneManager.environment.add(light);
+
+        this.environment = sceneManager.environment;
+        Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
+        this.environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
+
+        this.camera.far = 50f;
+        this.camera.near = 0.1f;
+        this.camera.update();
 
         sceneManager.getRenderableProviders().add(meshStorage);
     }
@@ -89,8 +88,9 @@ public class ObjectRenderer {
             Gdx.graphics.getBackBufferHeight() // Use physical height
         );
         // --- SKY BACKGROUND ---
-        // Sets the background color to light sky blue (0.5f, 0.7f, 1.0f)
-        Gdx.gl.glClearColor(0.5f, 0.7f, 1.0f, 1f);
+        // Set the background color to fog colour
+        Color fogColor = ((ColorAttribute)this.environment.get(ColorAttribute.Fog)).color;
+        Gdx.gl.glClearColor(fogColor.r, fogColor.g, fogColor.b, fogColor.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Render scene manager
