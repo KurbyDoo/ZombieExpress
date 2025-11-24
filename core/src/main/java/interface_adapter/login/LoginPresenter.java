@@ -3,7 +3,7 @@ package interface_adapter.login;
 import UseCases.Login.LoginOutputBoundary;
 import UseCases.Login.LoginOutputData;
 import UseCases.PlayerData.LoadPlayerDataInteractor;
-import domain.entities.PlayerSession;
+import domain.player.PlayerSession;
 
 /**
  * Presenter for the Login use case

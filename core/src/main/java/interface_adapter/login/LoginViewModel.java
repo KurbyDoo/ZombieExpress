@@ -1,5 +1,5 @@
 package interface_adapter.login;
-import domain.entities.PlayerSession;
+import domain.player.PlayerSession;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
