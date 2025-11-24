@@ -3,7 +3,6 @@ package presentation.view.hud;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import domain.entities.WorldPickup;
 import presentation.controllers.PickupController;
 
 public class PickupPromptHudElement implements HudElement {
@@ -15,7 +14,6 @@ public class PickupPromptHudElement implements HudElement {
         this.controller = controller;
 
         promptLabel = new Label("", style);
-        promptLabel.setVisible(false);
 
         Table table = new Table();
         table.setFillParent(true);
@@ -27,20 +25,11 @@ public class PickupPromptHudElement implements HudElement {
 
     @Override
     public void update(float deltaTime) {
-        if (controller == null) {
-            promptLabel.setVisible(false);
-            return;
+        String message = controller.getCurrentPickupMessage();
+        if (message == null) {
+            promptLabel.setText("");
+        } else {
+            promptLabel.setText(message);
         }
-
-        WorldPickup target = controller.getCurrentPickupTarget();
-
-        if (target == null) {
-            promptLabel.setVisible(false);
-            return;
-        }
-
-        String itemName = target.getItem().getName();
-        promptLabel.setText("Press E to pick up " + itemName);
-        promptLabel.setVisible(true);
     }
 }

@@ -8,10 +8,6 @@ public class Item {
     private final boolean stackable;
 
     public Item(String name, boolean stackable) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Name must not be empty");
-        }
-
         this.name = name;
         this.stackable = stackable;
     }

@@ -1,61 +1,70 @@
 package application.use_cases.pickup;
 
 import com.badlogic.gdx.math.Vector3;
+import data_access.EntityStorage;
+import domain.entities.Entity;
+import domain.entities.PickupEntity;
 import domain.player.Player;
-import domain.entities.PickupStorage;
-import domain.entities.WorldPickup;
 
 public class PickupInteractor {
 
-    private final PickupStorage pickupStorage;
+    private final EntityStorage entityStorage;
+    private final float maxDistance;
+    private final float maxCosAngle;
 
-    public PickupInteractor(PickupStorage pickupStorage) {
-        this.pickupStorage = pickupStorage;
+    public PickupInteractor(EntityStorage entityStorage,
+                            float maxDistance,
+                            float maxViewAngleDegrees) {
+        this.entityStorage = entityStorage;
+        this.maxDistance = maxDistance;
+        this.maxCosAngle = (float) Math.cos(Math.toRadians(maxViewAngleDegrees));
     }
 
     /**
-     * Find the closest pickup in front of the player, or null if none.
+     * Find the closest PickupEntity in front of the player, or null.
      */
-    public WorldPickup findPickupInFront(Player player) {
-        float maxDistance = 4.5f;
-        float maxCosAngle = (float) Math.cos(Math.toRadians(25));
+    public PickupEntity findPickupInFront(Player player) {
+        Vector3 playerPos = player.getPosition();
+        Vector3 playerDir = player.getDirection().nor();
 
-        Vector3 playerPosition = player.getPosition();
-        Vector3 playerDirection = player.getDirection().nor();
+        PickupEntity best = null;
+        float bestDist = Float.MAX_VALUE;
 
-        WorldPickup closestItem = null;
-        float closestItemDistance = Float.MAX_VALUE;
+        for (Integer id : entityStorage.getAllIds()) {
+            Entity e = entityStorage.getEntityByID(id);
+            if (!(e instanceof PickupEntity)) continue;
+            if (!e.isVisible()) continue;
 
-        for (WorldPickup pickup : pickupStorage.getAll()) {
-            Vector3 pickupDirection = pickup.getPosition().sub(playerPosition);  // from player to pickup
-            float distance = pickupDirection.len();
+            PickupEntity pickup = (PickupEntity) e;
+            Vector3 toPickup = new Vector3(pickup.getPosition()).sub(playerPos);
+            float distance = toPickup.len();
+            if (distance > maxDistance) continue;
 
-            if (distance > maxDistance) {
-                continue;
-            }
+            Vector3 toPickupNorm = new Vector3(toPickup).nor();
+            float cosAngle = playerDir.dot(toPickupNorm);
+            if (cosAngle < maxCosAngle) continue;
 
-            Vector3 pickupDirectionNorm = new Vector3(pickupDirection).nor();
-            float cosAngle = playerDirection.dot(pickupDirectionNorm);
-            if (cosAngle < maxCosAngle) {
-                continue;
-            }
-
-            if (distance < closestItemDistance) {
-                closestItemDistance = distance;
-                closestItem = pickup;
+            if (distance < bestDist) {
+                bestDist = distance;
+                best = pickup;
             }
         }
-        return closestItem;
+
+        return best;
     }
 
     /**
-     * Try to pick up the item in front of the player, returns true on success.
+     * Try to pick up the item in front.
+     * Returns the picked entity's ID.
      */
-    public void attemptPickup(Player player) {
-        WorldPickup target = findPickupInFront(player);
-        if (target == null) return;
-
+    public Integer attemptPickupInFront(Player player) {
+        PickupEntity target = findPickupInFront(player);
+        if (target == null) {
+            return null;
+        }
         player.pickUp(target.getItem());
-        pickupStorage.removePickup(target);
+        // Remove entity from the world
+        entityStorage.removeEntity(target.getID());
+        return target.getID();
     }
 }

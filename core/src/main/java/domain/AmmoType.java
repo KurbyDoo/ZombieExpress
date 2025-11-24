@@ -1,4 +1,4 @@
-package domain.entities;
+package domain;
 
 public enum AmmoType {
     PISTOL("Pistol Ammo"),
