@@ -1,6 +1,7 @@
 package application.use_cases.generate_chunk;
 
 import application.use_cases.generate_entity.GenerateEntityInputData;
+import application.use_cases.generate_entity.bullet.GenerateBulletInputData;
 import application.use_cases.generate_entity.train.GenerateTrainInputData;
 import application.use_cases.generate_entity.zombie.GenerateZombieInputData;
 import application.use_cases.ports.BlockRepository;
@@ -100,9 +101,17 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             entityFactory.create(trainInput);
         }
 
+
+        // zombie
         if (chunk.getChunkY() == 1) {
             Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
             entityFactory.create(new GenerateZombieInputData(pos, chunk));
+        }
+
+        // bullet
+        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
+            Vector3 bulletPosition = new Vector3(1f, 3f, 0);
+            entityFactory.create(new GenerateBulletInputData(bulletPosition, chunk));
         }
 
         return new GenerateChunkOutputData(chunk);
