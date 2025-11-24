@@ -3,6 +3,9 @@ package infrastructure.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import physics.CollisionHandler;
 import physics.GameMesh;
@@ -11,14 +14,17 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
+    public Environment environment;
     private SceneManager sceneManager;
     private CollisionHandler colHandler;
+    private PerspectiveCamera camera;
 
     private BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
     private BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
 
     public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
         this.colHandler = colHandler;
+        this.camera = camera;
 
         //set up scene manager
         sceneManager = new SceneManager();
@@ -27,6 +33,14 @@ public class ObjectRenderer {
         DirectionalLight light = new DirectionalLight();
         light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
         sceneManager.environment.add(light);
+
+        this.environment = sceneManager.environment;
+        Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
+        this.environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
+
+        this.camera.far = 50f;
+        this.camera.near = 0.1f;
+        this.camera.update();
 
         sceneManager.getRenderableProviders().add(meshStorage);
     }
@@ -73,6 +87,10 @@ public class ObjectRenderer {
             Gdx.graphics.getBackBufferWidth(),  // Use physical width
             Gdx.graphics.getBackBufferHeight() // Use physical height
         );
+        // --- SKY BACKGROUND ---
+        // Set the background color to fog colour
+        Color fogColor = ((ColorAttribute)this.environment.get(ColorAttribute.Fog)).color;
+        Gdx.gl.glClearColor(fogColor.r, fogColor.g, fogColor.b, fogColor.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
         // Render scene manager
