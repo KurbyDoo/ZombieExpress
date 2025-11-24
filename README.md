@@ -103,3 +103,39 @@ java
     │   └── noise
     │       └── PerlinNoise.java
 ```
+
+## Firebase Authentication
+
+The login/register system uses Firebase.
+To implement these two functions, we use two different keys, because register and login use different Firebase APIs
+
+### 1. Admin SDK Key (Register + Firestore)
+We create user using Firebase Admin SDK, and we load/save player data from Firestore
+So everyone must download their own "serviceAccountKey.json"
+
+Step:
+1. go to Firebase -> Project Setting -> Service Account
+2. Click “Generate new private key”
+3. Download the JSON file
+4. Store in `core/src/main/resources/serviceAccountKey.json`
+   **plz put it in git.ignore(do not commit this file to GitHub)**
+
+after that the Admin SDK will automatically initialize using:
+```
+FirebaseInitializer.init()
+```
+
+### 2. Web API key(Login via REST API)
+User login uses Firebase's REST endpoint
+
+Step:
+1. Firebase -> Project Setting -> General
+2. Copy the "Web API Key"
+3. IntelliJ->Run->Edit Configurations->Environment Variables
+4. set FIREBASE_WEB_API_KEY=**your_key_here**
+
+---
+After above set up steps, the things below should work correctly:
+- register a new user (Admin SDK)
+- log in an existing user (REST API)
+- load/save player scores from Firestore
