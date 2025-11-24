@@ -6,7 +6,6 @@ import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputData;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData;
 import application.use_cases.generate_mesh.GenerateMeshInputData;
 import application.use_cases.render_radius.RenderRadiusOutputData;
-import application.use_cases.update_entity.EntityBehaviourSystem;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -22,11 +21,8 @@ import application.use_cases.render_radius.RenderRadiusManagerInputBoundary;
 import application.use_cases.render_radius.RenderRadiusManagerInputData;
 import application.use_cases.render_radius.RenderRadiusManagerInteractor;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
-import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
-import application.use_cases.ports.BlockRepository;
 
-import java.util.List;
 import java.util.Set;
 
 
@@ -62,8 +58,8 @@ public class WorldSyncController implements Disposable {
         EntityStorage entityStorage,
         MeshFactory meshFactory,
         MeshStorage meshStorage,
-        BlockRepository blockRepository,
-        BlockMaterialRepository materialRepository,
+        GenerateChunkInputBoundary chunkGenerator,
+        ChunkMeshGenerationInputBoundary chunkMeshGenerator,
         int renderRadius
     ) {
         this.world = world;
@@ -71,9 +67,8 @@ public class WorldSyncController implements Disposable {
         this.RENDER_RADIUS = renderRadius;
 
         // TODO: Move these to game view
-        this.chunkGenerator = new GenerateChunkInteractor(blockRepository, entityFactory);
-        ModelGeneratorFacade meshGeneratorFacade = new ModelGeneratorFacade(world, blockRepository, materialRepository);
-        this.chunkMeshGenerator = meshGeneratorFacade;
+        this.chunkGenerator = chunkGenerator;
+        this.chunkMeshGenerator = chunkMeshGenerator;
 
         this.chunkRenderer = new ChunkRenderer(objectRenderer);
 

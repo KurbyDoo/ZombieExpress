@@ -8,23 +8,24 @@ import application.use_cases.ports.BlockRepository;
 import domain.Chunk;
 import domain.World;
 
-public class ModelGeneratorFacade implements ChunkMeshGenerationInputBoundary {
+public class ModelGeneratorFacade {
     private final World world;
     private final ChunkMeshGenerationInputBoundary chunkMeshBuilder;
-    public ModelGeneratorFacade(World world, BlockRepository blockRepository, BlockMaterialRepository materialRepository) {
+    public ModelGeneratorFacade(World world, ChunkMeshGenerationInputBoundary chunkMeshBuilder) {
         this.world = world;
-        this.chunkMeshBuilder = new ChunkMeshGenerationInteractor(blockRepository, materialRepository);
+        this.chunkMeshBuilder = chunkMeshBuilder;
+//        this.chunkMeshBuilder = new ChunkMeshGenerationInteractor(blockRepository, materialRepository);
     }
-
+//
     // New method to implement the boundary interface
-    @Override
-    public ChunkMeshGenerationOutputData execute(ChunkMeshGenerationInputData inputData) {
-        return chunkMeshBuilder.execute(inputData);
-    }
+//    @Override
+//    public ChunkMeshGenerationOutputData execute(ChunkMeshGenerationInputData inputData) {
+//        return chunkMeshBuilder.execute(inputData);
+//    }
 
-    public ChunkMeshData buildModel(Chunk chunk) {
-        ChunkMeshGenerationInputData inputData = new ChunkMeshGenerationInputData(world, chunk);
-        ChunkMeshGenerationOutputData outputData = chunkMeshBuilder.execute(inputData);
-        return outputData.getMeshData();
-    }
+//    public ChunkMeshData buildModel(Chunk chunk) {
+//        ChunkMeshGenerationInputData inputData = new ChunkMeshGenerationInputData(world, chunk);
+//        ChunkMeshGenerationOutputData outputData = chunkMeshBuilder.execute(inputData);
+//        return outputData.getMeshData();
+//    }
 }

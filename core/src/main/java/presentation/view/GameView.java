@@ -1,5 +1,8 @@
 package presentation.view;
 
+import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
+import application.use_cases.chunk_mesh_generation.ChunkTexturedMeshGeneration;
+import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
 import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
 import application.use_cases.ports.BlockRepository;
@@ -42,6 +45,8 @@ public class GameView implements Viewable{
 
     private Player player;
 
+    private GenerateChunkInteractor chunkGenerator;
+    private ChunkMeshGenerationInputBoundary chunkMeshGenerator;
     private WorldSyncController worldSyncController;
 
     private BlockRepository blockRepository;
@@ -72,7 +77,8 @@ public class GameView implements Viewable{
         cameraController = new FirstPersonCameraController(camera, player);
 
         blockRepository = new InMemoryBlockRepository();
-        materialRepository = new LibGDXMaterialRepository();
+//        materialRepository = new LibGDXMaterialRepository();
+        materialRepository = new TexturedBlockMaterialRepository();
 
         // --- ENTITY SYSTEM INITIALIZATION ---
         colHandler = new CollisionHandler();
@@ -99,6 +105,9 @@ public class GameView implements Viewable{
         entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
 
         // --- CHUNK SYSTEM INITIALIZATION ---
+        this.chunkGenerator = new GenerateChunkInteractor(blockRepository, entityFactory);
+        this.chunkMeshGenerator = new ChunkTexturedMeshGeneration(blockRepository, (TexturedBlockMaterialRepository) materialRepository);
+
         worldSyncController = new WorldSyncController(
             objectRenderer,
             world,
@@ -107,8 +116,8 @@ public class GameView implements Viewable{
             entityStorage,
             meshFactory,
             meshStorage,
-            blockRepository,
-            materialRepository,
+            chunkGenerator,
+            chunkMeshGenerator,
             RENDER_RADIUS
         );
 
