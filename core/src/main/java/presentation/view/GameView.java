@@ -126,15 +126,9 @@ public class GameView implements Viewable{
             cameraController.updatePrevious();
 
             // --- GAME LOGIC ---
-            // 1. Process player input
             gameInputAdapter.processInput(TIME_STEP);
 
-            // We unload separately because an entity might move into an unloaded chunk
-//            worldSyncController.loadUpdate();
-
             gameSimulationController.update(TIME_STEP);
-
-//            worldSyncController.unloadUpdate();
         }
 
         float alpha = accumulator / TIME_STEP;
