@@ -18,6 +18,7 @@ import application.game_use_cases.populate_chunk.PopulateChunkEntities;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
+import application.use_cases.generate_entity.bullet.GenerateBulletStrategy;
 import data_access.IdToEntityStorage;
 import interface_adapter.game.EntityStorage;
 import domain.GamePosition;
@@ -85,9 +86,13 @@ public class GameView implements Viewable{
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
         EntityStorage entityStorage = new IdToEntityStorage(world);
+        GenerateBulletStrategy bulletGenerationStrategy = new GenerateBulletStrategy();
+        application.use_cases.generate_mesh.GenerateBulletMeshStrategy bulletMeshStrategy = new application.use_cases.generate_mesh.GenerateBulletMeshStrategy();
+
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
+            .register(EntityType.BULLET, bulletGenerationStrategy)
             .register(EntityType.PICKUP, pickupGenerateStrategy)
             .build();
 
@@ -111,6 +116,7 @@ public class GameView implements Viewable{
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
             .register(EntityType.ZOMBIE, zombieMeshStrategy)
             .register(EntityType.TRAIN, trainMeshStrategy)
+            .register(EntityType.BULLET, bulletMeshStrategy)
             .register(EntityType.PICKUP, pickupMeshStrategy)
             .build();
 
