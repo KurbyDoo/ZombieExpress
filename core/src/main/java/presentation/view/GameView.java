@@ -39,9 +39,6 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 
-import static physics.HitBox.ShapeTypes.BOX;
-import static physics.HitBox.ShapeTypes.SPHERE;
-
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
@@ -73,7 +70,6 @@ public class GameView implements Viewable{
     private GameHUD hud;
 
     private final Map<WorldPickup, GameMesh> pickupMeshes = new HashMap<>();
-    private final Map<WorldPickup, Scene> pickupScenes = new HashMap<>();
 
     @Override
     public void createView() {
@@ -144,21 +140,6 @@ public class GameView implements Viewable{
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
         hud = new GameHUD(player, pickupController);
-
-//        for (WorldPickup pickup : pickupStorage.getAll()) {
-//            // Red HitBox mesh
-//            HitBox hitBox = new HitBox("pickupHitbox", BOX, 2, 2, 2);
-//            GameMesh mesh = hitBox.Construct();
-//            mesh.transform.setToTranslation(pickup.getPosition());
-//            mesh.moving = false; // so ObjectRenderer doesn't drop it each frame
-//            objectRenderer.add(mesh);
-//            pickupMeshes.put(pickup, mesh);
-//
-//            // Visual model: load from assets
-//            Scene scene = ItemPickupSceneFactory.createSceneForPickup(pickup);
-//            objectRenderer.addToSceneManager(scene);
-//            pickupScenes.put(pickup, scene);
-//        }
 
         // TESTING === CREATE VISUAL + PHYSICS FOR EACH PICKUP ===
         for (WorldPickup pickup : pickupStorage.getAll()) {
@@ -247,28 +228,16 @@ public class GameView implements Viewable{
     private void syncPickupVisuals() {
         Set<WorldPickup> current = new HashSet<>(pickupStorage.getAll());
 
-        Iterator<Map.Entry<WorldPickup, GameMesh>> itMesh = pickupMeshes.entrySet().iterator();
-        while (itMesh.hasNext()) {
-            Map.Entry<WorldPickup, GameMesh> entry = itMesh.next();
+        Iterator<Map.Entry<WorldPickup, GameMesh>> it = pickupMeshes.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<WorldPickup, GameMesh> entry = it.next();
             WorldPickup pickup = entry.getKey();
             GameMesh mesh = entry.getValue();
 
             if (!current.contains(pickup)) {
                 objectRenderer.remove(mesh);
-                // colHandler.remove(mesh); //  if we ever add collider removal
-                itMesh.remove();
+                it.remove();
             }
         }
-
-//        Iterator<Map.Entry<WorldPickup, Scene>> itScene = pickupScenes.entrySet().iterator();
-//        while (itScene.hasNext()) {
-//            Map.Entry<WorldPickup, Scene> entry = itScene.next();
-//            WorldPickup pickup = entry.getKey();
-//            Scene scene = entry.getValue();
-//            if (!current.contains(pickup)) {
-//                objectRenderer.remove(scene);
-//                itScene.remove();
-//            }
-//        }
     }
 }
