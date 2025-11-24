@@ -10,8 +10,8 @@ public class GeneratePickupInputData extends GenerateEntityInputData {
 
     private final Item item;
 
-    public GeneratePickupInputData(Item item, Vector3 position, Chunk chunk) {
-        super(EntityType.PICKUP, position, chunk);
+    public GeneratePickupInputData(Item item, Vector3 position) {
+        super(EntityType.PICKUP, position);
         this.item = item;
     }
 

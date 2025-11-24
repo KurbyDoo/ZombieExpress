@@ -6,7 +6,7 @@ import domain.Chunk;
 import domain.entities.EntityType;
 
 public class GenerateTrainInputData extends GenerateEntityInputData {
-    public GenerateTrainInputData(Vector3 position, Chunk chunk) {
-        super(EntityType.TRAIN, position, chunk);
+    public GenerateTrainInputData(Vector3 position) {
+        super(EntityType.TRAIN, position);
     }
 }

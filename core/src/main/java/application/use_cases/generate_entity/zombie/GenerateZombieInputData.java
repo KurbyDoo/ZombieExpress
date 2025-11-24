@@ -6,7 +6,7 @@ import domain.Chunk;
 import domain.entities.EntityType;
 
 public class GenerateZombieInputData extends GenerateEntityInputData {
-    public GenerateZombieInputData(Vector3 position, Chunk chunk) {
-        super(EntityType.ZOMBIE, position, chunk);
+    public GenerateZombieInputData(Vector3 position) {
+        super(EntityType.ZOMBIE, position);
     }
 }

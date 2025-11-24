@@ -1,5 +1,7 @@
-package application.use_cases.generate_chunk;
+package application.use_cases.populate_chunk;
 
+import application.use_cases.generate_chunk.GenerateChunkInputData;
+import application.use_cases.generate_chunk.GenerateChunkOutputData;
 import application.use_cases.generate_entity.train.GenerateTrainInputData;
 import application.use_cases.generate_entity.zombie.GenerateZombieInputData;
 import application.use_cases.generate_entity.pickup.GeneratePickupInputData;
@@ -13,21 +15,19 @@ import domain.items.ItemTypes;
 import infrastructure.noise.PerlinNoise;
 import java.util.Random;
 
-public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
-    private final BlockRepository blockRepository;
+public class PopulateChunkEntities implements PopulateChunkInputBoundary {
+    private final EntityFactory entityFactory;
     private final Random random = new Random();
 
-    public GenerateChunkInteractor(BlockRepository blockRepository) {
-        this.blockRepository = blockRepository;
+    public PopulateChunkEntities(EntityFactory entityFactory) {
+        this.entityFactory = entityFactory;
     }
 
     @Override
-    public GenerateChunkOutputData execute(GenerateChunkInputData inputData) {
-        Chunk chunk = new Chunk(inputData.getPosition());
-        World world = inputData.getWorld();
-
+    public void execute(PopulateChunkInputData inputData) {
+        Chunk chunk = inputData.getChunk();
         int chunkSize = Chunk.CHUNK_SIZE;
-        int worldEndX = world.getWorldDepthChunks() * chunkSize;
+        int worldEndX = inputData.getWorld().getWorldDepthChunks() * chunkSize;
 
         float scaleFactor = 0.05f;
         double valleyScale = (double) 1.0f / (chunkSize * chunkSize * 8);
@@ -41,22 +41,49 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
                     int worldY = h + chunk.getChunkWorldY();
                     int height = getLocalHeight(worldZ, valleyScale, chunk, worldX, worldEndX, perlinNoise);
 
-                    String type = getBlockByHeight(height, worldY);
-                    chunk.setBlock(x, h, z, blockRepository.findByName(type).orElseThrow());
+                    // Add random zombie
+                    if (worldY == height + 3 && (worldX * worldX + worldZ * worldZ) > 100 * 100) {
+                        double zombieNoise = PerlinNoise.perlin(
+                            worldX * scaleFactor * 10, 100f, worldZ * scaleFactor * 10
+                        );
+//                        System.out.println(zombieNoise);
+                        if (zombieNoise > 0.85){
+                            Vector3 pos = new Vector3(worldX, worldY, worldZ);
+                            entityFactory.create(new GenerateZombieInputData(pos));
+                        }
+                    }
 
+                    //Add random pickups
+                    if (worldY == height + 1 && (worldX * worldX + worldZ * worldZ) > 80 * 80) {
+                        double pickupNoise = PerlinNoise.perlin(
+                            worldX * scaleFactor * 8, 250f, worldZ * scaleFactor * 8
+                        );
+
+                        if (pickupNoise > 0.88) {
+                            Item item = randomPickupItem();
+                            Vector3 pickupPos = new Vector3(worldX, worldY, worldZ);
+                            entityFactory.create(new GeneratePickupInputData(item, pickupPos));
+                        }
+                    }
                 }
             }
         }
 
-        // generate rails
-        if (chunk.getChunkZ() == 0 && chunk.getChunkY() == 0) {
-            for (int x = 0; x < chunkSize; x++) {
-                chunk.setBlock(x, 0, 5,  blockRepository.findByName("STONE").orElseThrow());
-                chunk.setBlock(x, 0, 10,  blockRepository.findByName("STONE").orElseThrow());
-            }
+        // train
+        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
+            Vector3 trainPosition = new Vector3(
+                chunk.getChunkWorldX() + (chunkSize / 2f),
+                1f,
+                chunk.getChunkWorldZ() + (chunkSize / 2f)
+            );
+            GenerateTrainInputData trainInput = new GenerateTrainInputData(trainPosition);
+            entityFactory.create(trainInput);
         }
 
-        return new GenerateChunkOutputData(chunk);
+        if (chunk.getChunkY() == 1) {
+            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
+            entityFactory.create(new GenerateZombieInputData(pos));
+        }
     }
 
     private static int getLocalHeight(int worldZ, double valleyScale, Chunk chunk, int worldX, int worldEndX, double perlinNoise) {
@@ -68,7 +95,6 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             double valleyHeightZ = Math.min(8, worldX * worldX * valleyScale / 2);
             valleyHeight = Math.max(valleyHeight, valleyHeightZ);
         }
-
         // Chunks beyond the end have a valley
         if (chunk.getChunkWorldX() > worldEndX) {
             double valleyHeightZ = Math.min(8, (worldX - worldEndX) * (worldX - worldEndX) * valleyScale / 2);
@@ -78,12 +104,6 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
         return height;
     }
 
-    private String getBlockByHeight(int height, int worldY) {
-        if (worldY > height) return "AIR";
-        if (worldY == height) return "GRASS";
-        if (worldY >= height - 3) return "DIRT";
-        return "STONE";
-    }
 
     private Item randomPickupItem() {
         // Simple example: coal vs wood log
@@ -96,5 +116,4 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
                 return ItemTypes.WOOD_LOG;
         }
     }
-
 }
