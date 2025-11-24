@@ -23,18 +23,21 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
         Vector3 playerDirection = new Vector3(player.getDirection()).nor();
         Vector3 playerUp = new Vector3(player.getUp()).nor();
 
+        Vector3 totalUp = new Vector3(0f, playerDirection.y, 0f);
+        Vector3 orthogonalDirection = playerDirection.sub(totalUp).nor();
+
         if (inputData.isForward()) {
-            velocity.add(playerDirection);
+            velocity.add(orthogonalDirection);
         }
         if (inputData.isBackward()) {
-            velocity.sub(playerDirection);
+            velocity.sub(orthogonalDirection);
         }
         if (inputData.isLeft()) {
-            Vector3 left = new Vector3(playerDirection).crs(playerUp).nor().scl(-1);
+            Vector3 left = new Vector3(orthogonalDirection).crs(playerUp).nor().scl(-1);
             velocity.add(left);
         }
         if (inputData.isRight()) {
-            Vector3 right = new Vector3(playerDirection).crs(playerUp).nor();
+            Vector3 right = new Vector3(orthogonalDirection).crs(playerUp).nor();
             velocity.add(right);
         }
 

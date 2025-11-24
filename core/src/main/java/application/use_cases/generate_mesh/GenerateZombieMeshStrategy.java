@@ -22,6 +22,8 @@ public class GenerateZombieMeshStrategy implements GenerateMeshStrategy {
         Scene zombieScene = new Scene(zombieAsset.scene);
         ModelInstance modelInstance = zombieScene.modelInstance;
 
+        inputData.getEntity().getPosition().add(0, 1f, 0);
+
         BoundingBox bbox = new BoundingBox();
         modelInstance.calculateBoundingBox(bbox);
         Vector3 dimensions = new Vector3();

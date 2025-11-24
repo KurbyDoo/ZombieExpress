@@ -57,13 +57,13 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             }
         }
 
-        if (chunk.getChunkZ() > 0 && chunk.getChunkX() <= 0 && chunk.getChunkY() == 0) {
-            for (int x = 0; x < chunkSize; x++) {
-                for (int z = 0; z < chunkSize; z++) {
-                    chunk.setBlock(x, 0, z,  blockRepository.findByName("AIR").orElseThrow());
-                }
-            }
-        }
+//        if (chunk.getChunkZ() > 0 && chunk.getChunkX() <= 0 && chunk.getChunkY() == 0) {
+//            for (int x = 0; x < chunkSize; x++) {
+//                for (int z = 0; z < chunkSize; z++) {
+//                    chunk.setBlock(x, 0, z,  blockRepository.findByName("AIR").orElseThrow());
+//                }
+//            }
+//        }
 
 
         // generate rails

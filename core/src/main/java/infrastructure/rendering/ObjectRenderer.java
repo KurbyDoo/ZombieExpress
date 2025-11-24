@@ -78,9 +78,6 @@ public class ObjectRenderer {
         // Render scene manager
         sceneManager.update(deltaTime);
         sceneManager.render();
-
-        // gravity
-        colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
     }
 
     public void dispose() {

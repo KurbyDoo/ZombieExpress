@@ -136,6 +136,10 @@ public class WorldSyncController implements Disposable {
         // Unload Chunks
         for (Vector3 pos : radiusData.getChunksToUnload()) {
             chunkRenderer.onChunkRemoved(pos);
+            Chunk chunk = world.getChunk(pos);
+            for (int id : chunk.getEntityIds()) {
+                meshStorage.removeMesh(id);
+            }
             // TODO: Unload entities
         }
     }

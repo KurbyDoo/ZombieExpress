@@ -96,7 +96,7 @@ public class GameView implements Viewable{
 
         // --- PHYSICS ---
         PhysicsControlPort physicsAdapter = new BulletPhysicsAdapter(meshStorage);
-        entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage);
+        entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
 
         // --- CHUNK SYSTEM INITIALIZATION ---
         worldSyncController = new WorldSyncController(
@@ -112,7 +112,7 @@ public class GameView implements Viewable{
             RENDER_RADIUS
         );
 
-        gameSimulationController = new GameSimulationController(worldSyncController, entityBehaviourSystem, world);
+        gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
     }
 
 
@@ -130,11 +130,11 @@ public class GameView implements Viewable{
             gameInputAdapter.processInput(TIME_STEP);
 
             // We unload separately because an entity might move into an unloaded chunk
-            worldSyncController.loadUpdate();
+//            worldSyncController.loadUpdate();
 
             gameSimulationController.update(TIME_STEP);
 
-            worldSyncController.unloadUpdate();
+//            worldSyncController.unloadUpdate();
         }
 
         float alpha = accumulator / TIME_STEP;
