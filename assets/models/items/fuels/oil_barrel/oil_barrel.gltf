@@ -1,0 +1,400 @@
+{
+  "asset": {
+    "extras": {
+      "author": "adventurer (https://sketchfab.com/ahmagh2e)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/dirty-oil-barrel-5mb-b973a95ff3bb478a941ccb06a70b14bb",
+      "title": "Dirty oil barrel - 5MB"
+    },
+    "generator": "gltfeditor.com",
+    "version": "2.0"
+  },
+  "buffers": [
+    {
+      "uri": "oil_barrel.bin",
+      "byteLength": 229968
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 80784,
+      "byteStride": 24,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 80784,
+      "byteLength": 53856,
+      "byteStride": 16,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 134640,
+      "byteLength": 26928,
+      "byteStride": 8,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 161568,
+      "byteLength": 68400,
+      "target": 34963
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 3366,
+      "min": [
+        -1,
+        -1,
+        -0.9980267882347107
+      ],
+      "max": [
+        1,
+        1,
+        0.9980267882347107
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 12,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 3366,
+      "min": [
+        -36.30257034301758,
+        0,
+        -36.230934143066406
+      ],
+      "max": [
+        36.30257034301758,
+        118.43986511230469,
+        36.230934143066406
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 3366,
+      "min": [
+        -0.9992932677268982,
+        -1,
+        -1,
+        1
+      ],
+      "max": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 0,
+      "componentType": 5126,
+      "normalized": false,
+      "count": 3366,
+      "min": [
+        0.003968957811594009,
+        0.0028940439224243164
+      ],
+      "max": [
+        0.9930418729782104,
+        0.7609245181083679
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 3,
+      "byteOffset": 0,
+      "componentType": 5125,
+      "normalized": false,
+      "count": 17100,
+      "min": [
+        0
+      ],
+      "max": [
+        3365
+      ],
+      "type": "SCALAR"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        6
+      ],
+      "name": "Sketchfab_Scene"
+    }
+  ],
+  "nodes": [
+    {
+      "name": "black_all_0",
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "name": "black",
+      "children": [
+        0
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        -1.7904797585430003e-14,
+        0,
+        -108.22332763671875,
+        1
+      ],
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "name": "red_all_0",
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      },
+      "mesh": 0
+    },
+    {
+      "name": "red",
+      "children": [
+        2
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1.7763568394002505e-15,
+        0,
+        0,
+        1
+      ],
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "name": "RootNode",
+      "children": [
+        1,
+        3
+      ],
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "name": "0740b77096a9455190363fd6ea9bdf63.fbx",
+      "children": [
+        4
+      ],
+      "matrix": [
+        0.009999999776482582,
+        0,
+        0,
+        0,
+        0,
+        3.42285422227917e-10,
+        0.009999999776482582,
+        0,
+        0,
+        -0.009999999776482582,
+        3.42285422227917e-10,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      }
+    },
+    {
+      "name": "Sketchfab_model",
+      "children": [
+        5
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        3.422854177870249e-8,
+        -0.9999999403953552,
+        0,
+        0,
+        0.9999999403953552,
+        3.422854177870249e-8,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "extensions": {
+        "KHR_node_visibility": {
+          "visible": true
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "material": 0,
+          "mode": 4,
+          "attributes": {
+            "NORMAL": 0,
+            "POSITION": 1,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4
+        }
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "material",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "metallicFactor": 1,
+        "roughnessFactor": 1,
+        "baseColorTexture": {
+          "index": 0,
+          "texCoord": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1,
+          "texCoord": 0
+        }
+      },
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "alphaMode": "OPAQUE",
+      "doubleSided": true,
+      "normalTexture": {
+        "index": 2,
+        "texCoord": 0,
+        "scale": 1
+      }
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "name": "textures/material_baseColor.jpg",
+      "source": 0
+    },
+    {
+      "sampler": 1,
+      "name": "textures/material_metallicRoughness.jpg",
+      "source": 1
+    },
+    {
+      "sampler": 2,
+      "name": "textures/material_normal.jpg",
+      "source": 2
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    },
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    },
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/material_baseColor.jpg",
+      "mimeType": "image/jpeg",
+      "name": "textures/material_baseColor.jpg"
+    },
+    {
+      "uri": "textures/material_metallicRoughness.jpg",
+      "mimeType": "image/jpeg",
+      "name": "textures/material_metallicRoughness.jpg"
+    },
+    {
+      "uri": "textures/material_normal.jpg",
+      "mimeType": "image/jpeg",
+      "name": "textures/material_normal.jpg"
+    }
+  ],
+  "extensionsUsed": [
+    "KHR_node_visibility"
+  ]
+}

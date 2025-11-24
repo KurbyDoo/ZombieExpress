@@ -4,7 +4,7 @@ import domain.items.Item;
 
 public class Inventory {
 
-    public static final int MAX_SLOTS = 20;
+    private static final int MAX_SLOTS = 10;
     private final InventorySlot[] slots = new InventorySlot[MAX_SLOTS];
 
     public Inventory() {
@@ -29,11 +29,13 @@ public class Inventory {
      * Do nothing if inventory is full.
      * @param item The item to add to the inventory.
      */
-    public void addItem(Item item) {
+    public void addItem(Item item, int quantity) {
         if (item.isStackable()) {
             for (InventorySlot slot : slots) {
                 if (!slot.isEmpty() && slot.getItem().equals(item)) {
-                    slot.addOne(item);
+                    for (int i = 0; i < quantity; i++) {
+                        slot.addOne(item);
+                    }
                     return;
                 }
             }
@@ -41,10 +43,16 @@ public class Inventory {
 
         for (InventorySlot slot : slots) {
             if (slot.isEmpty()) {
-                slot.addOne(item);
+                for (int i = 0; i < quantity; i++) {
+                    slot.addOne(item);
+                }
                 return;
             }
         }
+    }
+
+    public void addItem(Item item) {
+        addItem(item, 1);
     }
 
     /**

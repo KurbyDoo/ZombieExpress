@@ -1,20 +1,22 @@
 package domain.items;
 
+import domain.entities.AmmoType;
+
 public class RangedWeapon extends Weapon {
 
-    private final String ammoType;
+    private final AmmoType ammoType;
 
-    public RangedWeapon(String name, int damage, String ammoType) {
+    public RangedWeapon(String name, int damage, AmmoType ammoType) {
         super(name, damage);
         this.ammoType = ammoType;
     }
 
-    public String getAmmoType() {
+    public AmmoType getAmmoType() {
         return ammoType;
     }
 
     @Override
     public String toString() {
-        return getName() + " [Ranged] (Damage: " + damage + ", Ammo: " + ammoType + ")";
+        return getName() + " [Ranged] (Damage: " + damage + ", Ammo: " + ammoType.getName() + ")";
     }
 }
