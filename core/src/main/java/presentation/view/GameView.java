@@ -3,78 +3,41 @@ package presentation.view;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
 import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
 import application.use_cases.ports.BlockRepository;
+import application.use_cases.pickup.PickupInteractor;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInteractor;
 import application.use_cases.ports.PhysicsControlPort;
 import application.use_cases.update_entity.EntityBehaviourSystem;
 import data_access.EntityStorage;
 import data_access.InMemoryBlockRepository;
-import domain.entities.EntityFactory;
-import domain.entities.EntityType;
-import domain.entities.IdToEntityStorage;
+import domain.entities.*;
+import domain.items.ItemTypes;
 import domain.player.Player;
 import domain.World;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
 import physics.GameMesh;
 import physics.HitBox;
-import infrastructure.rendering.*;
-import domain.entities.Player;
-import domain.entities.World;
-import domain.entities.Zombie; // delete this later
-import presentation.controllers.CameraController;
-import presentation.controllers.FirstPersonCameraController;
-import infrastructure.input_boundary.GameInputAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
-import io.github.testlibgdx.ChunkLoader;
-import infrastructure.rendering.GameMeshBuilder;
-import infrastructure.rendering.ObjectRenderer;
-import presentation.controllers.WorldGenerationController;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import domain.entities.InventorySlot;
-import presentation.controllers.GameSimulationController;
-import presentation.controllers.WorldSyncController;
-
-import static physics.HitBox.ShapeTypes.BOX;
-import com.badlogic.gdx.math.Vector3;
-import application.use_cases.EntityGeneration.EntityGenerationInteractor;
-import application.use_cases.RenderZombie.RenderZombieInteractor;
-import application.use_cases.player_movement.PlayerMovementInputBoundary;
-import application.use_cases.player_movement.PlayerMovementInteractor;
-import application.use_cases.pickup.PickupInteractor;
-import application.use_cases.ports.BlockRepository;
-import data_access.InMemoryBlockRepository;
-import domain.entities.*;
-import net.mgsx.gltf.scene3d.scene.Scene;
-import infrastructure.input_boundary.*;
-import infrastructure.rendering.*;
-import physics.CollisionHandler;
-import physics.GameMesh;
-import physics.HitBox;
-import presentation.ZombieInstanceUpdater;
 import presentation.controllers.*;
 import presentation.view.hud.GameHUD;
+import infrastructure.rendering.*;
+import infrastructure.input_boundary.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector3;
+import net.mgsx.gltf.scene3d.scene.Scene;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
+import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
+import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 
 import static physics.HitBox.ShapeTypes.BOX;
 import static physics.HitBox.ShapeTypes.SPHERE;
@@ -101,6 +64,11 @@ public class GameView implements Viewable{
     private final PickupStorage pickupStorage = new PickupStorage();
 
     private float accumulator;
+
+    private CollisionHandler colHandler;
+
+    private EntityBehaviourSystem entityBehaviourSystem;
+    private GameSimulationController gameSimulationController;
 
     private GameHUD hud;
 
@@ -177,25 +145,61 @@ public class GameView implements Viewable{
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
         hud = new GameHUD(player, pickupController);
 
+//        for (WorldPickup pickup : pickupStorage.getAll()) {
+//            // Red HitBox mesh
+//            HitBox hitBox = new HitBox("pickupHitbox", BOX, 2, 2, 2);
+//            GameMesh mesh = hitBox.Construct();
+//            mesh.transform.setToTranslation(pickup.getPosition());
+//            mesh.moving = false; // so ObjectRenderer doesn't drop it each frame
+//            objectRenderer.add(mesh);
+//            pickupMeshes.put(pickup, mesh);
+//
+//            // Visual model: load from assets
+//            Scene scene = ItemPickupSceneFactory.createSceneForPickup(pickup);
+//            objectRenderer.addToSceneManager(scene);
+//            pickupScenes.put(pickup, scene);
+//        }
+
         // TESTING === CREATE VISUAL + PHYSICS FOR EACH PICKUP ===
         for (WorldPickup pickup : pickupStorage.getAll()) {
-            // 1) Red HitBox mesh
-            HitBox hitBox = new HitBox("pickupHitbox", BOX, 2, 2, 2);
-            GameMesh mesh = hitBox.Construct();
-            mesh.transform.setToTranslation(pickup.getPosition());
-            mesh.moving = false; // so ObjectRenderer doesn't drop it each frame
+            // Visual model from your factory
+            Scene scene = ItemPickupSceneFactory.createSceneForPickup(pickup);
+
+            // Position the scene at the pickup's location
+            Matrix4 transform = new Matrix4().setToTranslation(pickup.getPosition());
+            scene.modelInstance.transform.set(transform);
+
+            // Create a simple static collision body from the model's bounding box
+            BoundingBox bbox = new BoundingBox();
+            scene.modelInstance.calculateBoundingBox(bbox);
+
+            Vector3 halfExtents = new Vector3();
+            bbox.getDimensions(halfExtents).scl(0.5f); // full -> half extents
+
+            btCollisionShape shape = new btBoxShape(halfExtents);
+
+            btDefaultMotionState motionState = new btDefaultMotionState(transform);
+            Vector3 inertia = new Vector3(0, 0, 0); // static body, no inertia
+            btRigidBody.btRigidBodyConstructionInfo info =
+                new btRigidBody.btRigidBodyConstructionInfo(
+                    0f,           // mass = 0 => static
+                    motionState,
+                    shape,
+                    inertia
+                );
+            btRigidBody body = new btRigidBody(info);
+            info.dispose();
+
+            // Wrap everything in a GameMesh
+            int meshId = pickup.hashCode();
+            GameMesh mesh = new GameMesh(meshId, scene, body, motionState);
+            mesh.setStatic(true);
+
+            // Register with renderer & your map
             objectRenderer.add(mesh);
             pickupMeshes.put(pickup, mesh);
-
-            // 2) Visual model: load from assets
-            Scene scene = ItemPickupSceneFactory.createSceneForPickup(pickup);
-            objectRenderer.addToSceneManager(scene);
-            pickupScenes.put(pickup, scene);
         }
 
-        //test add entities
-        Zombie zombie = new Zombie(objectRenderer);
-        zombie.createZombie(); //delete this later
     }
 
     @Override
@@ -237,7 +241,6 @@ public class GameView implements Viewable{
         worldSyncController.dispose();
 
         objectRenderer.dispose();
-        block.dispose();
     }
 
     //FOR TESTING (SUBJECT TO CHANGE)
@@ -251,21 +254,21 @@ public class GameView implements Viewable{
             GameMesh mesh = entry.getValue();
 
             if (!current.contains(pickup)) {
-                objectRenderer.models.remove(mesh);
+                objectRenderer.remove(mesh);
                 // colHandler.remove(mesh); //  if we ever add collider removal
                 itMesh.remove();
             }
         }
 
-        Iterator<Map.Entry<WorldPickup, Scene>> itScene = pickupScenes.entrySet().iterator();
-        while (itScene.hasNext()) {
-            Map.Entry<WorldPickup, Scene> entry = itScene.next();
-            WorldPickup pickup = entry.getKey();
-            Scene scene = entry.getValue();
-            if (!current.contains(pickup)) {
-                objectRenderer.removeScene(scene);
-                itScene.remove();
-            }
-        }
+//        Iterator<Map.Entry<WorldPickup, Scene>> itScene = pickupScenes.entrySet().iterator();
+//        while (itScene.hasNext()) {
+//            Map.Entry<WorldPickup, Scene> entry = itScene.next();
+//            WorldPickup pickup = entry.getKey();
+//            Scene scene = entry.getValue();
+//            if (!current.contains(pickup)) {
+//                objectRenderer.remove(scene);
+//                itScene.remove();
+//            }
+//        }
     }
 }

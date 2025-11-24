@@ -1,6 +1,7 @@
 package domain.player;
 
 import com.badlogic.gdx.math.Vector3;
+import domain.entities.AmmoType;
 import domain.items.Item;
 import static domain.entities.AmmoType.*;
 

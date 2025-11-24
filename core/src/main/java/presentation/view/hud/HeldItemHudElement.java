@@ -4,12 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.utils.Scaling;
-import domain.entities.InventorySlot;
-import domain.entities.Player;
-import presentation.view.hud.ItemImageFactory;
-
-import com.badlogic.gdx.scenes.scene2d.ui.Label; // only if you still pass style, unused otherwise
+import domain.player.InventorySlot;
+import domain.player.Player;
 
 public class HeldItemHudElement implements HudElement {
 

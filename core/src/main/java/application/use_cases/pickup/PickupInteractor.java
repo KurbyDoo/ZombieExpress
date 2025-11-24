@@ -1,7 +1,7 @@
 package application.use_cases.pickup;
 
 import com.badlogic.gdx.math.Vector3;
-import domain.entities.Player;
+import domain.player.Player;
 import domain.entities.PickupStorage;
 import domain.entities.WorldPickup;
 

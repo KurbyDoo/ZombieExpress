@@ -1,6 +1,7 @@
 package domain.entities;
 
 import com.badlogic.gdx.math.Vector3;
+import domain.items.Item;
 
 public class WorldPickup {
 

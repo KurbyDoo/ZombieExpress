@@ -7,8 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import domain.entities.InventorySlot;
-import domain.entities.Player;
+import domain.player.InventorySlot;
+import domain.player.Player;
 
 import static presentation.view.hud.UIAssetFactory.createSlotDrawable;
 

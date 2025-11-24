@@ -1,7 +1,7 @@
 package presentation.controllers;
 
 import application.use_cases.pickup.PickupInteractor;
-import domain.entities.Player;
+import domain.player.Player;
 import domain.entities.WorldPickup;
 
 public class PickupController {

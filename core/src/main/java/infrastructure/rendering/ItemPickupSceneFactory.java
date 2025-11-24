@@ -2,12 +2,12 @@ package infrastructure.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import domain.entities.Item;
+import domain.items.Item;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import domain.entities.WorldPickup;
-import domain.entities.ItemTypes;
+import domain.items.ItemTypes;
 
 public class ItemPickupSceneFactory {
 

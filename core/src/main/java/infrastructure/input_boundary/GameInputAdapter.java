@@ -6,7 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.utils.IntIntMap;
-import domain.entities.Player;
+import domain.player.Player;
 
 public class GameInputAdapter extends InputAdapter {
     private final IntIntMap keys = new IntIntMap();

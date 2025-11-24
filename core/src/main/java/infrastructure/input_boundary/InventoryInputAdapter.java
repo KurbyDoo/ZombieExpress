@@ -2,7 +2,7 @@ package infrastructure.input_boundary;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import domain.entities.Player;
+import domain.player.Player;
 
 public class InventoryInputAdapter {
     private final Player player;

@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import domain.entities.Player;
+import domain.player.Player;
 
 import static presentation.view.hud.UIAssetFactory.createBarDrawable;
 import static presentation.view.hud.UIAssetFactory.createBorderDrawable;

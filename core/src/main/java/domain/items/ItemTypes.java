@@ -1,5 +1,7 @@
 package domain.items;
 
+import domain.entities.AmmoType;
+
 public class ItemTypes {
 
     private ItemTypes() {}
