@@ -4,29 +4,22 @@ eclipse.project.name = appName + '-core'
 dependencies {
   api "com.badlogicgames.gdx:gdx:$gdxVersion"
 
-  if(enableGraalNative == 'true') {
-    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
-  }
-}
-dependencies {
-  api "com.badlogicgames.gdx:gdx:$gdxVersion"
-  // Firebase Admin SDK）
+  // Bullet physics
+  api "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+  implementation "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+  runtimeOnly "com.badlogicgames.gdx:gdx-bullet-platform:$gdxVersion:natives-desktop"
+
+  // glTF loader
+  api "com.github.mgsx-dev.gdx-gltf:gltf:$gltfVersion"
+
+  // Firebase Admin SDK
   implementation 'com.google.firebase:firebase-admin:9.7.0'
+
   // OkHttp
   implementation 'com.squareup.okhttp3:okhttp:5.3.0'
-  if(enableGraalNative == 'true') {
-    implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
-  }
-}
 
-
-dependencies {
-  api "com.badlogicgames.gdx:gdx:$gdxVersion"
-  // Firebase Admin SDK）
-  implementation 'com.google.firebase:firebase-admin:9.7.0'
-  // OkHttp
-  implementation 'com.squareup.okhttp3:okhttp:5.3.0'
-  if(enableGraalNative == 'true') {
+  // Native support for GraalVM if enabled
+  if (enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }
 }

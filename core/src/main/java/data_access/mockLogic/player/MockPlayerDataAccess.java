@@ -1,7 +1,7 @@
 package data_access.mockLogic.player;
 
 import UseCases.PlayerData.PlayerDataAccessInterface;
-import domain.entities.PlayerSession;
+import domain.player.PlayerSession;
 
 import java.util.HashMap;
 import java.util.Map;

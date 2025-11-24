@@ -1,5 +1,5 @@
 package UseCases.PlayerData;
-import domain.entities.PlayerSession;
+import domain.player.PlayerSession;
 
 /**
  * Data access interface for retrieving and saving player session data

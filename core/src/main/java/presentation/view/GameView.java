@@ -1,36 +1,60 @@
 package presentation.view;
 
-import domain.entities.Player;
-import domain.entities.World;
+import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
+import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
+import application.use_cases.ports.BlockRepository;
+import application.use_cases.player_movement.PlayerMovementInputBoundary;
+import application.use_cases.player_movement.PlayerMovementInteractor;
+import application.use_cases.ports.PhysicsControlPort;
+import application.use_cases.update_entity.EntityBehaviourSystem;
+import data_access.EntityStorage;
+import data_access.InMemoryBlockRepository;
+import domain.entities.EntityFactory;
+import domain.entities.EntityType;
+import domain.entities.IdToEntityStorage;
+import domain.player.Player;
+import domain.World;
+import physics.BulletPhysicsAdapter;
+import physics.CollisionHandler;
+import physics.GameMesh;
+import physics.HitBox;
+import infrastructure.rendering.*;
 import presentation.controllers.CameraController;
 import presentation.controllers.FirstPersonCameraController;
 import infrastructure.input_boundary.GameInputAdapter;
-import application.use_cases.ChunkGeneration.ChunkGenerationInteractor;
-import application.use_cases.PlayerMovement.PlayerMovementInputBoundary;
-import application.use_cases.PlayerMovement.PlayerMovementInteractor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
-import io.github.testlibgdx.ChunkLoader;
-import infrastructure.rendering.GameMeshBuilder;
-import infrastructure.rendering.ObjectRenderer;
-import presentation.controllers.WorldGenerationController;
+import presentation.controllers.GameSimulationController;
+import presentation.controllers.WorldSyncController;
 
-public class GameView implements Viewable {
+import static physics.HitBox.ShapeTypes.BOX;
+
+public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
+    private final int RENDER_RADIUS = 6; // The radius in chunks where meshes are visible
 
     public ObjectRenderer objectRenderer;
-    public GameMeshBuilder meshBuilder;
     public World world;
     private CameraController cameraController;
     private GameInputAdapter gameInputAdapter;
     private ViewCamera camera;
-    private ChunkLoader chunkLoader;
-    private WorldGenerationController worldGenerationController;
-    private ChunkGenerationInteractor chunkGenerationUseCase;
+
     private Player player;
 
+    private WorldSyncController worldSyncController;
+
+    private BlockRepository blockRepository;
+    private BlockMaterialRepository materialRepository;
+
     private float accumulator;
+
+    private CollisionHandler colHandler;
+
+    private EntityBehaviourSystem entityBehaviourSystem;
+
+    private GameSimulationController gameSimulationController;
+
 
     @Override
     public void createView() {
@@ -47,16 +71,50 @@ public class GameView implements Viewable {
 
         cameraController = new FirstPersonCameraController(camera, player);
 
-        objectRenderer = new ObjectRenderer(camera);
+        blockRepository = new InMemoryBlockRepository();
+        materialRepository = new LibGDXMaterialRepository();
+
+        // --- ENTITY SYSTEM INITIALIZATION ---
+        colHandler = new CollisionHandler();
+
+        GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
+        GenerateZombieMeshStrategy zombieMeshStrategy = new GenerateZombieMeshStrategy();
+
+        EntityStorage entityStorage = new IdToEntityStorage();
+        EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
+            .register(EntityType.ZOMBIE, zombieGenerateStrategy)
+            .build();
+
+        MeshStorage meshStorage = new IdToMeshStorage(colHandler);
+        MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
+            .register(EntityType.ZOMBIE, zombieMeshStrategy)
+            .build();
+
+        // --- MESH + COL ---
+        objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
         world = new World();
-        meshBuilder = new GameMeshBuilder(world);
-        chunkLoader = new ChunkLoader(meshBuilder, objectRenderer);
-        chunkGenerationUseCase = new ChunkGenerationInteractor();
 
-        worldGenerationController = new WorldGenerationController(chunkGenerationUseCase, world, chunkLoader);
+        // --- PHYSICS ---
+        PhysicsControlPort physicsAdapter = new BulletPhysicsAdapter(meshStorage);
+        entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage);
 
-        worldGenerationController.generateInitialWorld(8, 4, 32);
+        // --- CHUNK SYSTEM INITIALIZATION ---
+        worldSyncController = new WorldSyncController(
+            objectRenderer,
+            world,
+            player,
+            entityFactory,
+            entityStorage,
+            meshFactory,
+            meshStorage,
+            blockRepository,
+            materialRepository,
+            RENDER_RADIUS
+        );
+
+        gameSimulationController = new GameSimulationController(worldSyncController, entityBehaviourSystem, world);
     }
+
 
     @Override
     public void renderView() {
@@ -67,22 +125,31 @@ public class GameView implements Viewable {
             accumulator -= TIME_STEP;
             cameraController.updatePrevious();
 
-            // WORLD UPDATES
-            gameInputAdapter.processInput(deltaTime);
-        }
+            // --- GAME LOGIC ---
+            // 1. Process player input
+            gameInputAdapter.processInput(TIME_STEP);
 
-        // BACKGROUND PROCESSING
-        chunkLoader.loadChunks();
+            // We unload separately because an entity might move into an unloaded chunk
+            worldSyncController.loadUpdate();
+
+            gameSimulationController.update(TIME_STEP);
+
+            worldSyncController.unloadUpdate();
+        }
 
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        objectRenderer.render();
+        objectRenderer.render(deltaTime);
     }
+
 
     @Override
     public void disposeView() {
+        // Dispose world-related components first
+        worldSyncController.dispose();
+
         objectRenderer.dispose();
     }
 }

@@ -8,7 +8,7 @@ import UseCases.PlayerData.PlayerDataAccessInterface;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
-import domain.entities.PlayerSession;
+import domain.player.PlayerSession;
 
 import java.util.HashMap;
 import java.util.Map;

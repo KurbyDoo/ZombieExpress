@@ -3,62 +3,94 @@ package infrastructure.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-
-import java.util.ArrayList;
-import java.util.List;
+import physics.CollisionHandler;
+import physics.GameMesh;
+import net.mgsx.gltf.scene3d.scene.SceneManager;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
-    public Environment environment;
+    private SceneManager sceneManager;
+    private CollisionHandler colHandler;
 
-    public PerspectiveCamera camera;
-    public ModelBatch modelBatch;
-    public List<ModelInstance> models = new ArrayList<>();
+    private BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
+    private BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
 
-    public BlockingQueue<ModelInstance> toAdd = new LinkedBlockingQueue<>();
+    public ObjectRenderer(PerspectiveCamera camera, CollisionHandler colHandler, MeshStorage meshStorage) {
+        this.colHandler = colHandler;
 
-    public ObjectRenderer(PerspectiveCamera camera) {
-        environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        //set up scene manager
+        sceneManager = new SceneManager();
+        sceneManager.setCamera(camera);
+        sceneManager.setAmbientLight(0.1f);
+        DirectionalLight light = new DirectionalLight();
+        light.set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
+        sceneManager.environment.add(light);
 
-        modelBatch = new ModelBatch();
-
-        this.camera = camera;
+        sceneManager.getRenderableProviders().add(meshStorage);
     }
 
-    public void add(ModelInstance modelInstance) {
-        toAdd.add(modelInstance);
+    public void add(GameMesh mesh) {
+        toAdd.add(mesh);
+    }
+
+    // Explicit method for removing a GameMesh
+    public void remove(GameMesh mesh) {
+        if (mesh != null) {
+            toRemove.add(mesh);
+        }
     }
 
     private void updateRenderList() {
-        ModelInstance instance;
-        while ((instance = toAdd.poll()) != null) {
-            models.add(instance);
+        GameMesh mesh;
+        // Add new models
+        while ((mesh = toAdd.poll()) != null) {
+            sceneManager.addScene(mesh.getScene());
+            colHandler.add(mesh);
+        }
+
+        // Remove and dispose old models
+        while ((mesh = toRemove.poll()) != null) {
+            sceneManager.removeScene(mesh.getScene());
+            colHandler.remove(mesh.getBody()); // Remove from collision world
+            // The instance is ChunkMeshData. It's dispose() method handles body/shape/triangle.
+            mesh.dispose();
         }
     }
 
-    public void render() {
+
+    public void render(Float deltaTime) {
         updateRenderList();
 
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glEnable(GL20.GL_CULL_FACE);
+        Gdx.gl.glCullFace(GL20.GL_BACK);
+
+        Gdx.gl.glViewport(
+            0,
+            0,
+            Gdx.graphics.getBackBufferWidth(),  // Use physical width
+            Gdx.graphics.getBackBufferHeight() // Use physical height
+        );
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        modelBatch.begin(camera);
-        for (ModelInstance modelInstance : models) {
-            modelBatch.render(modelInstance, environment);
-        }
-        modelBatch.end();
+        // Render scene manager
+        sceneManager.update(deltaTime);
+        sceneManager.render();
+
+        // gravity
+        colHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
     }
 
     public void dispose() {
-        modelBatch.dispose();
-        models.clear();
+        // First, process any pending additions/removals to ensure they are moved to the 'models' list
+        updateRenderList();
+
+        colHandler.dispose();
+        sceneManager.dispose();
+
+        toAdd.clear();
+        toRemove.clear();
     }
 }

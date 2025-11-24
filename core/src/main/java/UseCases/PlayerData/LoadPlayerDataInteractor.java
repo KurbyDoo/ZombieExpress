@@ -3,7 +3,7 @@ package UseCases.PlayerData;
 /**
  * Interactor for loading player data use case
  */
-import domain.entities.PlayerSession;
+import domain.player.PlayerSession;
 
 public class LoadPlayerDataInteractor {
 
