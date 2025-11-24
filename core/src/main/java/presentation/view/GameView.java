@@ -1,9 +1,11 @@
 package presentation.view;
 
+import application.use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
 import application.use_cases.chunk_mesh_generation.ChunkTexturedMeshGeneration;
 import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
+import application.use_cases.generate_mesh.GenerateTrainMeshStrategy;
 import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
 import application.use_cases.ports.BlockRepository;
 import application.use_cases.pickup.PickupInteractor;
@@ -112,14 +114,19 @@ public class GameView implements Viewable{
         GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
         GenerateZombieMeshStrategy zombieMeshStrategy = new GenerateZombieMeshStrategy();
 
+        GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
+        GenerateTrainMeshStrategy trainMeshStrategy = new GenerateTrainMeshStrategy();
+
         EntityStorage entityStorage = new IdToEntityStorage();
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
+            .register(EntityType.TRAIN, trainGenerateStrategy)
             .build();
 
         MeshStorage meshStorage = new IdToMeshStorage(colHandler);
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
             .register(EntityType.ZOMBIE, zombieMeshStrategy)
+            .register(EntityType.TRAIN, trainMeshStrategy)
             .build();
 
         // --- MESH + COL ---

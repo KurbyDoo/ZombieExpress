@@ -1,11 +1,14 @@
 package application.use_cases.generate_chunk;
 
+import application.use_cases.generate_entity.GenerateEntityInputData;
+import application.use_cases.generate_entity.train.GenerateTrainInputData;
 import application.use_cases.generate_entity.zombie.GenerateZombieInputData;
 import application.use_cases.ports.BlockRepository;
 import com.badlogic.gdx.math.Vector3;
 import domain.Chunk;
 import domain.World;
 import domain.entities.EntityFactory;
+import domain.entities.EntityType;
 import infrastructure.noise.PerlinNoise;
 
 public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
@@ -86,10 +89,21 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             }
         }
 
-//        if (chunk.getChunkY() == 1) {
-//            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
-//            entityFactory.create(new GenerateZombieInputData(pos, chunk));
-//        }
+        // train
+        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
+            Vector3 trainPosition = new Vector3(
+                chunk.getChunkWorldX() + (chunkSize / 2f),
+                1f,
+                chunk.getChunkWorldZ() + (chunkSize / 2f)
+            );
+            GenerateTrainInputData trainInput = new GenerateTrainInputData(trainPosition, chunk);
+            entityFactory.create(trainInput);
+        }
+
+        if (chunk.getChunkY() == 1) {
+            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
+            entityFactory.create(new GenerateZombieInputData(pos, chunk));
+        }
 
         return new GenerateChunkOutputData(chunk);
     }
