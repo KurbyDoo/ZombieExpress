@@ -7,12 +7,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.utils.IntIntMap;
 import domain.player.Player;
-import presentation.view.GameView;
 
 public class GameInputAdapter extends InputAdapter {
     private final IntIntMap keys = new IntIntMap();
     private final PlayerMovementInputBoundary playerMovementInteractor;
-    private final GameView gameView;
 
     private int lastMouseX = -1;
     private int lastMouseY = -1;
@@ -23,19 +21,17 @@ public class GameInputAdapter extends InputAdapter {
     public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, Player player) {
         this.playerMovementInteractor = playerMovementInteractor;
         this.player = player;
-        this.gameView = gameView;
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-            gameView.setQuitMenuOpen(!gameView.isQuitMenuOpen());
+            Gdx.app.exit();
+            System.out.println("Exiting game. Goodbye!");
             return true;
         }
 
-        if (!gameView.isQuitMenuOpen()) {
-            keys.put(keycode, keycode);
-        }
+        keys.put(keycode, keycode);
         return true;
     }
 
