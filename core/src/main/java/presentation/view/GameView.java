@@ -74,7 +74,6 @@ public class GameView implements Viewable{
     private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
 
-    private boolean isQuitMenuOpen = false;
 
     private GameHUD hud;
 
@@ -257,13 +256,5 @@ public class GameView implements Viewable{
                 it.remove();
             }
         }
-    }
-
-    public boolean isQuitMenuOpen() {
-        return isQuitMenuOpen;
-    }
-
-    public void setQuitMenuOpen(boolean open) {
-        this.isQuitMenuOpen = open;
     }
 }
