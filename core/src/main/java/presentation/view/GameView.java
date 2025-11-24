@@ -103,8 +103,6 @@ public class GameView implements Viewable{
     private float accumulator;
 
     private GameHUD hud;
-    private float testDamageTimer = 0f;
-    private GameMesh coalMesh;
 
     private final Map<WorldPickup, GameMesh> pickupMeshes = new HashMap<>();
     private final Map<WorldPickup, Scene> pickupScenes = new HashMap<>();
@@ -181,7 +179,7 @@ public class GameView implements Viewable{
 
         // TESTING === CREATE VISUAL + PHYSICS FOR EACH PICKUP ===
         for (WorldPickup pickup : pickupStorage.getAll()) {
-            // 1) Physics / debug: red HitBox mesh
+            // 1) Red HitBox mesh
             HitBox hitBox = new HitBox("pickupHitbox", BOX, 2, 2, 2);
             GameMesh mesh = hitBox.Construct();
             mesh.transform.setToTranslation(pickup.getPosition());
@@ -242,6 +240,7 @@ public class GameView implements Viewable{
         block.dispose();
     }
 
+    //FOR TESTING (SUBJECT TO CHANGE)
     private void syncPickupVisuals() {
         Set<WorldPickup> current = new HashSet<>(pickupStorage.getAll());
 
