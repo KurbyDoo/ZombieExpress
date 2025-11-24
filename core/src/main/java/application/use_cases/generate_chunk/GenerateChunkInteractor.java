@@ -1,20 +1,22 @@
 package application.use_cases.generate_chunk;
 
-import application.use_cases.generate_entity.GenerateEntityInputData;
-import application.use_cases.generate_entity.bullet.GenerateBulletInputData;
 import application.use_cases.generate_entity.train.GenerateTrainInputData;
 import application.use_cases.generate_entity.zombie.GenerateZombieInputData;
+import application.use_cases.generate_entity.pickup.GeneratePickupInputData;
 import application.use_cases.ports.BlockRepository;
 import com.badlogic.gdx.math.Vector3;
 import domain.Chunk;
 import domain.World;
 import domain.entities.EntityFactory;
-import domain.entities.EntityType;
+import domain.items.Item;
+import domain.items.ItemTypes;
 import infrastructure.noise.PerlinNoise;
+import java.util.Random;
 
 public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
     private final BlockRepository blockRepository;
     private final EntityFactory entityFactory;
+    private final Random random = new Random();
 
     public GenerateChunkInteractor(BlockRepository blockRepository, EntityFactory entityFactory) {
         this.blockRepository = blockRepository;
@@ -69,6 +71,19 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
                             entityFactory.create(new GenerateZombieInputData(pos, chunk));
                         }
                     }
+
+                    //Add random pickups
+                    if (worldY == height + 1 && (worldX * worldX + worldZ * worldZ) > 80 * 80) {
+                        double pickupNoise = PerlinNoise.perlin(
+                            worldX * scaleFactor * 8, 250f, worldZ * scaleFactor * 8
+                        );
+
+                        if (pickupNoise > 0.88) {
+                            Item item = randomPickupItem();
+                            Vector3 pickupPos = new Vector3(worldX, worldY, worldZ);
+                            entityFactory.create(new GeneratePickupInputData(item, pickupPos, chunk));
+                        }
+                    }
                 }
             }
         }
@@ -101,18 +116,10 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             entityFactory.create(trainInput);
         }
 
-
-        // zombie
         if (chunk.getChunkY() == 1) {
             Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
             entityFactory.create(new GenerateZombieInputData(pos, chunk));
         }
-
-        // bullet (for testing purpose)
-//        if ((chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0)) {
-//            Vector3 pos = new Vector3(1f, 3f, 0f);
-//            entityFactory.create(new GenerateBulletInputData(pos, chunk));
-//        }
 
         return new GenerateChunkOutputData(chunk);
     }
@@ -123,4 +130,17 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
         if (worldY >= height - 3) return "DIRT";
         return "STONE";
     }
+
+    private Item randomPickupItem() {
+        // Simple example: coal vs wood log
+        int r = random.nextInt(2); // 0 or 1
+        switch (r) {
+            case 0:
+                return ItemTypes.COAL;
+            case 1:
+            default:
+                return ItemTypes.WOOD_LOG;
+        }
+    }
+
 }

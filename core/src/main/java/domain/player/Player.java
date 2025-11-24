@@ -1,9 +1,9 @@
 package domain.player;
 
 import com.badlogic.gdx.math.Vector3;
-import domain.entities.AmmoType;
+import domain.AmmoType;
 import domain.items.Item;
-import static domain.entities.AmmoType.*;
+import static domain.AmmoType.*;
 
 public class Player {
     private final Vector3 startingPosition;

@@ -27,7 +27,7 @@ public class GameMesh {
 
     private ModelInstance hitboxInstance;
     private Model hitboxModel;
-    private boolean showHitbox = false;
+    private boolean showHitbox = true;
     private final btRigidBody body;
     private ChunkMeshData chunkMeshData;
 
