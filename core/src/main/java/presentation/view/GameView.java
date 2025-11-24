@@ -1,5 +1,6 @@
 package presentation.view;
 
+import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.pickup.GeneratePickupStrategy;
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
@@ -9,6 +10,8 @@ import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
 import application.use_cases.generate_mesh.GeneratePickupMeshStrategy;
 import application.use_cases.generate_mesh.GenerateTrainMeshStrategy;
 import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
+import application.use_cases.populate_chunk.PopulateChunkEntities;
+import application.use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.use_cases.ports.BlockRepository;
 import application.use_cases.pickup.PickupInteractor;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
@@ -45,7 +48,8 @@ public class GameView implements Viewable{
 
     private Player player;
 
-    private GenerateChunkInteractor chunkGenerator;
+    private GenerateChunkInputBoundary chunkGenerator;
+    private PopulateChunkInputBoundary chunkPopulator;
     private ChunkMeshGenerationInputBoundary chunkMeshGenerator;
     private WorldSyncController worldSyncController;
 
@@ -64,9 +68,10 @@ public class GameView implements Viewable{
 
     @Override
     public void createView() {
+        world = new World();
+
         Vector3 startingPosition = new Vector3(0, 3f, 0);
         player = new Player(startingPosition);
-
         camera = new ViewCamera();
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
@@ -94,7 +99,7 @@ public class GameView implements Viewable{
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
         GeneratePickupMeshStrategy pickupMeshStrategy = new GeneratePickupMeshStrategy();
 
-        EntityStorage entityStorage = new IdToEntityStorage();
+        EntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
@@ -114,14 +119,14 @@ public class GameView implements Viewable{
 
         // --- MESH + COL ---
         objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
-        world = new World();
 
         // --- PHYSICS ---
         PhysicsControlPort physicsAdapter = new BulletPhysicsAdapter(meshStorage);
         entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
 
         // --- CHUNK SYSTEM INITIALIZATION ---
-        this.chunkGenerator = new GenerateChunkInteractor(blockRepository, entityFactory);
+        this.chunkGenerator = new GenerateChunkInteractor(blockRepository);
+        this.chunkPopulator = new PopulateChunkEntities(entityFactory);
         this.chunkMeshGenerator = new ChunkTexturedMeshGeneration(blockRepository, (TexturedBlockMaterialRepository) materialRepository);
 
         worldSyncController = new WorldSyncController(
@@ -133,6 +138,7 @@ public class GameView implements Viewable{
             meshFactory,
             meshStorage,
             chunkGenerator,
+            chunkPopulator,
             chunkMeshGenerator,
             RENDER_RADIUS
         );
