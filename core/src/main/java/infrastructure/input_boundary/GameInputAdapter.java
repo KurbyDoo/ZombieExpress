@@ -25,6 +25,10 @@ public class GameInputAdapter extends InputAdapter {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.ESCAPE) {
+            Gdx.app.exit();
+            return true;
+        }
         keys.put(keycode, keycode);
         return true;
     }
