@@ -10,20 +10,15 @@ import java.util.*;
 
 public class IdToMeshStorage implements MeshStorage {
     private final Map<Integer, GameMesh> meshStorage;
-    private final Set<GameMesh> meshesToLoad;
-    private final Set<GameMesh> meshesToUnload;
     private final CollisionHandler collisionHandler;
 
     public IdToMeshStorage(CollisionHandler collisionHandler) {
         meshStorage = new HashMap<>();
-        meshesToLoad = new HashSet<>();
-        meshesToUnload = new HashSet<>();
         this.collisionHandler = collisionHandler;
     }
 
     public void addMesh(int id, GameMesh mesh) {
         if (meshStorage.containsKey(id)) return;
-        meshesToLoad.add(mesh);
         meshStorage.put(id, mesh);
         collisionHandler.add(mesh);
     }
@@ -37,24 +32,12 @@ public class IdToMeshStorage implements MeshStorage {
     }
 
     public void removeMesh(int id) {
-        meshesToUnload.add(meshStorage.get(id));
+        if (!meshStorage.containsKey(id)) {
+            System.out.println("ID " + id + " already removed!");
+            return;
+        }
         collisionHandler.remove(meshStorage.get(id).getBody());
         meshStorage.remove(id);
-    }
-
-    @Override
-    public Set<GameMesh> getMeshesToLoad() {
-        return meshesToLoad;
-    }
-
-    @Override
-    public Set<GameMesh> getMeshesToUnload() {
-        return meshesToUnload;
-    }
-
-    @Override
-    public Collection<GameMesh> getAllMeshes() {
-        return meshStorage.values();
     }
 
     @Override
