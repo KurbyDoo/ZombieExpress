@@ -157,6 +157,7 @@ This violates the Dependency Rule - Domain should NOT depend on Use Cases or Dat
 **Violation:** The `addAmmo` and `consumeAmmo` methods use switch statements on `AmmoType`. Adding a new ammo type requires modifying the `Player` class.
 
 ```java
+// From domain/player/Player.java
 public void addAmmo(AmmoType type, int amount) {
     switch (type) {
         case PISTOL:
@@ -165,6 +166,22 @@ public void addAmmo(AmmoType type, int amount) {
         case RIFLE:
             rifleAmmo += amount;
             break;
+    }
+}
+
+public boolean consumeAmmo(AmmoType type, int amount) {
+    if (amount <= 0) return false;
+    switch (type) {
+        case PISTOL:
+            if (pistolAmmo < amount) return false;
+            pistolAmmo -= amount;
+            return true;
+        case RIFLE:
+            if (rifleAmmo < amount) return false;
+            rifleAmmo -= amount;
+            return true;
+        default:
+            return false;
     }
 }
 ```
@@ -192,7 +209,13 @@ public void addAmmo(AmmoType type, int amount) {
 **Violation:** The `setID` method has an empty implementation, which could lead to unexpected behavior for callers.
 
 ```java
-public void setID(Integer id) {}
+// From domain/entities/Entity.java
+public class Entity {
+    protected Integer id;
+    // ... other fields
+    
+    public void setID(Integer id) {} // Empty implementation - does nothing!
+}
 ```
 
 **Remediation:** Either implement the method properly or throw `UnsupportedOperationException` if ID should be immutable. Consider removing the method if IDs are set only in the constructor.
