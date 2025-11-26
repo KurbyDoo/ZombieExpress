@@ -20,7 +20,7 @@ public class GameInputAdapter extends InputAdapter {
     private float currentDeltaY = 0;
     private final Player player;
 
-    public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, Player player) {
+    public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, CloseGameInputBoundary closeGameInteractor, Player player) {
         this.playerMovementInteractor = playerMovementInteractor;
         this.closeGameInteractor = closeGameInteractor;
         this.player = player;
