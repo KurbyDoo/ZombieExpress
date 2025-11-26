@@ -1,5 +1,7 @@
 package presentation.view;
 
+import application.use_cases.close_game.CloseGameInputBoundary;
+import application.use_cases.close_game.CloseGameInteractor;
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
 import application.use_cases.chunk_mesh_generation.ChunkTexturedMeshGeneration;
@@ -74,6 +76,8 @@ public class GameView implements Viewable{
     private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
 
+    private CloseGameInputBoundary closeGameInteractor;
+
 
     private GameHUD hud;
 
@@ -88,6 +92,8 @@ public class GameView implements Viewable{
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
+        closeGameInteractor = new CloseGameInteractor();
+
         //TESTING
         pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new Vector3(5, 16, 0)));
         pickupStorage.addPickup(new WorldPickup(ItemTypes.WOOD_LOG, new Vector3(15, 16, 0)));
@@ -96,7 +102,7 @@ public class GameView implements Viewable{
         PickupInteractor pickupInteractor = new PickupInteractor(pickupStorage);
         PickupController pickupController = new PickupController(player, pickupInteractor);
 
-        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, player);
+        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, closeGameInteractor, player);
         Gdx.input.setInputProcessor(gameInputAdapter);
         Gdx.input.setCursorCatched(true);
 
