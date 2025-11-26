@@ -1,12 +1,12 @@
 package presentation.view;
 
-import application.use_cases.generate_entity.bullet.GenerateBulletStrategy;
+import application.use_cases.close_game.CloseGameInputBoundary;
+import application.use_cases.close_game.CloseGameInteractor;
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
 import application.use_cases.chunk_mesh_generation.ChunkTexturedMeshGeneration;
 import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
-import application.use_cases.generate_mesh.GenerateBulletMeshStrategy;
 import application.use_cases.generate_mesh.GenerateTrainMeshStrategy;
 import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
 import application.use_cases.ports.BlockRepository;
@@ -76,6 +76,8 @@ public class GameView implements Viewable{
     private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
 
+    private CloseGameInputBoundary closeGameInteractor;
+
 
     private GameHUD hud;
 
@@ -90,6 +92,8 @@ public class GameView implements Viewable{
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
+        closeGameInteractor = new CloseGameInteractor();
+
         //TESTING
         pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new Vector3(5, 16, 0)));
         pickupStorage.addPickup(new WorldPickup(ItemTypes.WOOD_LOG, new Vector3(15, 16, 0)));
@@ -98,7 +102,7 @@ public class GameView implements Viewable{
         PickupInteractor pickupInteractor = new PickupInteractor(pickupStorage);
         PickupController pickupController = new PickupController(player, pickupInteractor);
 
-        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, player);
+        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, closeGameInteractor, player);
         Gdx.input.setInputProcessor(gameInputAdapter);
         Gdx.input.setCursorCatched(true);
 
@@ -120,21 +124,16 @@ public class GameView implements Viewable{
         GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
         GenerateTrainMeshStrategy trainMeshStrategy = new GenerateTrainMeshStrategy();
 
-        GenerateBulletStrategy bulletGenerationStrategy = new GenerateBulletStrategy();
-        GenerateBulletMeshStrategy bulletMeshStrategy = new GenerateBulletMeshStrategy();
-
         EntityStorage entityStorage = new IdToEntityStorage();
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
-            .register(EntityType.BULLET, bulletGenerationStrategy)
             .build();
 
         MeshStorage meshStorage = new IdToMeshStorage(colHandler);
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
             .register(EntityType.ZOMBIE, zombieMeshStrategy)
             .register(EntityType.TRAIN, trainMeshStrategy)
-            .register(EntityType.BULLET, bulletMeshStrategy)
             .build();
 
         // --- MESH + COL ---

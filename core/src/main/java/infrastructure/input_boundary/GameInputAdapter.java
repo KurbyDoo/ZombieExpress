@@ -1,5 +1,6 @@
 package infrastructure.input_boundary;
 
+import application.use_cases.close_game.CloseGameInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInputData;
 import com.badlogic.gdx.Gdx;
@@ -11,6 +12,7 @@ import domain.player.Player;
 public class GameInputAdapter extends InputAdapter {
     private final IntIntMap keys = new IntIntMap();
     private final PlayerMovementInputBoundary playerMovementInteractor;
+    private final CloseGameInputBoundary closeGameInteractor;
 
     private int lastMouseX = -1;
     private int lastMouseY = -1;
@@ -20,6 +22,7 @@ public class GameInputAdapter extends InputAdapter {
 
     public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, Player player) {
         this.playerMovementInteractor = playerMovementInteractor;
+        this.closeGameInteractor = closeGameInteractor;
         this.player = player;
     }
 
