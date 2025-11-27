@@ -16,10 +16,8 @@ public class ExitGameUseCase { // <-- Renamed back to UseCase
     }
 
     public void execute() {
-        // Here you can add application-specific logic like saving state.
         System.out.println("Saving state before exit...");
 
-        // Delegate the framework-specific exit command to the port/adapter
         lifecyclePort.closeApplication();
     }
 }
