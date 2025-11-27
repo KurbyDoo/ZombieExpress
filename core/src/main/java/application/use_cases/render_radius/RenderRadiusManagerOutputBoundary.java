@@ -1,11 +1,11 @@
 package application.use_cases.render_radius;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import infrastructure.rendering.ChunkMeshData;
 
 public interface RenderRadiusManagerOutputBoundary {
 
-    void onChunkCreated(Vector3 chunkPos);
-    void onChunkRemoved(Vector3 chunkPos);
-    void onChunkMeshReady(Vector3 chunkPos, ChunkMeshData meshData);
+    void onChunkCreated(GamePosition chunkPos);
+    void onChunkRemoved(GamePosition chunkPos);
+    void onChunkMeshReady(GamePosition chunkPos, ChunkMeshData meshData);
 }

@@ -3,6 +3,7 @@ package physics;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import domain.GamePosition;
 import domain.entities.Entity;
 
 public class MeshMotionState extends btMotionState {
@@ -40,6 +41,6 @@ public class MeshMotionState extends btMotionState {
 
         worldTrans.getTranslation(tempPos);
         tempPos.add(offset);
-        entity.setPosition(tempPos);
+        entity.setPosition(new GamePosition(tempPos.x, tempPos.y, tempPos.z));
     }
 }

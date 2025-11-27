@@ -1,4 +1,4 @@
-package application.use_cases.generate_mesh;
+package infrastructure.rendering.strategies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -8,19 +8,20 @@ import com.badlogic.gdx.physics.bullet.collision.Collision;
 import com.badlogic.gdx.physics.bullet.collision.btBoxShape;
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import domain.GamePosition;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
 import net.mgsx.gltf.scene3d.scene.SceneAsset;
 import physics.GameMesh;
 import physics.MeshMotionState;
 
-public class GenerateBulletMeshStrategy implements GenerateMeshStrategy {
-    private SceneAsset bulletAsset = new GLTFLoader().load(Gdx.files.internal("models/bullet/bullet.gltf"));
+public class GenerateZombieMeshStrategy implements GenerateMeshStrategy {
+    private SceneAsset zombieAsset = new GLTFLoader().load(Gdx.files.internal("models/model.gltf"));
 
     @Override
     public GameMesh execute(GenerateMeshInputData inputData) {
-        Scene bulletScene = new Scene(bulletAsset.scene);
-        ModelInstance modelInstance = bulletScene.modelInstance;
+        Scene zombieScene = new Scene(zombieAsset.scene);
+        ModelInstance modelInstance = zombieScene.modelInstance;
 
         inputData.getEntity().getPosition().add(0, 1f, 0);
 
@@ -30,8 +31,9 @@ public class GenerateBulletMeshStrategy implements GenerateMeshStrategy {
         bbox.getDimensions(dimensions);
         dimensions.scl(0.5f);
 
-        Vector3 visualOffset = new Vector3(0, -dimensions.y, 0); // why -dimensions.y?
-        modelInstance.transform.setToTranslation(inputData.getEntity().getPosition());
+        Vector3 visualOffset = new Vector3(0, -dimensions.y, 0);
+        GamePosition pos = inputData.getEntity().getPosition();
+        modelInstance.transform.setToTranslation(pos.x, pos.y, pos.z);
 
         btCollisionShape shape = new btBoxShape(dimensions);
         float mass = 1f;
@@ -50,7 +52,7 @@ public class GenerateBulletMeshStrategy implements GenerateMeshStrategy {
 
         info.dispose();
 
-        GameMesh mesh = new GameMesh(inputData.getId(), bulletScene, body, motionState);
+        GameMesh mesh = new GameMesh(inputData.getId(), zombieScene, body, motionState);
         mesh.setShowHitbox(true);
         return mesh;
     }

@@ -1,4 +1,4 @@
-package application.use_cases.generate_mesh;
+package infrastructure.rendering.strategies;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Matrix4;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.bullet.collision.btCollisionShape;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btMotionState;
+import domain.GamePosition;
 import domain.entities.PickupEntity;
 import domain.items.Item;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
@@ -35,6 +36,7 @@ public class GeneratePickupMeshStrategy implements GenerateMeshStrategy {
         }
 
         PickupEntity pickup = (PickupEntity) inputData.getEntity();
+        GamePosition pickupPos = pickup.getPosition();
         Item item = pickup.getItem();
 
         SceneAsset asset = getAssetForItemName(item.getName());
@@ -44,7 +46,7 @@ public class GeneratePickupMeshStrategy implements GenerateMeshStrategy {
         float scale = getScaleForItemName(item.getName());
         scene.modelInstance.transform.idt();
         scene.modelInstance.transform
-            .setToTranslation(pickup.getPosition())
+            .setToTranslation(pickupPos.x, pickupPos.y, pickupPos.z)
             .scale(scale, scale, scale);
 
         // Build Bullet collision shape from bounding box
@@ -55,7 +57,7 @@ public class GeneratePickupMeshStrategy implements GenerateMeshStrategy {
         bbox.getDimensions(halfExtents).scl(0.5f);
 
         btCollisionShape shape = new btBoxShape(halfExtents);
-        Matrix4 transform = new Matrix4().setToTranslation(pickup.getPosition());
+        Matrix4 transform = new Matrix4().setToTranslation(pickupPos.x, pickupPos.y, pickupPos.z);
 
         btMotionState motionState = new btDefaultMotionState(transform);
         Vector3 inertia = new Vector3(0, 0, 0); // static

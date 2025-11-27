@@ -1,9 +1,9 @@
 package presentation.view.hud;
 
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import domain.GamePosition;
 import domain.player.Player;
 
 public class DistanceHudElement implements HudElement {
@@ -26,8 +26,8 @@ public class DistanceHudElement implements HudElement {
 
     @Override
     public void update(float deltaTime) {
-        Vector3 current = player.getPosition();
-        Vector3 start   = player.getStartingPosition();
+        GamePosition current = player.getPosition();
+        GamePosition start   = player.getStartingPosition();
         int distance = Math.max(0, (int) (current.x - start.x));
         distanceLabel.setText(String.format("Distance: %d m", distance));
     }

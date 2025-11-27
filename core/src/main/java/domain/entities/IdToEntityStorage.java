@@ -4,6 +4,7 @@ package domain.entities;
 import com.badlogic.gdx.math.Vector3;
 import data_access.EntityStorage;
 import domain.Chunk;
+import domain.GamePosition;
 import domain.World;
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class IdToEntityStorage implements EntityStorage {
     @Override
     public void setIDEntityPair(Integer id, Entity e) {
         storage.put(id, e);
-        Vector3 position = e.getPosition();
+        GamePosition position = e.getPosition();
         Chunk chunk = world.getChunkFromWorldPos(position);
         chunk.addEntity(id);
     }
@@ -44,7 +45,7 @@ public class IdToEntityStorage implements EntityStorage {
     public void removeEntity(Integer id) {
         Entity entity = storage.get(id);
         if (entity == null) return;
-        Vector3 position = entity.getPosition();
+        GamePosition position = entity.getPosition();
         Chunk chunk = world.getChunkFromWorldPos(position);
         storage.remove(id);
         chunk.removeEntity(id);
