@@ -28,6 +28,7 @@ import presentation.controllers.*;
 import presentation.view.hud.GameHUD;
 import infrastructure.rendering.*;
 import infrastructure.input_boundary.*;
+import infrastructure.input_boundary.LibGDXLifecycleAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import net.mgsx.gltf.scene3d.scene.Scene;
@@ -75,8 +76,6 @@ public class GameView implements Viewable{
     private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
 
-    private ExitGameUseCase exitGameUseCase;
-
 
     private GameHUD hud;
 
@@ -84,12 +83,16 @@ public class GameView implements Viewable{
 
     @Override
     public void createView() {
+        ExitGameUseCase exitGameUseCase;
         Vector3 startingPosition = new Vector3(0, 3f, 0);
         player = new Player(startingPosition);
 
         camera = new ViewCamera();
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
+
+        ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
+        exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
 
         //TESTING
         pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new Vector3(5, 16, 0)));
@@ -127,8 +130,6 @@ public class GameView implements Viewable{
             .register(EntityType.TRAIN, trainGenerateStrategy)
             .build();
 
-        ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
-        exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
 
         MeshStorage meshStorage = new IdToMeshStorage(colHandler);
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)

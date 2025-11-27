@@ -32,7 +32,8 @@ public class GameInputAdapter extends InputAdapter {
             exitGameUseCase.execute();
             return true;
         }
-        return false;
+        keys.put(keycode, keycode);
+        return true;
     }
 
     @Override
