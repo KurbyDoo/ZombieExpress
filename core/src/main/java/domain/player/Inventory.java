@@ -29,13 +29,11 @@ public class Inventory {
      * Do nothing if inventory is full.
      * @param item The item to add to the inventory.
      */
-    public boolean addItem(Item item, int quantity) {
+    public boolean addItem(Item item) {
         if (item.isStackable()) {
             for (InventorySlot slot : slots) {
                 if (!slot.isEmpty() && slot.getItem().equals(item)) {
-                    for (int i = 0; i < quantity; i++) {
-                        slot.addOne(item);
-                    }
+                    slot.addOne(item);
                     return true;
                 }
             }
@@ -43,17 +41,11 @@ public class Inventory {
 
         for (InventorySlot slot : slots) {
             if (slot.isEmpty()) {
-                for (int i = 0; i < quantity; i++) {
-                    slot.addOne(item);
-                }
+                slot.addOne(item);
                 return true;
             }
         }
         return false;
-    }
-
-    public boolean addItem(Item item) {
-        return addItem(item, 1);
     }
 
     /**
