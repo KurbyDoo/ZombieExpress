@@ -18,10 +18,8 @@ import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInteractor;
 import application.use_cases.ports.PhysicsControlPort;
 import application.use_cases.update_entity.EntityBehaviourSystem;
-import data_access.EntityStorage;
 import data_access.InMemoryBlockRepository;
 import domain.entities.*;
-import domain.items.ItemTypes;
 import domain.player.Player;
 import domain.World;
 import physics.BulletPhysicsAdapter;
@@ -64,7 +62,9 @@ public class GameView implements Viewable{
     private GameSimulationController gameSimulationController;
     private PickupController pickupController;
 
+    private IdToEntityStorage entityStorage;
     private GameHUD hud;
+    private float testFuelTimer = 0f;
 
     @Override
     public void createView() {
@@ -99,7 +99,7 @@ public class GameView implements Viewable{
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
         GeneratePickupMeshStrategy pickupMeshStrategy = new GeneratePickupMeshStrategy();
 
-        EntityStorage entityStorage = new IdToEntityStorage(world);
+        entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
@@ -113,8 +113,8 @@ public class GameView implements Viewable{
             .register(EntityType.PICKUP, pickupMeshStrategy)
             .build();
 
-        PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, 3f, 25f);
-        pickupController = new PickupController(player, pickupInteractor, meshStorage);
+        PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, player);
+        pickupController = new PickupController(pickupInteractor, meshStorage);
         pickupInputAdapter = new PickUpInputAdapter(pickupController);
 
         // --- MESH + COL ---
@@ -144,31 +144,7 @@ public class GameView implements Viewable{
         );
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
-        hud = new GameHUD(player, pickupController);
-
-//        // === TEMP TEST PICKUPS ===
-//        int nextPickupId = 1000; // just make sure it doesn’t collide with other entities
-//
-//        PickupEntity coalPickup = new PickupEntity(
-//            nextPickupId++,
-//            ItemTypes.COAL,
-//            new Vector3(5, 2, 0),
-//            true
-//        );
-//        entityStorage.setIDEntityPair(coalPickup.getID(), coalPickup);
-//        GenerateMeshInputData coalMeshData = new GenerateMeshInputData(coalPickup, coalPickup.getID());
-//        meshFactory.createMesh(coalMeshData);
-//
-//        PickupEntity woodPickup = new PickupEntity(
-//            nextPickupId++,
-//            ItemTypes.WOOD_LOG,
-//            new Vector3(7, 2, 0),
-//            true
-//        );
-//        entityStorage.setIDEntityPair(woodPickup.getID(), woodPickup);
-//        GenerateMeshInputData woodMeshData = new GenerateMeshInputData(woodPickup, woodPickup.getID());
-//        meshFactory.createMesh(woodMeshData);
-
+        hud = new GameHUD(player, entityStorage, pickupController);
     }
 
     @Override
@@ -188,13 +164,31 @@ public class GameView implements Viewable{
             gameSimulationController.update(TIME_STEP);
         }
 
+//        Train train = entityStorage.getTrain();
+//        if (train != null) {
+//            testFuelTimer += deltaTime;
+//
+//            // every 0.5 seconds, add 1 fuel until full
+//            if (testFuelTimer >= 0.5f) {
+//                testFuelTimer = 0f;
+//
+//                int current = train.getCurrentFuel();
+//                int max = train.getMaxFuel();
+//
+//                if (current < max) {
+//                    train.addFuel(1);   // test: slowly fill bar
+//                    System.out.println("Fuel test: " + train.getCurrentFuel() + "/" + max);
+//                }
+//            }
+//        }
+
         player.updatePassiveHealing(deltaTime);
 
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        pickupController.refreshPickupTarget();
+        pickupController.refreshTarget();
         objectRenderer.render(deltaTime);
 
         // HUD

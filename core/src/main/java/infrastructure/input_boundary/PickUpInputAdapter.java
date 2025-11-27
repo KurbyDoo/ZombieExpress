@@ -14,7 +14,7 @@ public class PickUpInputAdapter {
 
     public void pollInput() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
-            pickupController.onPickupKeyPressed();
+            pickupController.onActionKeyPressed();
         }
     }
 }
