@@ -4,16 +4,16 @@ package application.use_cases.win_condition;
  * Data structure holding the result of the win condition check.
  */
 public class WinConditionOutputData {
-    private final boolean gameWon;
+    private final boolean gameIsOver;
     private final String message;
 
-    public WinConditionOutputData(boolean gameWon, String message) {
-        this.gameWon = gameWon;
+    public WinConditionOutputData(boolean gameIsOver, String message) {
+        this.gameIsOver = gameIsOver;
         this.message = message;
     }
 
-    public boolean isGameWon() {
-        return gameWon;
+    public boolean isGameOver() {
+        return gameIsOver;
     }
 
     public String getMessage() {
