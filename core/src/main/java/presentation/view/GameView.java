@@ -1,5 +1,6 @@
 package presentation.view;
 
+import application.use_cases.exit_game.ExitGameUseCase;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.pickup.GeneratePickupStrategy;
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
@@ -12,6 +13,7 @@ import application.use_cases.generate_mesh.GenerateTrainMeshStrategy;
 import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
 import application.use_cases.populate_chunk.PopulateChunkEntities;
 import application.use_cases.populate_chunk.PopulateChunkInputBoundary;
+import application.use_cases.ports.ApplicationLifecyclePort;
 import application.use_cases.ports.BlockRepository;
 import application.use_cases.pickup.PickupInteractor;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
@@ -64,7 +66,6 @@ public class GameView implements Viewable{
 
     private IdToEntityStorage entityStorage;
     private GameHUD hud;
-    private float testFuelTimer = 0f;
 
     @Override
     public void createView() {
@@ -76,7 +77,10 @@ public class GameView implements Viewable{
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
-        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, player);
+        ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
+        ExitGameUseCase exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
+
+        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
         Gdx.input.setInputProcessor(gameInputAdapter);
         Gdx.input.setCursorCatched(true);
         inventoryInputAdapter = new InventoryInputAdapter(player);
@@ -164,26 +168,7 @@ public class GameView implements Viewable{
             gameSimulationController.update(TIME_STEP);
         }
 
-//        Train train = entityStorage.getTrain();
-//        if (train != null) {
-//            testFuelTimer += deltaTime;
-//
-//            // every 0.5 seconds, add 1 fuel until full
-//            if (testFuelTimer >= 0.5f) {
-//                testFuelTimer = 0f;
-//
-//                int current = train.getCurrentFuel();
-//                int max = train.getMaxFuel();
-//
-//                if (current < max) {
-//                    train.addFuel(1);   // test: slowly fill bar
-//                    System.out.println("Fuel test: " + train.getCurrentFuel() + "/" + max);
-//                }
-//            }
-//        }
-
         player.updatePassiveHealing(deltaTime);
-
         float alpha = accumulator / TIME_STEP;
 
         // RENDER UPDATES
