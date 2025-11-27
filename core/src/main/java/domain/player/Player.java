@@ -2,6 +2,8 @@ package domain.player;
 
 import com.badlogic.gdx.math.Vector3;
 import domain.entities.AmmoType;
+import domain.entities.Rideable;
+import domain.entities.Train;
 import domain.items.Item;
 import static domain.entities.AmmoType.*;
 
@@ -24,12 +26,16 @@ public class Player {
     private int currentHealth = maxHealth;
     private float passiveHealTimer = 0;
 
+    private Rideable currentRide;
+
     public Player(Vector3 startingPosition) {
         this.startingPosition = new Vector3(startingPosition);
         this.position = new Vector3(startingPosition);
         this.direction = new Vector3(1, 0, 0);
         this.up = new Vector3(Vector3.Y);
         this.inventory = new Inventory();
+
+        this.currentRide = new Train(-1, this.position);
 
 //        inventory.addItem(BASEBALL_BAT);
 //        inventory.addItem(RUSTY_PISTOL);
@@ -40,12 +46,9 @@ public class Player {
     /**
      * Updates the player's position based on a velocity vector.
      * @param velocity The direction of movement (should be normalized).
-     * @param deltaTime The time since the last frame.
-     * @param isSprinting Whether the player is sprinting.
      */
-    public void updatePosition(Vector3 velocity, float deltaTime, boolean isSprinting) {
-        float speed = isSprinting ? sprintSpeed : movementSpeed;
-        position.add(velocity.nor().scl(speed * deltaTime));
+    public void updatePosition(Vector3 velocity) {
+        position.add(velocity);
     }
 
     /**
@@ -105,6 +108,14 @@ public class Player {
 
     public int getCurrentSlot() {
         return currentSlot;
+    }
+
+    public void setCurrentRide(Rideable currentRide) {
+        this.currentRide = currentRide;
+    }
+
+    public Rideable getCurrentRide() {
+        return currentRide;
     }
 
     public int getMaxHealth() {

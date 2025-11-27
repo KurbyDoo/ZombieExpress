@@ -12,11 +12,6 @@ public class GenerateTrainStrategy implements GenerateEntityStrategy {
         // We set isVisible to true since the train needs to be rendered initially.
         // It's crucial to use the data passed via inputData to maintain the pattern.
 
-        return new Train(
-            inputData.getId(),
-            EntityType.TRAIN, // Passed from GenerateTrainInputData
-            inputData.getPosition(),
-            true // We assume the train is visible upon creation
-        );
+        return new Train(inputData.getId(), inputData.getPosition());
     }
 }

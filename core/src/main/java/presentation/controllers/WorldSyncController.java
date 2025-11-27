@@ -65,17 +65,17 @@ public class WorldSyncController implements Disposable {
         this.world = world;
         this.player = player;
         this.RENDER_RADIUS = renderRadius;
-
-        // TODO: Move these to game view
         this.chunkGenerator = chunkGenerator;
         this.chunkMeshGenerator = chunkMeshGenerator;
 
-        this.chunkRenderer = new ChunkRenderer(objectRenderer);
 
-        this.renderRadiusManager = new RenderRadiusManagerInteractor();
+        // TODO: Move these to game view
+        this.chunkRenderer = new ChunkRenderer(objectRenderer);
+        this.renderRadiusManager = new RenderRadiusManagerInteractor(world);
+
+
 
         this.entityStorage = entityStorage;
-
         this.meshFactory = meshFactory;
         this.meshStorage = meshStorage;
     }
