@@ -10,19 +10,24 @@ import java.util.Set;
 
 public class RenderRadiusManagerInteractor implements RenderRadiusManagerInputBoundary {
     // --- WORLD BOUNDARY CONSTANTS ---
-    private static final int MAX_WORLD_Z_CHUNKS = 8;
-    private static final int MIN_WORLD_Z_CHUNKS = -8;
-    private static final int MAX_WORLD_X_CHUNKS = 32;
-    private static final int MIN_WORLD_X_CHUNKS = -8;
-    private static final int MAX_WORLD_Y_CHUNKS = 8;
-    private static final int MIN_WORLD_Y_CHUNKS = 0;
-    private static final int Y_VIEW_RANGE = 3;
+    private final int MAX_WORLD_Z_CHUNKS = 8;
+    private final int MIN_WORLD_Z_CHUNKS = -8;
+    // TODO: This needs to be synced globally with chunk generation
+    private final int MAX_WORLD_X_CHUNKS;
+    private final int MIN_WORLD_X_CHUNKS = -8;
+    private final int MAX_WORLD_Y_CHUNKS = 8;
+    private final int MIN_WORLD_Y_CHUNKS = 0;
+    private final int Y_VIEW_RANGE = 3;
 
     private int lastChunkX = Integer.MAX_VALUE;
     private int lastChunkZ = Integer.MAX_VALUE;
 
     // Tracks chunks currently in the world
     private final Set<Vector3> renderedChunks = new HashSet<>();
+
+    public RenderRadiusManagerInteractor(World world) {
+        MAX_WORLD_X_CHUNKS = world.getWorldDepthChunks() + 12;
+    }
 
     @Override
     public RenderRadiusOutputData execute(RenderRadiusManagerInputData inputData) {
