@@ -28,6 +28,7 @@ public class InventorySlot {
         if (isEmpty()) {
             item = newItem;
             quantity = 1;
+            return;
         }
         if (item.equals(newItem) && item.isStackable()) {
             quantity++;

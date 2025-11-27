@@ -5,6 +5,8 @@ import application.use_cases.generate_chunk.GenerateChunkOutputData;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputData;
 import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData;
 import application.use_cases.generate_mesh.GenerateMeshInputData;
+import application.use_cases.populate_chunk.PopulateChunkInputBoundary;
+import application.use_cases.populate_chunk.PopulateChunkInputData;
 import application.use_cases.render_radius.RenderRadiusOutputData;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
@@ -36,6 +38,7 @@ public class WorldSyncController implements Disposable {
     private final int RENDER_RADIUS; // Removed hardcoded '= 6'
 
     private final GenerateChunkInputBoundary chunkGenerator;
+    private final PopulateChunkInputBoundary chunkPopulator;
     private final ChunkMeshGenerationInputBoundary chunkMeshGenerator;
     private final RenderRadiusManagerInputBoundary renderRadiusManager;
 
@@ -59,6 +62,7 @@ public class WorldSyncController implements Disposable {
         MeshFactory meshFactory,
         MeshStorage meshStorage,
         GenerateChunkInputBoundary chunkGenerator,
+        PopulateChunkInputBoundary chunkPopulator,
         ChunkMeshGenerationInputBoundary chunkMeshGenerator,
         int renderRadius
     ) {
@@ -66,8 +70,8 @@ public class WorldSyncController implements Disposable {
         this.player = player;
         this.RENDER_RADIUS = renderRadius;
 
-        // TODO: Move these to game view
         this.chunkGenerator = chunkGenerator;
+        this.chunkPopulator = chunkPopulator;
         this.chunkMeshGenerator = chunkMeshGenerator;
 
         this.chunkRenderer = new ChunkRenderer(objectRenderer);
@@ -95,7 +99,8 @@ public class WorldSyncController implements Disposable {
         // Generate chunks
         for (Vector3 pos : radiusData.getChunksToGenerate()) {
             GenerateChunkOutputData outputData = chunkGenerator.execute(new GenerateChunkInputData(pos, world));
-            world.addChunk(pos, outputData.getNewChunk());
+            world.addChunk(pos, outputData.getChunk());
+            chunkPopulator.execute(new PopulateChunkInputData(world, outputData.getChunk()));
             chunkRenderer.onChunkCreated(pos);
         }
 

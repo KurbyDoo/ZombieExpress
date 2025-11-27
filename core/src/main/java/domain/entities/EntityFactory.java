@@ -4,6 +4,7 @@ import application.use_cases.generate_entity.GenerateEntityStrategy;
 import application.use_cases.generate_entity.GenerateEntityInputData;
 import data_access.EntityStorage;
 import domain.Chunk;
+import domain.World;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,10 +24,8 @@ public class EntityFactory {
         // TODO: Should the entity hold id? yes right?
         idCounter++;
         inputData.setId(idCounter);
-        Chunk chunk = inputData.getChunk();
         Entity e = registry.get(inputData.getType()).execute(inputData);
         storage.setIDEntityPair(e.getID(), e);
-        chunk.addEntity(e.getID());
     }
 
     public static class EntityFactoryBuilder {

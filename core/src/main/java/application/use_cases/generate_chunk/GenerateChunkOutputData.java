@@ -8,7 +8,7 @@ public class GenerateChunkOutputData {
         newChunk = chunk;
     }
 
-    public Chunk getNewChunk() {
+    public Chunk getChunk() {
         return newChunk;
     }
 }

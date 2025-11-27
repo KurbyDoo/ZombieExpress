@@ -4,6 +4,6 @@ public enum EntityType {
     CHUNK,
     ZOMBIE,
     BULLET,
-    COAL,
+    PICKUP,
     TRAIN
 }

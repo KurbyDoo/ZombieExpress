@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import domain.entities.IdToEntityStorage;
+import domain.entities.Train;
 import domain.player.Player;
 import presentation.controllers.PickupController;
 
@@ -13,7 +15,7 @@ public class GameHUD {
     private final Stage uiStage;
     private final HudElement[] hudElements;
 
-    public GameHUD(Player player, PickupController pickupController) {
+    public GameHUD(Player player, IdToEntityStorage entityStorage, PickupController pickupController) {
         this.uiStage = new Stage(new ScreenViewport());
 
         Label.LabelStyle style = new Label.LabelStyle(new BitmapFont(), Color.WHITE);
@@ -23,6 +25,7 @@ public class GameHUD {
         hudElements = new HudElement[] {
             new TimeHudElement(uiStage, mainStyle),
             new DistanceHudElement(uiStage, mainStyle, player),
+            new FuelHudElement(uiStage, mainStyle, entityStorage),
             new HealthHudElement(uiStage, player),
             new AmmoHudElement(uiStage, mainStyle, player),
             new HeldItemHudElement(uiStage, player),

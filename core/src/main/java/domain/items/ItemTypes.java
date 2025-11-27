@@ -1,6 +1,6 @@
 package domain.items;
 
-import domain.entities.AmmoType;
+import domain.AmmoType;
 
 public class ItemTypes {
 
@@ -8,8 +8,8 @@ public class ItemTypes {
 
     // Fuel Items
     public static final FuelItem WOOD_LOG   = new FuelItem("Wood Log", true, 10);
-    public static final FuelItem COAL       = new FuelItem("Coal", true, 25);
-    public static final FuelItem OIL_BARREL = new FuelItem("Oil Barrel", false, 50);
+    public static final FuelItem COAL       = new FuelItem("Coal", true, 15);
+    public static final FuelItem OIL_BARREL = new FuelItem("Oil Barrel", true, 25);
 
     // Melee Weapons
     public static final MeleeWeapon BASEBALL_BAT = new MeleeWeapon("Baseball Bat", 10);

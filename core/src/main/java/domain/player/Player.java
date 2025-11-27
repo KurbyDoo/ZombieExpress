@@ -1,9 +1,9 @@
 package domain.player;
 
 import com.badlogic.gdx.math.Vector3;
-import domain.entities.AmmoType;
+import domain.AmmoType;
 import domain.items.Item;
-import static domain.entities.AmmoType.*;
+import static domain.AmmoType.*;
 
 public class Player {
     private final Vector3 startingPosition;
@@ -31,10 +31,10 @@ public class Player {
         this.up = new Vector3(Vector3.Y);
         this.inventory = new Inventory();
 
-//        inventory.addItem(BASEBALL_BAT);
 //        inventory.addItem(RUSTY_PISTOL);
 //        inventory.addItem(COAL, 2);
-        addAmmo(PISTOL, 10);
+        addAmmo(PISTOL, 250);
+        addAmmo(RIFLE, 100);
     }
 
     /**
@@ -181,10 +181,12 @@ public class Player {
     /**
      * Picks up the specified item and adds it to the player's inventory.
      * Do nothing if inventory is full.
+     *
      * @param item The item to be picked up.
+     * @return
      */
-    public void pickUp(Item item) {
-        inventory.addItem(item);
+    public boolean pickUp(Item item) {
+        return inventory.addItem(item);
     }
 
     /**
