@@ -59,7 +59,7 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
                             worldX * scaleFactor * 8, 250f, worldZ * scaleFactor * 8
                         );
 
-                        if (pickupNoise > 0.88) {
+                        if (pickupNoise > 0.83) {
                             Item item = randomPickupItem();
                             Vector3 pickupPos = new Vector3(worldX, worldY, worldZ);
                             entityFactory.create(new GeneratePickupInputData(item, pickupPos));
@@ -78,11 +78,6 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
             );
             GenerateTrainInputData trainInput = new GenerateTrainInputData(trainPosition);
             entityFactory.create(trainInput);
-        }
-
-        if (chunk.getChunkY() == 1) {
-            Vector3 pos = chunk.getWorldPosition().add(0, 10, 0);
-            entityFactory.create(new GenerateZombieInputData(pos));
         }
     }
 
@@ -106,12 +101,12 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
 
 
     private Item randomPickupItem() {
-        // Simple example: coal vs wood log
-        int r = random.nextInt(2); // 0 or 1
+        int r = random.nextInt(3);
         switch (r) {
             case 0:
                 return ItemTypes.COAL;
             case 1:
+                return ItemTypes.OIL_BARREL;
             default:
                 return ItemTypes.WOOD_LOG;
         }

@@ -84,17 +84,4 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
         if (worldY >= height - 3) return "DIRT";
         return "STONE";
     }
-
-    private Item randomPickupItem() {
-        // Simple example: coal vs wood log
-        int r = random.nextInt(2); // 0 or 1
-        switch (r) {
-            case 0:
-                return ItemTypes.COAL;
-            case 1:
-            default:
-                return ItemTypes.WOOD_LOG;
-        }
-    }
-
 }

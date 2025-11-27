@@ -16,9 +16,6 @@ public class HealthHudElement implements HudElement {
     private final Player player;
     private final Image healthBar;
 
-    private static final float HEALTH_BAR_WIDTH  = 260;
-    private static final float HEALTH_BAR_HEIGHT = 30;
-
     public HealthHudElement(Stage stage, Player player) {
         this.player = player;
 
@@ -26,12 +23,14 @@ public class HealthHudElement implements HudElement {
         healthTable.setFillParent(true);
         healthTable.top().right().padTop(10).padRight(10);
 
+        float barWidth = 260;
+        float barHeight = 30;
         Drawable redHealth = createBarDrawable(new Color(0.3f, 0, 0, 1),
-            (int) HEALTH_BAR_WIDTH, (int) HEALTH_BAR_HEIGHT);
+            (int) barWidth, (int) barHeight);
         Drawable greenHealth = createBarDrawable(Color.GREEN,
-            (int) HEALTH_BAR_WIDTH, (int) HEALTH_BAR_HEIGHT);
+            (int) barWidth, (int) barHeight);
         Drawable healthBorder = createBorderDrawable(
-            (int) HEALTH_BAR_WIDTH, (int) HEALTH_BAR_HEIGHT);
+            (int) barWidth, (int) barHeight);
 
         Image healthBackground = new Image(redHealth);
         healthBar = new Image(greenHealth);
@@ -43,8 +42,8 @@ public class HealthHudElement implements HudElement {
         stack.add(healthBorderImage);
 
         healthTable.add(stack)
-            .width(HEALTH_BAR_WIDTH)
-            .height(HEALTH_BAR_HEIGHT);
+            .width(barWidth)
+            .height(barHeight);
 
         stage.addActor(healthTable);
     }
