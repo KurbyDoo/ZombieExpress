@@ -3,7 +3,7 @@ package application.use_cases.win_condition;
 import com.badlogic.gdx.Gdx;
 import domain.World;
 import domain.entities.Entity;
-import data_access.mockLogic.EntityStorage;
+import domain.entities.IdToEntityStorage;
 import domain.entities.EntityType;
 import java.util.Optional;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class WinConditionInteractor implements WinConditionInputBoundary {
 
     private final World world;
-    private final EntityStorage entityStorage;
+    private final IdToEntityStorage IdToEntityStorage;
     private boolean isGameOver = false;
 
     public WinConditionInteractor(World world, EntityStorage entityStorage) {
