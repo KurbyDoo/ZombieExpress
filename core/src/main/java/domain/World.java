@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 public class World {
-    private final int worldDepthChunks = 20;
+    private final int worldDepthChunks = 200;
     private HashMap<Vector3, Chunk> chunks;
 
     public World() {

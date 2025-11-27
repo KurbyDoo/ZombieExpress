@@ -14,8 +14,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.*;
 import infrastructure.rendering.ChunkMeshData;
 import infrastructure.rendering.BlockMaterialRepository;
-import physics.GameMesh;
-
 
 public class ChunkMeshGenerationInteractor implements ChunkMeshGenerationInputBoundary {
     private final Vector3 p1 = new Vector3();
