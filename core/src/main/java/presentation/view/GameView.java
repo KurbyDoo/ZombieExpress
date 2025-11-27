@@ -3,9 +3,12 @@ package presentation.view;
 import application.use_cases.exit_game.ExitGameUseCase;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.pickup.GeneratePickupStrategy;
+import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
+import application.use_cases.update_world.UpdateWorldInputBoundary;
+import application.use_cases.update_world.UpdateWorldInteractor;
 import application.use_cases.populate_chunk.PopulateChunkEntities;
 import application.use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.use_cases.ports.ApplicationLifecyclePort;
@@ -74,7 +77,7 @@ public class GameView implements Viewable{
     private GameSimulationController gameSimulationController;
     private PickupController pickupController;
 
-    private EntityStorage entityStorage;
+//    private EntityStorage entityStorage;
     private GameHUD hud;
 
     // TODO: Merge with entity storage
@@ -96,7 +99,9 @@ public class GameView implements Viewable{
         GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
-        entityStorage = new IdToEntityStorage(world);
+        // TODO: Merge with entity storage
+//        this.pickupStorage = new PickupStorage();
+        EntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
@@ -114,9 +119,10 @@ public class GameView implements Viewable{
 
 
         // Chunk Generation
-        GenerateChunkInteractor chunkGenerator = new GenerateChunkInteractor(blockRepository);
+        GenerateChunkInputBoundary chunkGenerator = new GenerateChunkInteractor(blockRepository);
         PopulateChunkInputBoundary chunkPopulator = new PopulateChunkEntities(entityFactory);
-        RenderRadiusManagerInteractor renderRadiusManager = new RenderRadiusManagerInteractor(world);
+        RenderRadiusManagerInputBoundary renderRadiusManager = new RenderRadiusManagerInteractor(world);
+        UpdateWorldInputBoundary updateWorld = new UpdateWorldInteractor(renderRadiusManager, chunkGenerator, chunkPopulator, world, player);
 
         // --- WORLD RENDERING SYSTEM INITIALIZATION ---
         BlockMaterialRepository materialRepository = new TexturedBlockMaterialRepository();
@@ -156,10 +162,7 @@ public class GameView implements Viewable{
         worldSyncController = new WorldSyncController(
             RENDER_RADIUS,
             world,
-            player,
-            renderRadiusManager,
-            chunkGenerator,
-            chunkPopulator,
+            updateWorld,
             chunkRenderer
         );
 
