@@ -27,7 +27,6 @@ public class GenerateTrainMeshStrategy implements GenerateMeshStrategy {
         ModelInstance modelInstance = trainScene.modelInstance;
         GamePosition pos = inputData.getEntity().getPosition();
         modelInstance.transform.setToTranslation(pos.x, pos.y, pos.z);
-        modelInstance.transform.rotate(Vector3.Y, 180);
 
         BoundingBox bbox = new BoundingBox();
         modelInstance.calculateBoundingBox(bbox);
