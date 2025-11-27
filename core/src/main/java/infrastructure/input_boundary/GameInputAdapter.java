@@ -1,8 +1,8 @@
 package infrastructure.input_boundary;
 
-import application.use_cases.close_game.CloseGameInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInputData;
+import application.use_cases.exit_game.ExitGameUseCase;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -11,8 +11,8 @@ import domain.player.Player;
 
 public class GameInputAdapter extends InputAdapter {
     private final IntIntMap keys = new IntIntMap();
+    private final ExitGameUseCase exitGameUseCase;
     private final PlayerMovementInputBoundary playerMovementInteractor;
-    private final CloseGameInputBoundary closeGameInteractor;
 
     private int lastMouseX = -1;
     private int lastMouseY = -1;
@@ -20,21 +20,19 @@ public class GameInputAdapter extends InputAdapter {
     private float currentDeltaY = 0;
     private final Player player;
 
-    public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, CloseGameInputBoundary closeGameInteractor, Player player) {
+    public GameInputAdapter(PlayerMovementInputBoundary playerMovementInteractor, ExitGameUseCase exitGameUseCase, Player player) {
         this.playerMovementInteractor = playerMovementInteractor;
-        this.closeGameInteractor = closeGameInteractor;
+        this.exitGameUseCase = exitGameUseCase;
         this.player = player;
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE) {
-            closeGameInteractor.execute();
+            exitGameUseCase.execute();
             return true;
         }
-
-        keys.put(keycode, keycode);
-        return true;
+        return false;
     }
 
     @Override
