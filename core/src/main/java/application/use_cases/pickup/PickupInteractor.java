@@ -1,6 +1,6 @@
 package application.use_cases.pickup;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import domain.player.Player;
 import domain.entities.PickupStorage;
 import domain.entities.WorldPickup;
@@ -20,21 +20,21 @@ public class PickupInteractor {
         float maxDistance = 4.5f;
         float maxCosAngle = (float) Math.cos(Math.toRadians(25));
 
-        Vector3 playerPosition = player.getPosition();
-        Vector3 playerDirection = player.getDirection().nor();
+        GamePosition playerPosition = player.getPosition();
+        GamePosition playerDirection = player.getDirection().nor();
 
         WorldPickup closestItem = null;
         float closestItemDistance = Float.MAX_VALUE;
 
         for (WorldPickup pickup : pickupStorage.getAll()) {
-            Vector3 pickupDirection = pickup.getPosition().sub(playerPosition);  // from player to pickup
+            GamePosition pickupDirection = pickup.getPosition().sub(playerPosition);  // from player to pickup
             float distance = pickupDirection.len();
 
             if (distance > maxDistance) {
                 continue;
             }
 
-            Vector3 pickupDirectionNorm = new Vector3(pickupDirection).nor();
+            GamePosition pickupDirectionNorm = new GamePosition(pickupDirection).nor();
             float cosAngle = playerDirection.dot(pickupDirectionNorm);
             if (cosAngle < maxCosAngle) {
                 continue;

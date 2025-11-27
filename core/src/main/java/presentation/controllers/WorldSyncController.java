@@ -2,26 +2,19 @@ package presentation.controllers;
 
 import application.use_cases.generate_chunk.GenerateChunkInputData;
 import application.use_cases.generate_chunk.GenerateChunkOutputData;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputData;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData;
-import application.use_cases.generate_mesh.GenerateMeshInputData;
 import application.use_cases.render_radius.RenderRadiusOutputData;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
-import data_access.EntityStorage;
 import domain.Chunk;
+import domain.GamePosition;
 import domain.World;
-import domain.entities.Entity;
-import domain.entities.EntityFactory;
 import domain.player.Player;
 import infrastructure.rendering.*;
 
 import application.use_cases.render_radius.RenderRadiusManagerInputBoundary;
 import application.use_cases.render_radius.RenderRadiusManagerInputData;
-import application.use_cases.render_radius.RenderRadiusManagerInteractor;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
 
 import java.util.Set;
 
@@ -36,14 +29,9 @@ public class WorldSyncController implements Disposable {
     private final int RENDER_RADIUS; // Removed hardcoded '= 6'
 
     private final GenerateChunkInputBoundary chunkGenerator;
-    private final ChunkMeshGenerationInputBoundary chunkMeshGenerator;
     private final RenderRadiusManagerInputBoundary renderRadiusManager;
 
     private final ChunkRenderer chunkRenderer;
-
-    private final EntityStorage entityStorage;
-    private final MeshFactory meshFactory;
-    private final MeshStorage meshStorage;
 
     private RenderRadiusOutputData radiusData;
 
@@ -51,41 +39,26 @@ public class WorldSyncController implements Disposable {
      * Creates and wires together all world components using provided dependencies.
      */
     public WorldSyncController(
-        ObjectRenderer objectRenderer,
+        int renderRadius,
         World world,
         Player player,
-        EntityFactory entityFactory,
-        EntityStorage entityStorage,
-        MeshFactory meshFactory,
-        MeshStorage meshStorage,
+        RenderRadiusManagerInputBoundary renderRadiusManager,
         GenerateChunkInputBoundary chunkGenerator,
-        ChunkMeshGenerationInputBoundary chunkMeshGenerator,
-        int renderRadius
+        ChunkRenderer chunkRenderer
     ) {
+        this.RENDER_RADIUS = renderRadius;
         this.world = world;
         this.player = player;
-        this.RENDER_RADIUS = renderRadius;
+        this.renderRadiusManager = renderRadiusManager;
         this.chunkGenerator = chunkGenerator;
-        this.chunkMeshGenerator = chunkMeshGenerator;
-
-
-        // TODO: Move these to game view
-        this.chunkRenderer = new ChunkRenderer(objectRenderer);
-        this.renderRadiusManager = new RenderRadiusManagerInteractor(world);
-
-
-
-        this.entityStorage = entityStorage;
-        this.meshFactory = meshFactory;
-        this.meshStorage = meshStorage;
-    }
+        this.chunkRenderer = chunkRenderer;}
 
     /**
      * Updates the world state based on the player's current position, triggering
      * chunk generation, meshing, and de-rendering.
      */
     public void loadUpdate() {
-        Vector3 playerPosition = player.getPosition();
+        GamePosition playerPosition = player.getPosition();
 
         // Find chunks to update
         radiusData = renderRadiusManager.execute(
@@ -93,49 +66,28 @@ public class WorldSyncController implements Disposable {
         );
 
         // Generate chunks
-        for (Vector3 pos : radiusData.getChunksToGenerate()) {
+        for (GamePosition pos : radiusData.getChunksToGenerate()) {
             GenerateChunkOutputData outputData = chunkGenerator.execute(new GenerateChunkInputData(pos, world));
             world.addChunk(pos, outputData.getNewChunk());
-            chunkRenderer.onChunkCreated(pos);
         }
 
         // Load Chunks
-        for (Vector3 pos : radiusData.getChunksToLoad()) {
+        for (GamePosition pos : radiusData.getChunksToLoad()) {
             Chunk chunk = world.getChunk(pos);
-            ChunkMeshGenerationOutputData meshOutput = chunkMeshGenerator.execute(
-                new ChunkMeshGenerationInputData(world, chunk)
-            );
-
-            if (meshOutput.getMeshData() != null) {
-                chunkRenderer.onChunkMeshReady(pos, meshOutput.getMeshData());
-            }
-
-            for (int id : chunk.getEntityIds()) {
-                // TODO: Do i really need to have entity storage here?
-                // - check if mesh has been generated
-                // - if not, generate mesh and add to mesh storage
-                if (meshStorage.hasMesh(id)) continue;
-                Entity entity = entityStorage.getEntityByID(id);
-                meshFactory.createMesh(new GenerateMeshInputData(entity, id));
-
-            }
+            chunkRenderer.loadChunk(pos, chunk);
         }
     }
 
-    public Set<Vector3> getActiveChunkPositions() {
+    public Set<GamePosition> getActiveChunkPositions() {
         // Return the list of chunks currently loaded/updating
         return radiusData.getChunksToUpdate();
     }
 
     public void unloadUpdate() {
         // Unload Chunks
-        for (Vector3 pos : radiusData.getChunksToUnload()) {
-            chunkRenderer.onChunkRemoved(pos);
+        for (GamePosition pos : radiusData.getChunksToUnload()) {
             Chunk chunk = world.getChunk(pos);
-            for (int id : chunk.getEntityIds()) {
-                meshStorage.removeMesh(id);
-            }
-            // TODO: Unload entities
+            chunkRenderer.unloadChunk(pos, chunk);
         }
     }
 

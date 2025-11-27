@@ -1,17 +1,18 @@
 package presentation.view;
 
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
-import application.use_cases.chunk_mesh_generation.ChunkTexturedMeshGeneration;
 import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
-import application.use_cases.generate_mesh.GenerateTrainMeshStrategy;
-import application.use_cases.generate_mesh.GenerateZombieMeshStrategy;
+import domain.GamePosition;
+import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
+import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
 import application.use_cases.ports.BlockRepository;
 import application.use_cases.pickup.PickupInteractor;
 import application.use_cases.player_movement.PlayerMovementInputBoundary;
 import application.use_cases.player_movement.PlayerMovementInteractor;
 import application.use_cases.ports.PhysicsControlPort;
+import application.use_cases.render_radius.RenderRadiusManagerInputBoundary;
+import application.use_cases.render_radius.RenderRadiusManagerInteractor;
 import application.use_cases.update_entity.EntityBehaviourSystem;
 import data_access.EntityStorage;
 import data_access.InMemoryBlockRepository;
@@ -22,7 +23,6 @@ import domain.World;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
 import physics.GameMesh;
-import physics.HitBox;
 import presentation.controllers.*;
 import presentation.view.hud.GameHUD;
 import infrastructure.rendering.*;
@@ -49,48 +49,68 @@ public class GameView implements Viewable{
     private final float TIME_STEP = 1.0f / FPS;
     private final int RENDER_RADIUS = 6; // The radius in chunks where meshes are visible
 
+//    private ViewCamera camera;
     public ObjectRenderer objectRenderer;
-    public World world;
+//    public World world;
     private CameraController cameraController;
+    // TODO: These should be merged
     private GameInputAdapter gameInputAdapter;
     private InventoryInputAdapter inventoryInputAdapter;
     private PickUpInputAdapter  pickupInputAdapter;
-    private ViewCamera camera;
 
-    private Player player;
+//    private Player player;
 
-    private GenerateChunkInteractor chunkGenerator;
-    private ChunkMeshGenerationInputBoundary chunkMeshGenerator;
+    // World Generation
+//    private GenerateChunkInteractor chunkGenerator;
+//    private ChunkMeshGenerator chunkMeshGenerator;
+//    private RenderRadiusManagerInputBoundary renderRadiusManager;
+
+    // World rendering
+//    private EntityRenderer entityRenderer;
+//    private ChunkRenderer chunkRenderer;
+
+
     private WorldSyncController worldSyncController;
 
-    private BlockRepository blockRepository;
-    private BlockMaterialRepository materialRepository;
-    private final PickupStorage pickupStorage = new PickupStorage();
+//    private BlockRepository blockRepository;
+//    private BlockMaterialRepository materialRepository;
+    private PickupStorage pickupStorage;
 
     private float accumulator;
 
-    private CollisionHandler colHandler;
+//    private CollisionHandler colHandler;
 
-    private EntityBehaviourSystem entityBehaviourSystem;
+//    private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
 
     private GameHUD hud;
 
+    // TODO: Merge with entity storage
     private final Map<WorldPickup, GameMesh> pickupMeshes = new HashMap<>();
 
     @Override
     public void createView() {
-        Vector3 startingPosition = new Vector3(0, 3f, 0);
-        player = new Player(startingPosition);
+        // ---  WORLD GENERATION SYSTEM INITIALIZATION ---
+        World world = new World();
+        BlockRepository blockRepository = new InMemoryBlockRepository();
 
-        camera = new ViewCamera();
-
+        GamePosition startingPosition = new GamePosition(0, 3f, 0);
+        Player player = new Player(startingPosition);
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
-        //TESTING
-        pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new Vector3(5, 16, 0)));
-        pickupStorage.addPickup(new WorldPickup(ItemTypes.WOOD_LOG, new Vector3(15, 16, 0)));
-        pickupStorage.addPickup(new WorldPickup(ItemTypes.OIL_BARREL, new Vector3(25, 16, 0)));
+        // Entity Generation
+        GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
+        GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
+
+        // TODO: Merge with entity storage
+        this.pickupStorage = new PickupStorage();
+        EntityStorage entityStorage = new IdToEntityStorage();
+        EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
+            .register(EntityType.ZOMBIE, zombieGenerateStrategy)
+            .register(EntityType.TRAIN, trainGenerateStrategy)
+            .build();
+
+
 
         PickupInteractor pickupInteractor = new PickupInteractor(pickupStorage);
         PickupController pickupController = new PickupController(player, pickupInteractor);
@@ -102,26 +122,18 @@ public class GameView implements Viewable{
         inventoryInputAdapter = new InventoryInputAdapter(player);
         pickupInputAdapter = new PickUpInputAdapter(pickupController);
 
-        cameraController = new FirstPersonCameraController(camera, player);
 
-        blockRepository = new InMemoryBlockRepository();
-//        materialRepository = new LibGDXMaterialRepository();
-        materialRepository = new TexturedBlockMaterialRepository();
+        // Chunk Generation
+        GenerateChunkInteractor chunkGenerator = new GenerateChunkInteractor(blockRepository, entityFactory);
+        RenderRadiusManagerInteractor renderRadiusManager = new RenderRadiusManagerInteractor(world);
 
-        // --- ENTITY SYSTEM INITIALIZATION ---
-        colHandler = new CollisionHandler();
-
-        GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
+        // --- WORLD RENDERING SYSTEM INITIALIZATION ---
+        BlockMaterialRepository materialRepository = new TexturedBlockMaterialRepository();
+        ChunkMeshGenerator chunkMeshGenerator = new ChunkMeshGenerator(world, blockRepository, (TexturedBlockMaterialRepository) materialRepository);
         GenerateZombieMeshStrategy zombieMeshStrategy = new GenerateZombieMeshStrategy();
-
-        GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
         GenerateTrainMeshStrategy trainMeshStrategy = new GenerateTrainMeshStrategy();
 
-        EntityStorage entityStorage = new IdToEntityStorage();
-        EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
-            .register(EntityType.ZOMBIE, zombieGenerateStrategy)
-            .register(EntityType.TRAIN, trainGenerateStrategy)
-            .build();
+        CollisionHandler colHandler = new CollisionHandler();
 
         MeshStorage meshStorage = new IdToMeshStorage(colHandler);
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
@@ -129,41 +141,45 @@ public class GameView implements Viewable{
             .register(EntityType.TRAIN, trainMeshStrategy)
             .build();
 
-        // --- MESH + COL ---
+        // TODO: invert this dependency, object renderer should be at the end
+        // --- SETUP FRAMEWORKS ---
+        ViewCamera camera = new ViewCamera();
         objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
-        world = new World();
+        cameraController = new FirstPersonCameraController(camera, player);
+
+        // CHUNK + ENTITY RENDERING
+        EntityRenderer entityRenderer = new EntityRenderer(entityStorage, meshFactory, meshStorage);
+        ChunkRenderer chunkRenderer = new ChunkRenderer(objectRenderer, chunkMeshGenerator, entityRenderer);
 
         // --- PHYSICS ---
         PhysicsControlPort physicsAdapter = new BulletPhysicsAdapter(meshStorage);
-        entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
-
-        // --- CHUNK SYSTEM INITIALIZATION ---
-        this.chunkGenerator = new GenerateChunkInteractor(blockRepository, entityFactory);
-        this.chunkMeshGenerator = new ChunkTexturedMeshGeneration(blockRepository, (TexturedBlockMaterialRepository) materialRepository);
+        EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
 
         worldSyncController = new WorldSyncController(
-            objectRenderer,
+            RENDER_RADIUS,
             world,
             player,
-            entityFactory,
-            entityStorage,
-            meshFactory,
-            meshStorage,
+            renderRadiusManager,
             chunkGenerator,
-            chunkMeshGenerator,
-            RENDER_RADIUS
+            chunkRenderer
         );
 
         gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
         hud = new GameHUD(player, pickupController);
 
+
+        //TESTING
+        pickupStorage.addPickup(new WorldPickup(ItemTypes.COAL, new GamePosition(5, 16, 0)));
+        pickupStorage.addPickup(new WorldPickup(ItemTypes.WOOD_LOG, new GamePosition(15, 16, 0)));
+        pickupStorage.addPickup(new WorldPickup(ItemTypes.OIL_BARREL, new GamePosition(25, 16, 0)));
         // TESTING === CREATE VISUAL + PHYSICS FOR EACH PICKUP ===
         for (WorldPickup pickup : pickupStorage.getAll()) {
             // Visual model from your factory
             Scene scene = ItemPickupSceneFactory.createSceneForPickup(pickup);
 
             // Position the scene at the pickup's location
-            Matrix4 transform = new Matrix4().setToTranslation(pickup.getPosition());
+            GamePosition pickupPos = pickup.getPosition();
+            Matrix4 transform = new Matrix4().setToTranslation(pickupPos.x, pickupPos.y, pickupPos.z);
             scene.modelInstance.transform.set(transform);
 
             // Create a simple static collision body from the model's bounding box
@@ -217,7 +233,8 @@ public class GameView implements Viewable{
             gameSimulationController.update(TIME_STEP);
         }
 
-        player.updatePassiveHealing(deltaTime);
+        // TODO: This needs to be moved into world
+//        player.updatePassiveHealing(deltaTime);
 
         float alpha = accumulator / TIME_STEP;
 

@@ -1,12 +1,12 @@
 package domain.entities;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 
 public class Train extends Entity implements Rideable {
     private int maxFuel;
     private int totalFuel;
     private int speed;
-    public Train(Integer id, Vector3 position) {
+    public Train(Integer id, GamePosition position) {
         super(id, EntityType.TRAIN, position, true);
         maxFuel = 100;
         totalFuel = 20;
@@ -30,7 +30,7 @@ public class Train extends Entity implements Rideable {
     }
 
     @Override
-    public Vector3 getPlayerPosition() {
+    public GamePosition getPlayerPosition() {
         return getPosition().add(0f, 2f, 0f);
     }
 

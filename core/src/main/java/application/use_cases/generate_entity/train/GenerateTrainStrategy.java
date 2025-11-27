@@ -3,8 +3,7 @@ package application.use_cases.generate_entity.train;
 import application.use_cases.generate_entity.GenerateEntityInputData;
 import application.use_cases.generate_entity.GenerateEntityStrategy;
 import domain.entities.Entity;
-import domain.entities.EntityType;
-import domain.entities.Train; // Import your specific Train class
+import domain.entities.Train;
 
 public class GenerateTrainStrategy implements GenerateEntityStrategy {
     @Override

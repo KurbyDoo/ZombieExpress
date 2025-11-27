@@ -1,8 +1,8 @@
 package domain.entities;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 
 public interface Rideable {
-    Vector3 getPlayerPosition();
+    GamePosition getPlayerPosition();
     int getSpeed();
 }

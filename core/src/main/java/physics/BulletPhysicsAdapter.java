@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import domain.GamePosition;
 import infrastructure.rendering.MeshStorage;
 import physics.GameMesh;
 
@@ -38,17 +39,18 @@ public class BulletPhysicsAdapter implements PhysicsControlPort {
     }
 
     @Override
-    public Vector3 getLinearVelocity(int entityId) {
+    public GamePosition getLinearVelocity(int entityId) {
         btRigidBody body = getBody(entityId);
         if (body != null) {
             // Return a copy so the caller doesn't modify internal state
-            return new Vector3(body.getLinearVelocity());
+            Vector3 vel = body.getLinearVelocity();
+            return new GamePosition(vel.x, vel.y, vel.z);
         }
-        return new Vector3(0,0,0);
+        return new GamePosition(0,0,0);
     }
 
     @Override
-    public void lookAt(int entityId, Vector3 targetPosition) {
+    public void lookAt(int entityId, GamePosition targetPosition) {
         btRigidBody body = getBody(entityId);
         GameMesh mesh = meshStorage.getMesh(entityId);
 
@@ -60,7 +62,7 @@ public class BulletPhysicsAdapter implements PhysicsControlPort {
             Vector3 currentPos = tempMat.getTranslation(tempVec);
 
             // 2. Calculate direction to target
-            Vector3 direction = new Vector3(targetPosition).sub(currentPos);
+            Vector3 direction = new Vector3(targetPosition.x, targetPosition.y, targetPosition.z).sub(currentPos);
             direction.y = 0; // Flatten to XZ plane so they don't look up/down
             direction.nor(); // Normalize
 

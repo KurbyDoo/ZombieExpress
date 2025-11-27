@@ -1,7 +1,6 @@
 package application.use_cases.update_entity;
 
 import application.use_cases.ports.PhysicsControlPort;
-import domain.entities.Entity;
 import domain.player.Player;
 
 /**

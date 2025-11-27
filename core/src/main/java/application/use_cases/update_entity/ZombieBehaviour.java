@@ -1,12 +1,12 @@
 package application.use_cases.update_entity;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import domain.entities.Entity;
 
 public class ZombieBehaviour implements EntityBehaviour {
     private final float MOVE_SPEED = 3.0f;
-    private final Vector3 tempDir = new Vector3();
-    private final Vector3 tempVel = new Vector3();
+    private final GamePosition tempDir = new GamePosition();
+    private final GamePosition tempVel = new GamePosition();
 
     @Override
     public void update(Entity entity, BehaviourContext context) {
@@ -17,7 +17,7 @@ public class ZombieBehaviour implements EntityBehaviour {
         tempDir.nor();
 
         // Get physics state
-        Vector3 currentVel = context.physics.getLinearVelocity(entity.getID());
+        GamePosition currentVel = context.physics.getLinearVelocity(entity.getID());
         if (currentVel == null) return;
 
         // Apply movement

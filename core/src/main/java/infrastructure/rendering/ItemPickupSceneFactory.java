@@ -2,6 +2,7 @@ package infrastructure.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import domain.GamePosition;
 import domain.items.Item;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.scene.Scene;
@@ -44,9 +45,11 @@ public class ItemPickupSceneFactory {
         SceneAsset asset = getAssetForItemName(name);
         Scene scene = new Scene(asset.scene);
 
+        GamePosition pos = pickup.getPosition();
+
         float scale = getScaleForItemName(name);
         scene.modelInstance.transform.scale(scale, scale, scale);
-        scene.modelInstance.transform.setTranslation(pickup.getPosition());
+        scene.modelInstance.transform.setTranslation(pos.x, pos.y, pos.z);
         return scene;
     }
 }
