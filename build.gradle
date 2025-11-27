@@ -27,7 +27,7 @@ allprojects {
     maven { url 'https://jitpack.io' }
   }
   ext {
-    gltfVersion = '-SNAPSHOT'
+    gltfVersion = '2.2.0'
   }
 }
 
