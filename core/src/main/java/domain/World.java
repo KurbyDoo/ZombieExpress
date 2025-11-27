@@ -15,6 +15,10 @@ public class World {
         chunks = new HashMap<>();
     }
 
+    public float getWorldEndCoordinateX() {
+        return (float) worldDepthChunks * Chunk.CHUNK_SIZE;
+    }
+
     public HashMap<Vector3, Chunk> getChunks() {
         return chunks;
     }
