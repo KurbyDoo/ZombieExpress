@@ -1,7 +1,7 @@
 package infrastructure.rendering;
 
-import application.use_cases.generate_mesh.GenerateMeshInputData;
-import application.use_cases.generate_mesh.GenerateMeshStrategy;
+import infrastructure.rendering.strategies.GenerateMeshInputData;
+import infrastructure.rendering.strategies.GenerateMeshStrategy;
 import domain.entities.EntityType;
 import physics.GameMesh;
 
@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MeshFactory {
+    // TODO: should this class hold storage? should that be the responsibility of the caller
+    // The issue is that its tedious for everyone to hold both the mesh storage and factory
+    // Maybe we just have one class that holds both and everyone holds that class
     private final Map<EntityType, GenerateMeshStrategy> registry;
     private final MeshStorage storage;
 

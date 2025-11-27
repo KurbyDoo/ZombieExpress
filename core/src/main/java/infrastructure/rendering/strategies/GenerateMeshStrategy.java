@@ -1,4 +1,4 @@
-package application.use_cases.generate_mesh;
+package infrastructure.rendering.strategies;
 
 import physics.GameMesh;
 

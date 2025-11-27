@@ -1,7 +1,5 @@
 package domain;
 
-import com.badlogic.gdx.math.Vector3;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,20 +7,20 @@ public class Chunk {
     public static final int CHUNK_SIZE = 16;
 
     private short[][][] blocks = new short[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-    private final Vector3 chunkCoordinates;
+    private final GamePosition chunkCoordinates;
     private Set<Integer> entityIds;
 
-    public Chunk(Vector3 pos) {
+    public Chunk(GamePosition pos) {
         chunkCoordinates = pos;
         entityIds = new HashSet<>();
     }
 
     public Chunk(int chunkX, int chunkY, int chunkZ) {
-        this(new Vector3(chunkX, chunkY, chunkZ));
+        this(new GamePosition(chunkX, chunkY, chunkZ));
     }
 
-    public Vector3 getPosition() {
-        return new Vector3(chunkCoordinates);
+    public GamePosition getPosition() {
+        return new GamePosition(chunkCoordinates);
     }
 
     public short getBlock(int x, int y, int z) {
@@ -57,8 +55,8 @@ public class Chunk {
         return getChunkZ() * CHUNK_SIZE;
     }
 
-    public Vector3 getWorldPosition() {
-        return new Vector3(getChunkWorldX(), getChunkWorldY(), getChunkWorldZ());
+    public GamePosition getWorldPosition() {
+        return new GamePosition(getChunkWorldX(), getChunkWorldY(), getChunkWorldZ());
     }
 
     public void addEntity(int id) {

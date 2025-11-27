@@ -6,8 +6,8 @@ import application.use_cases.generate_entity.train.GenerateTrainInputData;
 import application.use_cases.generate_entity.zombie.GenerateZombieInputData;
 import application.use_cases.generate_entity.pickup.GeneratePickupInputData;
 import application.use_cases.ports.BlockRepository;
-import com.badlogic.gdx.math.Vector3;
 import domain.Chunk;
+import domain.GamePosition;
 import domain.World;
 import domain.entities.EntityFactory;
 import domain.items.Item;
@@ -48,7 +48,7 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
                         );
 //                        System.out.println(zombieNoise);
                         if (zombieNoise > 0.85){
-                            Vector3 pos = new Vector3(worldX, worldY, worldZ);
+                            GamePosition pos = new GamePosition(worldX, worldY, worldZ);
                             entityFactory.create(new GenerateZombieInputData(pos));
                         }
                     }
@@ -61,7 +61,7 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
 
                         if (pickupNoise > 0.83) {
                             Item item = randomPickupItem();
-                            Vector3 pickupPos = new Vector3(worldX, worldY, worldZ);
+                            GamePosition pickupPos = new GamePosition(worldX, worldY, worldZ);
                             entityFactory.create(new GeneratePickupInputData(item, pickupPos));
                         }
                     }
@@ -71,7 +71,7 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
 
         // train
         if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
-            Vector3 trainPosition = new Vector3(
+            GamePosition trainPosition = new GamePosition(
                 chunk.getChunkWorldX() + (chunkSize / 2f),
                 1f,
                 chunk.getChunkWorldZ() + (chunkSize / 2f)

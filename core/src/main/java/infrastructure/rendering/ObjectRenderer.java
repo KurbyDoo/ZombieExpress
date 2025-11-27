@@ -15,9 +15,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ObjectRenderer {
     public Environment environment;
-    private SceneManager sceneManager;
-    private CollisionHandler colHandler;
-    private PerspectiveCamera camera;
+    private final SceneManager sceneManager;
+    private final CollisionHandler colHandler;
+    private final PerspectiveCamera camera;
 
     private BlockingQueue<GameMesh> toAdd = new LinkedBlockingQueue<>();
     private BlockingQueue<GameMesh> toRemove = new LinkedBlockingQueue<>();
@@ -27,6 +27,7 @@ public class ObjectRenderer {
         this.camera = camera;
 
         //set up scene manager
+        // TODO: Should this be dependency injected?
         sceneManager = new SceneManager();
         sceneManager.setCamera(camera);
         sceneManager.setAmbientLight(0.1f);

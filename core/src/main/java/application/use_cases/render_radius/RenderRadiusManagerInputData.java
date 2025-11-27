@@ -1,15 +1,15 @@
 package application.use_cases.render_radius;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import domain.World;
 
 public class RenderRadiusManagerInputData {
-    private final Vector3 playerPosition;
+    private final GamePosition playerPosition;
     private final World world;
     private final int renderRadius;
 
     public RenderRadiusManagerInputData(
-        Vector3 playerPosition,
+        GamePosition playerPosition,
         World world,
         int radius
     ) {
@@ -19,7 +19,7 @@ public class RenderRadiusManagerInputData {
         this.renderRadius = radius;
     }
 
-    public Vector3 getPlayerPosition() {
+    public GamePosition getPlayerPosition() {
         return playerPosition;
     }
 

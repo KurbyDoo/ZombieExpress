@@ -1,14 +1,14 @@
 package domain.entities;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 
 public class Entity {
     protected Integer id;
-    protected Vector3 position;
+    protected GamePosition position;
     protected boolean isVisible;
     private final EntityType type;
 
-    public Entity(Integer id, EntityType type, Vector3 position, boolean isVisible) {
+    public Entity(Integer id, EntityType type, GamePosition position, boolean isVisible) {
         this.id = id;
         this.type = type;
         this.position = position;
@@ -25,11 +25,11 @@ public class Entity {
         return type;
     }
 
-    public Vector3 getPosition() {
+    public GamePosition getPosition() {
         return position;
     }
 
-    public void setPosition(Vector3 position) {
+    public void setPosition(GamePosition position) {
         this.position = position;
     }
 

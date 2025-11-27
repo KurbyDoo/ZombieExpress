@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
+import data_access.EntityStorage;
+import domain.entities.Entity;
 import domain.entities.IdToEntityStorage;
+import domain.entities.Rideable;
 import domain.entities.Train;
+import domain.player.Player;
 
 import static presentation.view.hud.UIAssetFactory.*;
 
@@ -19,10 +23,10 @@ import static presentation.view.hud.UIAssetFactory.*;
  */
 public class FuelHudElement implements HudElement {
 
-    private final IdToEntityStorage entityStorage;
+    private final EntityStorage entityStorage;
     private final Image fuelBar;
 
-    public FuelHudElement(Stage stage, Label.LabelStyle style, IdToEntityStorage entityStorage) {
+    public FuelHudElement(Stage stage, Label.LabelStyle style, EntityStorage entityStorage) {
         this.entityStorage = entityStorage;
 
         Table table = new Table();
@@ -56,7 +60,13 @@ public class FuelHudElement implements HudElement {
 
     @Override
     public void update(float deltaTime) {
-        Train train = entityStorage.getTrain();
+        Train train = null;
+        for (int id : entityStorage.getAllIds()) {
+            Entity e = entityStorage.getEntityByID(id);
+            if (!(e instanceof Train)) continue;
+            train = (Train) e;
+        }
+
         if (train == null) {
             fuelBar.setScaleY(0);
             return;
