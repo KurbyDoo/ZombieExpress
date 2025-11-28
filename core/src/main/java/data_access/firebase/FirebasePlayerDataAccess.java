@@ -3,8 +3,8 @@
  * Loads or creates PlayerSession objects using Firebase.
  * Used by login and register interactors.
  */
-package data_access.Firebase;
-import UseCases.PlayerData.PlayerDataAccessInterface;
+package data_access.firebase;
+import application.interface_use_cases.player_data.PlayerDataAccessInterface;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;

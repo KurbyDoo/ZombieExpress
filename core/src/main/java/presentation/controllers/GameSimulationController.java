@@ -1,11 +1,10 @@
 package presentation.controllers;
 
-import application.use_cases.update_entity.EntityBehaviourSystem;
+import application.game_use_cases.update_entity.EntityBehaviourSystem;
 import domain.World;
 import infrastructure.rendering.EntityMeshSynchronizer;
 import physics.CollisionHandler;
 
-import java.util.Collection;
 import java.util.List;
 
 public class GameSimulationController {
@@ -40,7 +39,7 @@ public class GameSimulationController {
         meshSynchronizer.sync();
 
         // Update physics
-        collisionHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
+        collisionHandler.stepSimulation(deltaTime);
 
 
         // unload chunks

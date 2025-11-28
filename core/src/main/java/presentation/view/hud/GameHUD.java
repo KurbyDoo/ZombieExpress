@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import data_access.EntityStorage;
-import domain.entities.IdToEntityStorage;
-import domain.entities.Train;
+import interface_adapter.game.EntityStorage;
 import domain.player.Player;
 import presentation.controllers.PickupController;
 

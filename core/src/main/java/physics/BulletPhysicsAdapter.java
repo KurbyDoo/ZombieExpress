@@ -1,13 +1,12 @@
 package physics;
 
-import application.use_cases.ports.PhysicsControlPort;
+import application.game_use_cases.ports.PhysicsControlPort;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
 import domain.GamePosition;
 import infrastructure.rendering.MeshStorage;
-import physics.GameMesh;
 
 public class BulletPhysicsAdapter implements PhysicsControlPort {
     private final MeshStorage meshStorage;

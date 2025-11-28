@@ -1,8 +1,8 @@
 package presentation.view;
 
-import UseCases.PlayerData.LoadPlayerDataInteractor;
-import UseCases.Register.RegisterInteractor;
-import data_access.Firebase.FirebaseLoginRegisterDataAccess;
+import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
+import application.interface_use_cases.register.RegisterInteractor;
+import data_access.firebase.FirebaseLoginRegisterDataAccess;
 import domain.player.PlayerSession;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;

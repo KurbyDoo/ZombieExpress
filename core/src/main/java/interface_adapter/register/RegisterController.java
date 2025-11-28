@@ -1,6 +1,6 @@
 package interface_adapter.register;
 
-import UseCases.Register.RegisterInputBoundary;
+import application.interface_use_cases.register.RegisterInputBoundary;
 
 /**
  * Controller for the register use case

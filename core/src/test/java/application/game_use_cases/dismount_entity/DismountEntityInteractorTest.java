@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DismountEntityInteractorTest {
+class DismountEntityInteractorTest {
     private Player player;
     private Rideable ride;
     private DismountEntityInteractor interactor;
@@ -19,6 +19,7 @@ public class DismountEntityInteractorTest {
     void setUp() {
         player = new Player(new GamePosition(0, 0, 0));
         ride = new Train(0, new GamePosition(0, 0, 0));
+        player.setPosition(ride.getRideOffset());
         interactor = new DismountEntityInteractor(player);
     }
 
@@ -27,9 +28,17 @@ public class DismountEntityInteractorTest {
     void dismountEntity() {
         player.setCurrentRide(ride);
         DismountEntityOutputData outputData = interactor.execute(new DismountEntityInputData());
+        GamePosition position = new GamePosition(
+            player.getPosition().x, 2f, player.getPosition().z
+        );
 
         assertNull(player.getCurrentRide(), "Ride should be null after dismount");
         assertTrue(outputData.isDismountSuccess(), "Success should be true.");
+        assertTrue(
+            player.getPosition().epsilonEquals(position, 0.001f),
+            "Player should be at ground level after dismount, instead at " + player.getPosition()
+        );
+
     }
 
     @Test
@@ -39,16 +48,5 @@ public class DismountEntityInteractorTest {
 
         assertNull(player.getCurrentRide(), "Ride should be null after dismount");
         assertFalse(outputData.isDismountSuccess(), "Success should be false.");
-    }
-
-    @AfterEach
-    void checkPlayerPos() {
-        GamePosition position = new GamePosition(
-            player.getPosition().x, 3f, player.getPosition().z
-        );
-        assertTrue(
-            player.getPosition().epsilonEquals(position, 0.001f),
-            "Player should be at ground level after dismount."
-        );
     }
 }

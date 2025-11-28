@@ -15,10 +15,9 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
     @Override
     public GenerateChunkOutputData execute(GenerateChunkInputData inputData) {
         Chunk chunk = new Chunk(inputData.getPosition());
-        World world = inputData.getWorld();
 
         int chunkSize = Chunk.CHUNK_SIZE;
-        int worldEndX = world.getWorldDepthChunks() * chunkSize;
+        int worldEndX = inputData.getWorldEndX();
 
         float scaleFactor = 0.05f;
         double valleyScale = (double) 1.0f / (chunkSize * chunkSize * 8);
@@ -65,8 +64,7 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             double valleyHeightZ = Math.min(8, (worldX - worldEndX) * (worldX - worldEndX) * valleyScale / 2);
             valleyHeight = Math.max(valleyHeight, valleyHeightZ);
         }
-        int height = (int)(perlinNoise * valleyHeight * valleyHeight);
-        return height;
+        return (int)(perlinNoise * valleyHeight * valleyHeight);
     }
 
     private String getBlockByHeight(int height, int worldY) {

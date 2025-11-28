@@ -1,5 +1,8 @@
-package application.game_use_cases.dismount_entity;
+package application.game_use_cases.mount_entity;
 
+import application.game_use_cases.dismount_entity.DismountEntityInputData;
+import application.game_use_cases.dismount_entity.DismountEntityInteractor;
+import application.game_use_cases.dismount_entity.DismountEntityOutputData;
 import domain.GamePosition;
 import domain.entities.Rideable;
 import domain.entities.Train;
@@ -8,49 +11,61 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class DismountEntityInteractorTest {
+class MountEntityInteractorTest {
     private Player player;
     private Rideable ride;
-    private DismountEntityInteractor interactor;
+    private MountEntityInteractor interactor;
 
     @BeforeEach
     void setUp() {
         player = new Player(new GamePosition(0, 0, 0));
         ride = new Train(0, new GamePosition(0, 0, 0));
-        player.setPosition(ride.getRideOffset());
-        interactor = new DismountEntityInteractor(player);
+        interactor = new MountEntityInteractor(player);
     }
 
     @Test
-    @DisplayName("Dismount entity")
-    void dismountEntity() {
-        player.setCurrentRide(ride);
-        DismountEntityOutputData outputData = interactor.execute(new DismountEntityInputData());
+    @DisplayName("Mount entity")
+    void mountEntity() {
+        MountEntityOutputData outputData = interactor.execute(new MountEntityInputData(ride));
+        GamePosition offsetPos = ride.getPosition().add(ride.getRideOffset());
 
-        assertNull(player.getCurrentRide(), "Ride should be null after dismount");
-        assertTrue(outputData.isDismountSuccess(), "Success should be true.");
-    }
-
-    @Test
-    @DisplayName("Dismount null entity")
-    void dismountNull() {
-        DismountEntityOutputData outputData = interactor.execute(new DismountEntityInputData());
-
-        assertNull(player.getCurrentRide(), "Ride should be null after dismount");
-        assertFalse(outputData.isDismountSuccess(), "Success should be false.");
-    }
-
-    @AfterEach
-    void checkPlayerPos() {
-        GamePosition position = new GamePosition(
-            player.getPosition().x, 2f, player.getPosition().z
-        );
-
+        assertNotNull(player.getCurrentRide(), "Ride should be not be null after mount");
         assertTrue(
-            player.getPosition().epsilonEquals(position, 0.001f),
-            "Player should be at ground level after dismount, instead at " + player.getPosition().y
+            player.getPosition().epsilonEquals(offsetPos, 0.001f),
+            "Player should be at mount position after dismount, instead at " + player.getPosition()
+        );
+        assertTrue(outputData.isMountSuccess(), "Success should be true.");
+    }
+
+    @Test
+    @DisplayName("Mount null entity")
+    void mountNull() {
+        GamePosition initialPosition = player.getPosition();
+        MountEntityOutputData outputData = interactor.execute(new MountEntityInputData(null));
+
+        assertNull(player.getCurrentRide(), "Ride should be null after mount");
+        assertFalse(outputData.isMountSuccess(), "Success should be false.");
+        assertTrue(
+            initialPosition.epsilonEquals(player.getPosition(), 0.001f),
+            "Position should not change after failed mount"
+        );
+    }
+
+    @Test
+    @DisplayName("Attempt already mounted")
+    void mountEntityAlreadyMounted() {
+        player.setCurrentRide(ride);
+        GamePosition initialPosition = player.getPosition();
+        MountEntityOutputData outputData = interactor.execute(new MountEntityInputData(ride));
+
+        assertNotNull(player.getCurrentRide(), "Ride should not be modified");
+        assertFalse(outputData.isMountSuccess(), "Success should be false.");
+        assertTrue(
+            initialPosition.epsilonEquals(player.getPosition(), 0.001f),
+            "Position should not change after failed mount"
         );
     }
 }

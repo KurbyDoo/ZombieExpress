@@ -1,9 +1,9 @@
 package application.use_cases.win_condition;
 
+import application.game_use_cases.exit_game.ExitGameUseCase;
 import domain.World;
 import domain.player.Player;
 import com.badlogic.gdx.math.Vector3;
-import application.use_cases.exit_game.ExitGameUseCase;
 
 /**
  * The Interactor responsible for checking all possible game-ending conditions:

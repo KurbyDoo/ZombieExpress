@@ -1,10 +1,10 @@
 package runner;
 
-import UseCases.Login.*;
-import UseCases.PlayerData.LoadPlayerDataInteractor;
-import data_access.Firebase.FirebaseInitializer;
-import data_access.Firebase.FirebaseLoginRegisterDataAccess;
-import data_access.Firebase.FirebasePlayerDataAccess;
+import application.interface_use_cases.login.LoginInteractor;
+import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
+import data_access.firebase.FirebaseInitializer;
+import data_access.firebase.FirebaseLoginRegisterDataAccess;
+import data_access.firebase.FirebasePlayerDataAccess;
 import interface_adapter.login.*;
 import presentation.view.LoginView;
 
