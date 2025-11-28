@@ -11,23 +11,19 @@ public class ZombieBehaviour implements EntityBehaviour {
     @Override
     public void update(Entity entity, BehaviourContext context) {
         // Find player direction
-        tempDir.set(context.player.getPosition()).sub(entity.getPosition());
-
+        tempDir.set(context.getPlayer().getPosition()).sub(entity.getPosition());
         tempDir.y = 0;
         tempDir.nor();
 
         // Get physics state
-        GamePosition currentVel = context.physics.getLinearVelocity(entity.getID());
-        if (currentVel == null) return;
-
-        // Apply movement
-        context.physics.setLinearVelocity(
-            entity.getID(),
+        entity.setVelocity(
             tempDir.x * MOVE_SPEED,
-            currentVel.y,
+            0,
             tempDir.z * MOVE_SPEED
         );
 
-        context.physics.lookAt(entity.getID(), entity.getPosition().sub(tempDir));
+        // Apply movement
+        float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
+        entity.setYaw(yaw);
     }
 }

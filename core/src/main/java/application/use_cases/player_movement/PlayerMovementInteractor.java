@@ -21,23 +21,31 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
             player.updateRotation(inputData.getDeltaX(), inputData.getDeltaY());
         }
 
-        // --- Handle Movement ---
-        GamePosition playerDirection = new GamePosition(player.getDirection()).nor();
-        GamePosition playerUp = new GamePosition(player.getUp()).nor();
         Rideable playerRide = player.getCurrentRide();
 
-        GamePosition velocity;
         if (playerRide instanceof Train) {
-            velocity = getOnTrainVelocity(inputData, playerDirection, (Train) playerRide);
-        } else {
-            velocity = getOnGroundVelocity(inputData, playerDirection, playerUp);
-            velocity.scl(player.getMovementSpeed());
-            if (inputData.isSprinting()) velocity.scl(SPRINT_MULTIPLIER);
-        }
+            Train train = (Train) playerRide;
 
-        // Only update the player's position if there is movement input.
-        if (!velocity.isZero()) {
-            player.updatePosition(velocity.scl(inputData.getDeltaTime()));
+            if (inputData.isForward() && train.getCurrentFuel() > 0) {
+                train.accelerate();
+                train.consumeFuel(1);
+            }
+        } else {
+            GamePosition playerDirection = new GamePosition(player.getDirection()).nor();
+            GamePosition playerUp = new GamePosition(player.getUp()).nor();
+
+            GamePosition velocity = getOnGroundVelocity(inputData, playerDirection, playerUp);
+
+            velocity.scl(player.getMovementSpeed());
+
+            if (inputData.isSprinting()) {
+                velocity.scl(SPRINT_MULTIPLIER);
+            }
+
+            // Apply the move immediately
+            if (!velocity.isZero()) {
+                player.updatePosition(velocity.scl(inputData.getDeltaTime()));
+            }
         }
     }
 
@@ -61,17 +69,5 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
             velocity.add(right);
         }
         return velocity;
-    }
-
-
-    // TODO: We will update train position through behaviour
-    // This should be changed to set the velo to diff between train and player
-    // and set the velocity of the train
-    private GamePosition getOnTrainVelocity(PlayerMovementInputData inputData, GamePosition playerDirection, Train train) {
-        if (inputData.isForward() && train.getCurrentFuel() > 0) {
-            return new GamePosition(Math.abs(playerDirection.x), 0f, 0f).nor().scl(train.getSpeed());
-        }
-
-        return new GamePosition();
     }
 }

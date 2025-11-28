@@ -1,5 +1,7 @@
 package presentation.view;
 
+import application.use_cases.dismount_entity.DismountEntityInputBoundary;
+import application.use_cases.dismount_entity.DismountEntityInteractor;
 import application.use_cases.exit_game.ExitGameUseCase;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.pickup.GeneratePickupStrategy;
@@ -7,6 +9,8 @@ import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.use_cases.generate_chunk.GenerateChunkInteractor;
 import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
+import application.use_cases.mount_entity.MountEntityInputBoundary;
+import application.use_cases.mount_entity.MountEntityInteractor;
 import application.use_cases.update_world.UpdateWorldInputBoundary;
 import application.use_cases.update_world.UpdateWorldInteractor;
 import application.use_cases.populate_chunk.PopulateChunkEntities;
@@ -91,6 +95,8 @@ public class GameView implements Viewable{
 
         GamePosition startingPosition = new GamePosition(0, 3f, 0);
         Player player = new Player(startingPosition);
+        MountEntityInputBoundary mountEntity = new MountEntityInteractor(player);
+        DismountEntityInputBoundary dismountEntity = new DismountEntityInteractor(player);
 
         PlayerMovementInputBoundary playerMovementInteractor = new PlayerMovementInteractor(player);
 
@@ -144,7 +150,7 @@ public class GameView implements Viewable{
         // --- SETUP FRAMEWORKS ---
         ViewCamera camera = new ViewCamera();
         PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, player);
-        pickupController = new PickupController(pickupInteractor, meshStorage);
+        pickupController = new PickupController(player, pickupInteractor, mountEntity, dismountEntity, meshStorage);
         pickupInputAdapter = new PickUpInputAdapter(pickupController);
 
         // --- MESH + COL ---
@@ -158,6 +164,7 @@ public class GameView implements Viewable{
         // --- PHYSICS ---
         PhysicsControlPort physicsAdapter = new BulletPhysicsAdapter(meshStorage);
         EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
+        EntityMeshSynchronizer meshSynchronizer = new EntityMeshSynchronizer(entityStorage, meshStorage);
 
         worldSyncController = new WorldSyncController(
             RENDER_RADIUS,
@@ -166,7 +173,10 @@ public class GameView implements Viewable{
             chunkRenderer
         );
 
-        gameSimulationController = new GameSimulationController(worldSyncController, colHandler, entityBehaviourSystem, world);
+        gameSimulationController = new GameSimulationController(
+            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, world
+        );
+
         hud = new GameHUD(player, entityStorage, pickupController);
     }
 
@@ -175,20 +185,19 @@ public class GameView implements Viewable{
         float deltaTime = Gdx.graphics.getDeltaTime();
         accumulator += deltaTime;
 
+        // Theses should be polled at most once per frame
+        inventoryInputAdapter.pollInput();
+        pickupInputAdapter.pollInput();
+
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;
             cameraController.updatePrevious();
 
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
-
-            inventoryInputAdapter.pollInput();
-            pickupInputAdapter.pollInput();
             gameSimulationController.update(TIME_STEP);
         }
 
-        // TODO: This needs to be moved into world
-//        player.updatePassiveHealing(deltaTime);
 
         float alpha = accumulator / TIME_STEP;
 

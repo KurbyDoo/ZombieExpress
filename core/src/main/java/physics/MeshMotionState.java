@@ -10,7 +10,7 @@ public class MeshMotionState extends btMotionState {
     private final Matrix4 visualTransform;
     private Matrix4 hitboxTransform;
     private final Vector3 offset;
-    private final Entity entity; // <--- ADD THIS
+    private final Entity entity;
 
     private final Vector3 tempPos = new Vector3();
 

@@ -8,13 +8,25 @@ import domain.player.Player;
  * to decide how to act (Time, Player position, Physics access).
  */
 public class BehaviourContext {
-    public final PhysicsControlPort physics;
-    public final Player player;
-    public final float deltaTime;
+    private final PhysicsControlPort physics;
+    private final Player player;
+    private final float deltaTime;
 
     public BehaviourContext(PhysicsControlPort physics, Player player, float deltaTime) {
         this.physics = physics;
         this.player = player;
         this.deltaTime = deltaTime;
+    }
+
+    public PhysicsControlPort getPhysics() {
+        return physics;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public float getDeltaTime() {
+        return deltaTime;
     }
 }

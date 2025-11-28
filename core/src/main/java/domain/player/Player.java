@@ -212,4 +212,8 @@ public class Player {
     public void drop() {
         inventory.removeItem(currentSlot);
     }
+
+    public void setPosition(GamePosition newPlayerPos) {
+        position.set(newPlayerPos);
+    }
 }

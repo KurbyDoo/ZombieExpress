@@ -39,7 +39,7 @@ public class ObjectRenderer {
         Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
         this.environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
 
-        this.camera.far = 50f;
+        this.camera.far = 100f;
         this.camera.near = 0.1f;
         this.camera.update();
 
