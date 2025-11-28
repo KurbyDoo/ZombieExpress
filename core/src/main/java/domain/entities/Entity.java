@@ -5,7 +5,9 @@ import domain.GamePosition;
 public class Entity {
     protected Integer id;
     protected GamePosition position;
+    protected GamePosition velocity;
     protected boolean isVisible;
+    protected float yaw;
     private final EntityType type;
 
     public Entity(Integer id, EntityType type, GamePosition position, boolean isVisible) {
@@ -13,6 +15,7 @@ public class Entity {
         this.type = type;
         this.position = position;
         this.isVisible = isVisible;
+        this.velocity = new GamePosition(0, 0, 0);
     }
 
     public Integer getID() {
@@ -31,6 +34,26 @@ public class Entity {
 
     public void setPosition(GamePosition position) {
         this.position = position;
+    }
+
+    public GamePosition getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(GamePosition velocity) {
+        this.velocity = velocity;
+    }
+
+    public void setVelocity(float x, float y, float z) {
+        this.velocity.set(x, y, z);
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
     }
 
     public boolean isVisible() {

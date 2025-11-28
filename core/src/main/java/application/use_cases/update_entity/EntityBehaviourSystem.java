@@ -41,6 +41,7 @@ public class EntityBehaviourSystem {
         // Register strategies here
         behaviors.put(EntityType.ZOMBIE, new ZombieBehaviour());
         behaviors.put(EntityType.BULLET, new BulletBehaviour());
+        behaviors.put(EntityType.TRAIN, new TrainBehaviour());
         // Add more as needed
     }
 

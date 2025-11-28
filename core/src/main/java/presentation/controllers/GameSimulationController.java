@@ -2,6 +2,7 @@ package presentation.controllers;
 
 import application.use_cases.update_entity.EntityBehaviourSystem;
 import domain.World;
+import infrastructure.rendering.EntityMeshSynchronizer;
 import physics.CollisionHandler;
 
 import java.util.Collection;
@@ -11,17 +12,20 @@ public class GameSimulationController {
     private final WorldSyncController worldSyncController;
     private final CollisionHandler collisionHandler;
     private final EntityBehaviourSystem entityBehaviorSystem;
+    private final EntityMeshSynchronizer meshSynchronizer;
     private final World world;
 
     public GameSimulationController(
         WorldSyncController worldSyncController,
         CollisionHandler collisionHandler,
         EntityBehaviourSystem entityBehaviorSystem,
+        EntityMeshSynchronizer meshSynchronizer,
         World world
     ) {
         this.worldSyncController = worldSyncController;
         this.collisionHandler = collisionHandler;
         this.entityBehaviorSystem = entityBehaviorSystem;
+        this.meshSynchronizer = meshSynchronizer;
         this.world = world;
     }
 
@@ -32,6 +36,8 @@ public class GameSimulationController {
         entityBehaviorSystem.updateCache(activeEntities);
         // Run Entity Logic (AI)
         entityBehaviorSystem.update(activeEntities, deltaTime);
+
+        meshSynchronizer.sync();
 
         // Update physics
         collisionHandler.dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
