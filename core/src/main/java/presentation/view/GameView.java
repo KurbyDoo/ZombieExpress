@@ -182,7 +182,7 @@ public class GameView implements Viewable{
         );
 
         hud = new GameHUD(player, entityStorage, pickupController);
-        WinConditionInteractor = new WinConditionInteractor(world, player);
+        WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
     }
 
     @Override
