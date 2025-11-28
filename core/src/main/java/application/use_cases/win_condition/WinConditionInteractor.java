@@ -25,9 +25,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
     @Override
     public WinConditionOutputData execute() {
-        // 1. Guard against repeated execution
         if (isGameOver) {
-            // If the game is already over, just return the state
             return new WinConditionOutputData(true, "Game Over.");
         }
 
@@ -43,27 +41,20 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
         }
 
         // --- CASE A: CHECK WIN CONDITION (TRAIN AT WORLD END) ---
+        // Player.getTrackedPosition() correctly returns the Ridable's position (the train)
+        Vector3 trackedPosition = player.getPosition();
 
-        // The win condition only applies if the player is actually riding the train
-        if (player.getCurrentRidable() != null) {
+        float trackedX = trackedPosition.x;
+        float worldEndX = world.getWorldEndCoordinateX();
 
-            // Player.getTrackedPosition() correctly returns the Ridable's position (the train)
-            Vector3 trackedPosition = player.getTrackedPosition();
+        if (trackedX >= worldEndX) {
+            isGameOver = true;
+            String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
 
-            float trackedX = trackedPosition.x;
-            float worldEndX = world.getWorldEndCoordinateX();
+            System.out.println("--- GAME WON: " + message + " ---");
 
-            if (trackedX >= worldEndX) {
-                isGameOver = true;
-                String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
-
-                System.out.println("--- GAME WON: " + message + " ---");
-                Gdx.app.exit(); // Triggers application exit
-
-                return new WinConditionOutputData(true, message);
-            }
+            return new WinConditionOutputData(true, message);
         }
-
         // Return default state if no end condition is met
         return new WinConditionOutputData(false, "");
     }
