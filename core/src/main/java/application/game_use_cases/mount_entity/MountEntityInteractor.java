@@ -17,6 +17,10 @@ public class MountEntityInteractor implements MountEntityInputBoundary {
             return new MountEntityOutputData(false);
         }
 
+        if (ride == null) {
+            return new MountEntityOutputData(false);
+        }
+
         player.setCurrentRide(ride);
         GamePosition seatOffset = ride.getRideOffset();
         GamePosition newPlayerPos = ride.getPosition().cpy().add(seatOffset);

@@ -12,17 +12,17 @@ import com.badlogic.gdx.utils.Disposable;
  * creates an btCollisionWorld that calls for the contactListener when any collisions are detected.
  */
 public class CollisionHandler implements Disposable {
-    final static short GROUND_FLAG = 1 << 8;
-    final static short OBJECT_FLAG = 1 << 9;
-    final static short ALL_FLAG = -1;
+    private final short GROUND_FLAG = 1 << 8;
+    private final short OBJECT_FLAG = 1 << 9;
+    private final short ALL_FLAG = -1;
 
-    public btCollisionConfiguration config;
-    public btDispatcher dispatch;
-    public btBroadphaseInterface broadphase;
-    public btConstraintSolver constraintSolver;
+    private final btCollisionConfiguration config;
+    private final btDispatcher dispatch;
+    private final btBroadphaseInterface broadphase;
+    private final btConstraintSolver constraintSolver;
 
-    public btDiscreteDynamicsWorld dynamicsWorld;
-    public ObjectContactListener listener;
+    private final btDiscreteDynamicsWorld dynamicsWorld;
+    private final ObjectContactListener listener;
 
     public CollisionHandler() {
         config = new btDefaultCollisionConfiguration();
@@ -36,6 +36,11 @@ public class CollisionHandler implements Disposable {
 
     }
 
+    public void stepSimulation(float deltaTime) {
+        dynamicsWorld.stepSimulation(deltaTime, 5, 1f/60f);
+
+    }
+
     public void add(GameMesh object) {
         if (object != null){
             object.getBody().setCollisionFlags(object.getBody().getCollisionFlags() | btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK);
@@ -44,7 +49,7 @@ public class CollisionHandler implements Disposable {
             if (object.getIsStatic()) {
                 dynamicsWorld.addRigidBody(object.getBody(), GROUND_FLAG, ALL_FLAG);
             } else{
-                dynamicsWorld.addRigidBody(object.getBody(), OBJECT_FLAG, GROUND_FLAG); //for non world objects
+                dynamicsWorld.addRigidBody(object.getBody(), OBJECT_FLAG, ALL_FLAG);
             }
         }
     }

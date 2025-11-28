@@ -1,5 +1,5 @@
 package interface_adapter.login;
-import UseCases.Login.LoginInputBoundary;
+import application.interface_use_cases.login.LoginInputBoundary;
 
 /**
  * Controller for the Login use case

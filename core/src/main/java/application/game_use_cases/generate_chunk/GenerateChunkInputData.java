@@ -5,12 +5,12 @@ import domain.World;
 
 public class GenerateChunkInputData {
     private final GamePosition position;
-    private final World world;
-    public GenerateChunkInputData(GamePosition position, World world) {
+    private final int worldEndX;
+    public GenerateChunkInputData(GamePosition position, int worldEndX) {
         this.position = position;
-        this.world = world;
+        this.worldEndX = worldEndX;
     }
 
     public GamePosition getPosition() { return position; }
-    public World getWorld() { return world; }
+    public int getWorldEndX() { return worldEndX; }
 }

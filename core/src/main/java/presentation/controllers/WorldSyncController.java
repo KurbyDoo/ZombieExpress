@@ -1,9 +1,8 @@
 package presentation.controllers;
 
-import application.use_cases.populate_chunk.PopulateChunkInputData;
-import application.use_cases.update_world.UpdateWorldInputBoundary;
-import application.use_cases.update_world.UpdateWorldInputData;
-import application.use_cases.update_world.UpdateWorldOutputData;
+import application.game_use_cases.update_world.UpdateWorldInputBoundary;
+import application.game_use_cases.update_world.UpdateWorldInputData;
+import application.game_use_cases.update_world.UpdateWorldOutputData;
 import com.badlogic.gdx.utils.Disposable;
 
 import domain.Chunk;

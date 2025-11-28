@@ -1,7 +1,8 @@
 package runner;
 
-import UseCases.Login.*;
-import data_access.mockLogic.login.MockfirebaseAuthManager;
+import application.interface_use_cases.login.LoginDataAccessInterface;
+import application.interface_use_cases.login.LoginInteractor;
+import data_access.mock_logic.login.MockfirebaseAuthManager;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;

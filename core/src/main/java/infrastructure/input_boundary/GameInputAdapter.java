@@ -1,8 +1,8 @@
 package infrastructure.input_boundary;
 
-import application.use_cases.player_movement.PlayerMovementInputBoundary;
-import application.use_cases.player_movement.PlayerMovementInputData;
-import application.use_cases.exit_game.ExitGameUseCase;
+import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
+import application.game_use_cases.player_movement.PlayerMovementInputData;
+import application.game_use_cases.exit_game.ExitGameUseCase;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;

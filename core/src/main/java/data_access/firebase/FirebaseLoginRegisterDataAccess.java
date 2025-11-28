@@ -1,7 +1,7 @@
-package data_access.Firebase;
+package data_access.firebase;
 
-import UseCases.Login.LoginDataAccessInterface;
-import UseCases.Register.RegisterUserDataAccessInterface;
+import application.interface_use_cases.login.LoginDataAccessInterface;
+import application.interface_use_cases.register.RegisterUserDataAccessInterface;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;

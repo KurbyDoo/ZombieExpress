@@ -1,10 +1,8 @@
 package domain.entities;
 
-import application.use_cases.generate_entity.GenerateEntityStrategy;
-import application.use_cases.generate_entity.GenerateEntityInputData;
-import data_access.EntityStorage;
-import domain.Chunk;
-import domain.World;
+import application.game_use_cases.generate_entity.GenerateEntityStrategy;
+import application.game_use_cases.generate_entity.GenerateEntityInputData;
+import interface_adapter.game.EntityStorage;
 
 import java.util.HashMap;
 import java.util.Map;

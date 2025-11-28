@@ -1,6 +1,6 @@
 package infrastructure.input_boundary;
 
-import application.use_cases.ports.ApplicationLifecyclePort;
+import application.game_use_cases.ports.ApplicationLifecyclePort;
 import com.badlogic.gdx.Gdx;
 
 /**

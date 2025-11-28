@@ -8,6 +8,7 @@ import application.game_use_cases.render_radius.RenderRadiusManagerInputData;
 import application.game_use_cases.render_radius.RenderRadiusOutputData;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.populate_chunk.PopulateChunkInputData;
+import domain.Chunk;
 import domain.GamePosition;
 import domain.World;
 import domain.player.Player;
@@ -44,7 +45,7 @@ public class UpdateWorldInteractor implements UpdateWorldInputBoundary {
         for (GamePosition pos : radiusData.getChunksToGenerate()) {
             // TODO: remove this world dependency
             GenerateChunkOutputData outputData = chunkGenerator.execute(
-                new GenerateChunkInputData(pos, world)
+                new GenerateChunkInputData(pos, world.getWorldDepthChunks() * Chunk.CHUNK_SIZE)
             );
             world.addChunk(pos, outputData.getChunk());
             System.out.println("Added chunk at " + pos);

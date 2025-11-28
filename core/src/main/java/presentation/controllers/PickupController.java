@@ -1,12 +1,11 @@
 package presentation.controllers;
 
-import application.use_cases.dismount_entity.DismountEntityInputBoundary;
-import application.use_cases.dismount_entity.DismountEntityInputData;
-import application.use_cases.dismount_entity.DismountEntityOutputData;
-import application.use_cases.mount_entity.MountEntityInputBoundary;
-import application.use_cases.mount_entity.MountEntityInputData;
-import application.use_cases.mount_entity.MountEntityOutputData;
-import application.use_cases.pickup.PickupInteractor;
+import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
+import application.game_use_cases.dismount_entity.DismountEntityInputData;
+import application.game_use_cases.mount_entity.MountEntityInputBoundary;
+import application.game_use_cases.mount_entity.MountEntityInputData;
+import application.game_use_cases.mount_entity.MountEntityOutputData;
+import application.game_use_cases.pickup.PickupInteractor;
 import domain.entities.PickupEntity;
 import domain.entities.Train;
 import domain.player.Player;
@@ -93,7 +92,7 @@ public class PickupController {
 
     public void onRideKeyPressed() {
         if (player.getCurrentRide() != null) {
-            dismountEntity.execute(new DismountEntityInputData(player.getCurrentRide()));
+            dismountEntity.execute(new DismountEntityInputData());
         } else if (currentTrainTarget != null) {
             MountEntityOutputData outputData = mountEntity.execute(
                 new MountEntityInputData(currentTrainTarget)

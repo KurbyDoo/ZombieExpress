@@ -1,95 +1,68 @@
 package presentation.view;
 
-import application.use_cases.dismount_entity.DismountEntityInputBoundary;
-import application.use_cases.dismount_entity.DismountEntityInteractor;
-import application.use_cases.exit_game.ExitGameUseCase;
-import application.use_cases.ports.ApplicationLifecyclePort;
 import application.use_cases.win_condition.WinConditionInputBoundary;
 import application.use_cases.win_condition.WinConditionInteractor;
-import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
-import application.use_cases.generate_entity.pickup.GeneratePickupStrategy;
-import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
-import application.use_cases.generate_entity.train.GenerateTrainStrategy;
-import application.use_cases.generate_chunk.GenerateChunkInteractor;
-import application.use_cases.generate_entity.zombie.GenerateZombieStrategy;
-import application.use_cases.mount_entity.MountEntityInputBoundary;
-import application.use_cases.mount_entity.MountEntityInteractor;
-import application.use_cases.update_world.UpdateWorldInputBoundary;
-import application.use_cases.update_world.UpdateWorldInteractor;
-import application.use_cases.populate_chunk.PopulateChunkEntities;
-import application.use_cases.populate_chunk.PopulateChunkInputBoundary;
-import application.use_cases.ports.ApplicationLifecyclePort;
-import data_access.EntityStorage;
+import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
+import application.game_use_cases.dismount_entity.DismountEntityInteractor;
+import application.game_use_cases.exit_game.ExitGameUseCase;
+import application.game_use_cases.generate_chunk.GenerateChunkInputBoundary;
+import application.game_use_cases.generate_entity.pickup.GeneratePickupStrategy;
+import application.game_use_cases.generate_entity.train.GenerateTrainStrategy;
+import application.game_use_cases.generate_chunk.GenerateChunkInteractor;
+import application.game_use_cases.generate_entity.zombie.GenerateZombieStrategy;
+import application.game_use_cases.mount_entity.MountEntityInputBoundary;
+import application.game_use_cases.mount_entity.MountEntityInteractor;
+import application.game_use_cases.update_world.UpdateWorldInputBoundary;
+import application.game_use_cases.update_world.UpdateWorldInteractor;
+import application.game_use_cases.populate_chunk.PopulateChunkEntities;
+import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
+import application.game_use_cases.ports.ApplicationLifecyclePort;
+import data_access.IdToEntityStorage;
+import interface_adapter.game.EntityStorage;
 import domain.GamePosition;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
-import application.use_cases.ports.BlockRepository;
-import application.use_cases.pickup.PickupInteractor;
-import application.use_cases.player_movement.PlayerMovementInputBoundary;
-import application.use_cases.player_movement.PlayerMovementInteractor;
-import application.use_cases.ports.PhysicsControlPort;
-import application.use_cases.render_radius.RenderRadiusManagerInputBoundary;
-import application.use_cases.render_radius.RenderRadiusManagerInteractor;
-import application.use_cases.update_entity.EntityBehaviourSystem;
+import application.game_use_cases.ports.BlockRepository;
+import application.game_use_cases.pickup.PickupInteractor;
+import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
+import application.game_use_cases.player_movement.PlayerMovementInteractor;
+import application.game_use_cases.ports.PhysicsControlPort;
+import application.game_use_cases.render_radius.RenderRadiusManagerInputBoundary;
+import application.game_use_cases.render_radius.RenderRadiusManagerInteractor;
+import application.game_use_cases.update_entity.EntityBehaviourSystem;
 import data_access.InMemoryBlockRepository;
 import domain.entities.*;
 import domain.player.Player;
 import domain.World;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
-import physics.GameMesh;
 import presentation.controllers.*;
 import presentation.view.hud.GameHUD;
 import infrastructure.rendering.*;
 import infrastructure.input_boundary.*;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Vector3;
 
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
     private final int RENDER_RADIUS = 6; // The radius in chunks where meshes are visible
 
-//    private ViewCamera camera;
     public ObjectRenderer objectRenderer;
-//    public World world;
     private CameraController cameraController;
     // TODO: These should be merged
     private GameInputAdapter gameInputAdapter;
     private InventoryInputAdapter inventoryInputAdapter;
     private PickUpInputAdapter  pickupInputAdapter;
 
-//    private Player player;
-
-    // World Generation
-//    private GenerateChunkInteractor chunkGenerator;
-//    private ChunkMeshGenerator chunkMeshGenerator;
-//    private RenderRadiusManagerInputBoundary renderRadiusManager;
-
-//    private GenerateChunkInputBoundary chunkGenerator;
-//    private PopulateChunkInputBoundary chunkPopulator;
-//    private ChunkMeshGenerationInputBoundary chunkMeshGenerator;
     private WorldSyncController worldSyncController;
-
-//    private BlockRepository blockRepository;
-//    private BlockMaterialRepository materialRepository;
-//    private PickupStorage pickupStorage;
-
     private float accumulator;
 
-//    private CollisionHandler colHandler;
-
-//    private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
     private PickupController pickupController;
     private WinConditionInputBoundary WinConditionInteractor;
 
-//    private EntityStorage entityStorage;
     private GameHUD hud;
-
-    // TODO: Merge with entity storage
-//    private final Map<WorldPickup, GameMesh> pickupMeshes = new HashMap<>();
 
     @Override
     public void createView() {
@@ -109,23 +82,12 @@ public class GameView implements Viewable{
         GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
-        // TODO: Merge with entity storage
-//        this.pickupStorage = new PickupStorage();
         EntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
             .register(EntityType.PICKUP, pickupGenerateStrategy)
             .build();
-
-
-        ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
-        ExitGameUseCase exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
-
-        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
-        Gdx.input.setInputProcessor(gameInputAdapter);
-        Gdx.input.setCursorCatched(true);
-        inventoryInputAdapter = new InventoryInputAdapter(player);
 
 
         // Chunk Generation
@@ -156,6 +118,15 @@ public class GameView implements Viewable{
         PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, player);
         pickupController = new PickupController(player, pickupInteractor, mountEntity, dismountEntity, meshStorage);
         pickupInputAdapter = new PickUpInputAdapter(pickupController);
+
+        ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
+        ExitGameUseCase exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
+
+        gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
+        Gdx.input.setInputProcessor(gameInputAdapter);
+        Gdx.input.setCursorCatched(true);
+        inventoryInputAdapter = new InventoryInputAdapter(player);
+
 
         // --- MESH + COL ---
         objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
