@@ -1,6 +1,5 @@
 package application.use_cases.win_condition;
 
-import com.badlogic.gdx.Gdx;
 import domain.World;
 import domain.player.Player;
 import com.badlogic.gdx.math.Vector3;
