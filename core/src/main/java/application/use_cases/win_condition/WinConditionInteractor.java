@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import domain.World;
 import domain.player.Player;
 import com.badlogic.gdx.math.Vector3;
+import application.use_cases.exit_game.ExitGameUseCase;
 
 /**
  * The Interactor responsible for checking all possible game-ending conditions:
@@ -15,12 +16,14 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
     private final World world;
     private final Player player;
+    private final ExitGameUseCase exitGameUseCase;
 
     private boolean isGameOver = false;
 
-    public WinConditionInteractor(World world, Player player) {
+    public WinConditionInteractor(World world, Player player, ExitGameUseCase exitGameUseCase) {
         this.world = world;
         this.player = player;
+        this.exitGameUseCase = exitGameUseCase;
     }
 
     @Override
@@ -35,8 +38,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             String message = "Game Over! Your health reached zero. You succumbed to the Zombie Express.";
 
             System.out.println("--- GAME LOST: Player Died ---");
-            Gdx.app.exit(); // Triggers application exit
-
+            exitGameUseCase.execute();
             return new WinConditionOutputData(true, message);
         }
 
