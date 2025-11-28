@@ -1,29 +1,16 @@
 package presentation.controllers;
 
-import application.use_cases.generate_chunk.GenerateChunkInputData;
-import application.use_cases.generate_chunk.GenerateChunkOutputData;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputData;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationOutputData;
-import application.use_cases.generate_mesh.GenerateMeshInputData;
-import application.use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.use_cases.populate_chunk.PopulateChunkInputData;
-import application.use_cases.render_radius.RenderRadiusOutputData;
-import com.badlogic.gdx.math.Vector3;
+import application.use_cases.update_world.UpdateWorldInputBoundary;
+import application.use_cases.update_world.UpdateWorldInputData;
+import application.use_cases.update_world.UpdateWorldOutputData;
 import com.badlogic.gdx.utils.Disposable;
 
-import data_access.EntityStorage;
 import domain.Chunk;
+import domain.GamePosition;
 import domain.World;
-import domain.entities.Entity;
-import domain.entities.EntityFactory;
-import domain.player.Player;
 import infrastructure.rendering.*;
 
-import application.use_cases.render_radius.RenderRadiusManagerInputBoundary;
-import application.use_cases.render_radius.RenderRadiusManagerInputData;
-import application.use_cases.render_radius.RenderRadiusManagerInteractor;
-import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
-import application.use_cases.chunk_mesh_generation.ChunkMeshGenerationInputBoundary;
 
 import java.util.Set;
 
@@ -34,113 +21,59 @@ import java.util.Set;
  */
 public class WorldSyncController implements Disposable {
     private final World world;
-    private final Player player;
-    private final int RENDER_RADIUS; // Removed hardcoded '= 6'
+    private final int RENDER_RADIUS;
 
-    private final GenerateChunkInputBoundary chunkGenerator;
-    private final PopulateChunkInputBoundary chunkPopulator;
-    private final ChunkMeshGenerationInputBoundary chunkMeshGenerator;
-    private final RenderRadiusManagerInputBoundary renderRadiusManager;
+    private final UpdateWorldInputBoundary worldUpdater;
 
     private final ChunkRenderer chunkRenderer;
 
-    private final EntityStorage entityStorage;
-    private final MeshFactory meshFactory;
-    private final MeshStorage meshStorage;
-
-    private RenderRadiusOutputData radiusData;
+    private Set<GamePosition> toUnload;
+    private Set<GamePosition> toUpdate;
 
     /**
      * Creates and wires together all world components using provided dependencies.
      */
     public WorldSyncController(
-        ObjectRenderer objectRenderer,
+        int renderRadius,
         World world,
-        Player player,
-        EntityFactory entityFactory,
-        EntityStorage entityStorage,
-        MeshFactory meshFactory,
-        MeshStorage meshStorage,
-        GenerateChunkInputBoundary chunkGenerator,
-        PopulateChunkInputBoundary chunkPopulator,
-        ChunkMeshGenerationInputBoundary chunkMeshGenerator,
-        int renderRadius
+        UpdateWorldInputBoundary worldUpdater,
+        ChunkRenderer chunkRenderer
     ) {
-        this.world = world;
-        this.player = player;
         this.RENDER_RADIUS = renderRadius;
-
-        this.chunkGenerator = chunkGenerator;
-        this.chunkPopulator = chunkPopulator;
-        this.chunkMeshGenerator = chunkMeshGenerator;
-
-        this.chunkRenderer = new ChunkRenderer(objectRenderer);
-
-        this.renderRadiusManager = new RenderRadiusManagerInteractor();
-
-        this.entityStorage = entityStorage;
-
-        this.meshFactory = meshFactory;
-        this.meshStorage = meshStorage;
-    }
+        this.world = world;
+        this.worldUpdater = worldUpdater;
+        this.chunkRenderer = chunkRenderer;}
 
     /**
      * Updates the world state based on the player's current position, triggering
      * chunk generation, meshing, and de-rendering.
      */
     public void loadUpdate() {
-        Vector3 playerPosition = player.getPosition();
 
-        // Find chunks to update
-        radiusData = renderRadiusManager.execute(
-            new RenderRadiusManagerInputData(playerPosition, world, RENDER_RADIUS)
+        UpdateWorldOutputData outputData = worldUpdater.execute(
+            new UpdateWorldInputData(RENDER_RADIUS)
         );
 
-        // Generate chunks
-        for (Vector3 pos : radiusData.getChunksToGenerate()) {
-            GenerateChunkOutputData outputData = chunkGenerator.execute(new GenerateChunkInputData(pos, world));
-            world.addChunk(pos, outputData.getChunk());
-            chunkPopulator.execute(new PopulateChunkInputData(world, outputData.getChunk()));
-            chunkRenderer.onChunkCreated(pos);
-        }
-
         // Load Chunks
-        for (Vector3 pos : radiusData.getChunksToLoad()) {
+        for (GamePosition pos : outputData.getChunksToLoad()) {
             Chunk chunk = world.getChunk(pos);
-            ChunkMeshGenerationOutputData meshOutput = chunkMeshGenerator.execute(
-                new ChunkMeshGenerationInputData(world, chunk)
-            );
-
-            if (meshOutput.getMeshData() != null) {
-                chunkRenderer.onChunkMeshReady(pos, meshOutput.getMeshData());
-            }
-
-            for (int id : chunk.getEntityIds()) {
-                // TODO: Do i really need to have entity storage here?
-                // - check if mesh has been generated
-                // - if not, generate mesh and add to mesh storage
-                if (meshStorage.hasMesh(id)) continue;
-                Entity entity = entityStorage.getEntityByID(id);
-                meshFactory.createMesh(new GenerateMeshInputData(entity, id));
-
-            }
+            chunkRenderer.loadChunk(pos, chunk);
         }
+
+        toUpdate = outputData.getChunksToUpdate();
+        toUnload = outputData.getChunksToUnload();
     }
 
-    public Set<Vector3> getActiveChunkPositions() {
+    public Set<GamePosition> getActiveChunkPositions() {
         // Return the list of chunks currently loaded/updating
-        return radiusData.getChunksToUpdate();
+        return toUpdate;
     }
 
     public void unloadUpdate() {
         // Unload Chunks
-        for (Vector3 pos : radiusData.getChunksToUnload()) {
-            chunkRenderer.onChunkRemoved(pos);
+        for (GamePosition pos : toUnload) {
             Chunk chunk = world.getChunk(pos);
-            for (int id : chunk.getEntityIds()) {
-                meshStorage.removeMesh(id);
-            }
-            // TODO: Unload entities
+            chunkRenderer.unloadChunk(pos, chunk);
         }
     }
 

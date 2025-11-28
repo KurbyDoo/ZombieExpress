@@ -1,29 +1,27 @@
 package domain;
 
-import com.badlogic.gdx.math.Vector3;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
 public class World {
-    private final int worldDepthChunks = 20;
-    private HashMap<Vector3, Chunk> chunks;
+    private final int worldDepthChunks = 200;
+    private HashMap<GamePosition, Chunk> chunks;
 
     public World() {
         chunks = new HashMap<>();
+    }
+
+    public HashMap<GamePosition, Chunk> getChunks() {
+        return chunks;
     }
 
     public float getWorldEndCoordinateX() {
         return (float) worldDepthChunks * Chunk.CHUNK_SIZE;
     }
 
-    public HashMap<Vector3, Chunk> getChunks() {
-        return chunks;
-    }
-
-    public boolean addChunk(Vector3 pos, Chunk chunk) {
+    public boolean addChunk(GamePosition pos, Chunk chunk) {
         if (chunks.containsKey(pos)) return false;
         chunks.put(pos, chunk);
         return true;
@@ -37,7 +35,7 @@ public class World {
         int chunkX = Math.floorDiv(x, Chunk.CHUNK_SIZE);
         int chunkY = Math.floorDiv(y, Chunk.CHUNK_SIZE);
         int chunkZ = Math.floorDiv(z, Chunk.CHUNK_SIZE);
-        Vector3 chunkVector = new Vector3(chunkX, chunkY, chunkZ);
+        GamePosition chunkVector = new GamePosition(chunkX, chunkY, chunkZ);
 
         if (chunks.containsKey(chunkVector)) {
             return chunks.get(chunkVector).getBlock(localX, localY, localZ);
@@ -51,41 +49,41 @@ public class World {
     }
 
     public boolean hasChunk(int x, int y, int z) {
-        return chunks.containsKey(new Vector3(x, y, z));
+        return chunks.containsKey(new GamePosition(x, y, z));
     }
 
-    public boolean hasChunk(Vector3 pos) {
+    public boolean hasChunk(GamePosition pos) {
         return chunks.containsKey(pos);
     }
 
     public void removeChunk(int x, int y, int z) {
-        chunks.remove(new Vector3(x, y, z));
+        chunks.remove(new GamePosition(x, y, z));
     }
 
-    public Set<Vector3> getChunkPositions() {
+    public Set<GamePosition> getChunkPositions() {
         return chunks.keySet();
     }
 
     public Chunk getChunk(int chunkX, int chunkY, int chunkZ) {
-        return chunks.get(new Vector3(chunkX, chunkY, chunkZ));
+        return chunks.get(new GamePosition(chunkX, chunkY, chunkZ));
     }
 
-    public Chunk getChunk(Vector3 pos) {
+    public Chunk getChunk(GamePosition pos) {
         return chunks.get(pos);
     }
 
-    public List<Integer> getEntitiesInChunks(Set<Vector3> activeChunks) {
+    public List<Integer> getEntitiesInChunks(Set<GamePosition> activeChunks) {
         ArrayList<Integer> result = new ArrayList<>();
-        for (Vector3 pos : activeChunks) {
+        for (GamePosition pos : activeChunks) {
             result.addAll(getChunk(pos).getEntityIds());
         }
         return result;
     }
 
-    public Chunk getChunkFromWorldPos(Vector3 position) {
+    public Chunk getChunkFromWorldPos(GamePosition position) {
         int chunkX = Math.floorDiv((int) position.x, Chunk.CHUNK_SIZE);
         int chunkY = Math.floorDiv((int) position.y, Chunk.CHUNK_SIZE);
         int chunkZ = Math.floorDiv((int) position.z, Chunk.CHUNK_SIZE);
-        return getChunk(new Vector3(chunkX, chunkY, chunkZ));
+        return getChunk(new GamePosition(chunkX, chunkY, chunkZ));
     }
 }

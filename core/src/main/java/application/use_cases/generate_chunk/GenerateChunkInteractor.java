@@ -1,15 +1,12 @@
 package application.use_cases.generate_chunk;
 
+import domain.GamePosition;
 import application.use_cases.generate_entity.train.GenerateTrainInputData;
 import application.use_cases.generate_entity.zombie.GenerateZombieInputData;
 import application.use_cases.generate_entity.pickup.GeneratePickupInputData;
 import application.use_cases.ports.BlockRepository;
-import com.badlogic.gdx.math.Vector3;
 import domain.Chunk;
 import domain.World;
-import domain.entities.EntityFactory;
-import domain.items.Item;
-import domain.items.ItemTypes;
 import infrastructure.noise.PerlinNoise;
 import java.util.Random;
 

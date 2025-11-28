@@ -1,5 +1,6 @@
 package presentation.controllers;
 
+import domain.GamePosition;
 import domain.player.Player;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
@@ -8,18 +9,18 @@ public class CameraController {
     private final Camera camera;
     private final Player player;
 
-    private final Vector3 previousPosition;
-    private final Vector3 previousDirection;
-    private final Vector3 previousUp;
+    private final GamePosition previousPosition;
+    private final GamePosition previousDirection;
+    private final GamePosition previousUp;
 
 
     public CameraController(Camera camera, Player player) {
         this.camera = camera;
         this.player = player;
 
-        previousPosition = new Vector3();
-        previousDirection = new Vector3();
-        previousUp = new Vector3();
+        previousPosition = new GamePosition();
+        previousDirection = new GamePosition();
+        previousUp = new GamePosition();
     }
 
     public void updatePrevious() {
@@ -30,9 +31,12 @@ public class CameraController {
 
 
     public void renderCamera(float alpha) {
-        camera.position.set(previousPosition.lerp(player.getPosition(), alpha));
-        camera.direction.set(previousDirection.lerp(player.getDirection(), alpha));
-        camera.up.set(previousUp.lerp(player.getUp(), alpha));
+        GamePosition newPos = previousPosition.lerp(player.getPosition(), alpha);
+        GamePosition newDir = previousDirection.lerp(player.getDirection(), alpha);
+        GamePosition newUp = previousUp.lerp(player.getUp(), alpha);
+        camera.position.set(newPos.x, newPos.y, newPos.z);
+        camera.direction.set(newDir.x, newDir.y, newDir.z);
+        camera.up.set(newUp.x, newUp.y, newUp.z);
         camera.update();
     }
 }

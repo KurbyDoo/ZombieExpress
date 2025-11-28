@@ -1,22 +1,40 @@
 package presentation.controllers;
 
+import application.use_cases.dismount_entity.DismountEntityInputBoundary;
+import application.use_cases.dismount_entity.DismountEntityInputData;
+import application.use_cases.dismount_entity.DismountEntityOutputData;
+import application.use_cases.mount_entity.MountEntityInputBoundary;
+import application.use_cases.mount_entity.MountEntityInputData;
+import application.use_cases.mount_entity.MountEntityOutputData;
 import application.use_cases.pickup.PickupInteractor;
 import domain.entities.PickupEntity;
 import domain.entities.Train;
+import domain.player.Player;
 import infrastructure.rendering.MeshStorage;
 
 public class PickupController {
 
     private final PickupInteractor interactor;
+    private final MountEntityInputBoundary mountEntity;
+    private final DismountEntityInputBoundary dismountEntity;
     private final MeshStorage meshStorage;
+    private final Player player;
 
     private PickupEntity currentPickupTarget;
     private Train currentTrainTarget;
     private String currentMessage = "";
 
-    public PickupController(PickupInteractor interactor,
-                            MeshStorage meshStorage) {
+    public PickupController(
+        Player player,
+        PickupInteractor interactor,
+        MountEntityInputBoundary mountEntity,
+        DismountEntityInputBoundary dismountEntity,
+        MeshStorage meshStorage
+    ) {
+        this.player = player;
         this.interactor = interactor;
+        this.mountEntity = mountEntity;
+        this.dismountEntity = dismountEntity;
         this.meshStorage = meshStorage;
     }
 
@@ -28,7 +46,9 @@ public class PickupController {
         StringBuilder sb = new StringBuilder();
 
         Train train = interactor.findTrainInFront();
-        if (train != null) {
+        if (player.getCurrentRide() != null) {
+            sb.append("Press F to dismount");
+        } else if (train != null) {
             currentTrainTarget = train;
             sb.append("Press F to drive Train");
             if (interactor.isHoldingFuel()) {
@@ -68,6 +88,20 @@ public class PickupController {
             // Remove the visual mesh for this entity ID
             meshStorage.removeMesh(pickedID);
             clearTargets();
+        }
+    }
+
+    public void onRideKeyPressed() {
+        if (player.getCurrentRide() != null) {
+            dismountEntity.execute(new DismountEntityInputData(player.getCurrentRide()));
+        } else if (currentTrainTarget != null) {
+            MountEntityOutputData outputData = mountEntity.execute(
+                new MountEntityInputData(currentTrainTarget)
+            );
+            if (outputData.isMountSuccess()) {
+                // optional: play sound, log, etc.
+                clearTargets();
+            }
         }
     }
 

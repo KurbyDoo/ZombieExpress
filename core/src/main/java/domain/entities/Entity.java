@@ -1,18 +1,21 @@
 package domain.entities;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 
 public class Entity {
     protected Integer id;
-    protected Vector3 position;
+    protected GamePosition position;
+    protected GamePosition velocity;
     protected boolean isVisible;
+    protected float yaw;
     private final EntityType type;
 
-    public Entity(Integer id, EntityType type, Vector3 position, boolean isVisible) {
+    public Entity(Integer id, EntityType type, GamePosition position, boolean isVisible) {
         this.id = id;
         this.type = type;
         this.position = position;
         this.isVisible = isVisible;
+        this.velocity = new GamePosition(0, 0, 0);
     }
 
     public Integer getID() {
@@ -25,12 +28,32 @@ public class Entity {
         return type;
     }
 
-    public Vector3 getPosition() {
+    public GamePosition getPosition() {
         return position;
     }
 
-    public void setPosition(Vector3 position) {
+    public void setPosition(GamePosition position) {
         this.position = position;
+    }
+
+    public GamePosition getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(GamePosition velocity) {
+        this.velocity = velocity;
+    }
+
+    public void setVelocity(float x, float y, float z) {
+        this.velocity.set(x, y, z);
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
     }
 
     public boolean isVisible() {

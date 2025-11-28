@@ -1,7 +1,6 @@
-package application.use_cases.generate_mesh;
+package infrastructure.rendering.strategies;
 
 import domain.entities.Entity;
-import domain.entities.EntityType;
 
 public class GenerateMeshInputData {
     private final Entity entity;

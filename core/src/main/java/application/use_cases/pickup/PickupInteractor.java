@@ -1,10 +1,8 @@
 package application.use_cases.pickup;
 
-import com.badlogic.gdx.math.Vector3;
-import domain.entities.Entity;
-import domain.entities.IdToEntityStorage;
-import domain.entities.Train;
-import domain.entities.PickupEntity;
+import data_access.EntityStorage;
+import domain.GamePosition;
+import domain.entities.*;
 import domain.items.FuelItem;
 import domain.player.Inventory;
 import domain.player.InventorySlot;
@@ -12,27 +10,27 @@ import domain.player.Player;
 
 public class PickupInteractor {
 
-    private final IdToEntityStorage entityStorage;
+    private final EntityStorage entityStorage;
     private final Player player;
 
-    public PickupInteractor(IdToEntityStorage entityStorage,
+    public PickupInteractor(EntityStorage entityStorage,
                             Player player) {
         this.entityStorage = entityStorage;
         this.player = player;
     }
 
-    private boolean isInFront(Vector3 from, Vector3 forward, Vector3 targetPosition, float maxDistance, float angle) {
+    private boolean isInFront(GamePosition from, GamePosition forward, GamePosition targetPosition, float maxDistance, float angle) {
         float minCosAngle = (float) Math.cos(Math.toRadians(angle));
 
-        Vector3 toTarget = new Vector3(targetPosition).sub(from);
+        GamePosition toTarget = new GamePosition(targetPosition).sub(from);
         float distance = toTarget.len();
 
         if (distance > maxDistance) {
             return false;
         }
 
-        Vector3 forwardNorm = new Vector3(forward).nor();
-        Vector3 toTargetNorm = new Vector3(toTarget).nor();
+        GamePosition forwardNorm = new GamePosition(forward).nor();
+        GamePosition toTargetNorm = new GamePosition(toTarget).nor();
 
         float cosAngle = forwardNorm.dot(toTargetNorm);
         return cosAngle >= minCosAngle;
@@ -42,8 +40,8 @@ public class PickupInteractor {
      * Find the closest PickupEntity in front of the player, or null.
      */
     public PickupEntity findPickupInFront() {
-        Vector3 pos = player.getPosition();
-        Vector3 dir = player.getDirection().nor();
+        GamePosition pos = player.getPosition();
+        GamePosition dir = player.getDirection().nor();
 
         PickupEntity best = null;
         float closestDistance = Float.MAX_VALUE;
@@ -53,7 +51,7 @@ public class PickupInteractor {
             if (!(e instanceof PickupEntity)) continue;
 
             PickupEntity p = (PickupEntity) e;
-            Vector3 pickupPos = p.getPosition();
+            GamePosition pickupPos = p.getPosition();
             if (!isInFront(pos, dir, pickupPos, 4.5f, 25)) continue;
 
             float dist = pickupPos.dst(pos);
@@ -66,12 +64,18 @@ public class PickupInteractor {
     }
 
     public Train findTrainInFront() {
-        Train t = entityStorage.getTrain();
+        Train t = null;
+        for (int id : entityStorage.getAllIds()) {
+            Entity e = entityStorage.getEntityByID(id);
+            if (!(e instanceof Train)) continue;
+            t = (Train) e;
+        }
+
         if (t == null) return null;
 
-        Vector3 pos = player.getPosition();
-        Vector3 dir = player.getDirection();
-        Vector3 trainPos = t.getPosition();
+        GamePosition pos = player.getPosition();
+        GamePosition dir = player.getDirection();
+        GamePosition trainPos = t.getPosition();
 
         if (isInFront(pos, dir, trainPos, 10, 50)) {
             return t;

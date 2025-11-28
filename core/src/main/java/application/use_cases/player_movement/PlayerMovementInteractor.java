@@ -1,12 +1,15 @@
 package application.use_cases.player_movement;
 
+import domain.GamePosition;
+import domain.entities.Rideable;
+import domain.entities.Train;
 import domain.player.Player;
-import com.badlogic.gdx.math.Vector3;
 
 public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
     private final Player player;
 
-    // The interactor only needs a reference to the entity it manipulates.
+    private final int SPRINT_MULTIPLIER = 5;
+
     public PlayerMovementInteractor(Player player) {
         this.player = player;
     }
@@ -18,13 +21,38 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
             player.updateRotation(inputData.getDeltaX(), inputData.getDeltaY());
         }
 
-        // --- Handle Movement ---
-        Vector3 velocity = new Vector3();
-        Vector3 playerDirection = new Vector3(player.getDirection()).nor();
-        Vector3 playerUp = new Vector3(player.getUp()).nor();
+        Rideable playerRide = player.getCurrentRide();
 
-        Vector3 totalUp = new Vector3(0f, playerDirection.y, 0f);
-        Vector3 orthogonalDirection = playerDirection.sub(totalUp).nor();
+        if (playerRide instanceof Train) {
+            Train train = (Train) playerRide;
+
+            if (inputData.isForward() && train.getCurrentFuel() > 0) {
+                train.accelerate();
+                train.consumeFuel(1);
+            }
+        } else {
+            GamePosition playerDirection = new GamePosition(player.getDirection()).nor();
+            GamePosition playerUp = new GamePosition(player.getUp()).nor();
+
+            GamePosition velocity = getOnGroundVelocity(inputData, playerDirection, playerUp);
+
+            velocity.scl(player.getMovementSpeed());
+
+            if (inputData.isSprinting()) {
+                velocity.scl(SPRINT_MULTIPLIER);
+            }
+
+            // Apply the move immediately
+            if (!velocity.isZero()) {
+                player.updatePosition(velocity.scl(inputData.getDeltaTime()));
+            }
+        }
+    }
+
+    private GamePosition getOnGroundVelocity(PlayerMovementInputData inputData, GamePosition playerDirection, GamePosition playerUp) {
+        GamePosition velocity = new GamePosition();
+        GamePosition totalUp = new GamePosition(0f, playerDirection.y, 0f);
+        GamePosition orthogonalDirection = playerDirection.sub(totalUp).nor();
 
         if (inputData.isForward()) {
             velocity.add(orthogonalDirection);
@@ -33,17 +61,13 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
             velocity.sub(orthogonalDirection);
         }
         if (inputData.isLeft()) {
-            Vector3 left = new Vector3(orthogonalDirection).crs(playerUp).nor().scl(-1);
+            GamePosition left = new GamePosition(orthogonalDirection).crs(playerUp).nor().scl(-1);
             velocity.add(left);
         }
         if (inputData.isRight()) {
-            Vector3 right = new Vector3(orthogonalDirection).crs(playerUp).nor();
+            GamePosition right = new GamePosition(orthogonalDirection).crs(playerUp).nor();
             velocity.add(right);
         }
-
-        // Only update the player's position if there is movement input.
-        if (!velocity.isZero()) {
-            player.updatePosition(velocity, inputData.getDeltaTime(), inputData.isSprinting());
-        }
+        return velocity;
     }
 }

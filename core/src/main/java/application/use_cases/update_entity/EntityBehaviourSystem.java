@@ -1,7 +1,7 @@
 package application.use_cases.update_entity;
 
+import domain.GamePosition;
 import application.use_cases.ports.PhysicsControlPort;
-import com.badlogic.gdx.math.Vector3;
 import data_access.EntityStorage;
 import domain.Chunk;
 import domain.World;
@@ -23,7 +23,7 @@ public class EntityBehaviourSystem {
     // Map Enum types to specific strategies
     private final Map<EntityType, EntityBehaviour> behaviors = new EnumMap<>(EntityType.class);
 
-    private Map<Integer, Vector3> entityToPosition;
+    private Map<Integer, GamePosition> entityToPosition;
 
     public EntityBehaviourSystem(PhysicsControlPort physicsControl, Player player, EntityStorage storage, World world) {
         this.physicsControl = physicsControl;
@@ -41,6 +41,7 @@ public class EntityBehaviourSystem {
         // Register strategies here
         behaviors.put(EntityType.ZOMBIE, new ZombieBehaviour());
         behaviors.put(EntityType.BULLET, new BulletBehaviour());
+        behaviors.put(EntityType.TRAIN, new TrainBehaviour());
         // Add more as needed
     }
 
@@ -69,10 +70,10 @@ public class EntityBehaviourSystem {
 
     public void unloadCache(List<Integer> activeEntities) {
         for (Integer entityID : activeEntities) {
-            Vector3 previousPos = entityToPosition.get(entityID);
+            GamePosition previousPos = entityToPosition.get(entityID);
             Chunk previousChunk = world.getChunkFromWorldPos(previousPos);
 
-            Vector3 newPos = storage.getEntityByID(entityID).getPosition();
+            GamePosition newPos = storage.getEntityByID(entityID).getPosition();
             Chunk newChunk = world.getChunkFromWorldPos(newPos);
 
             if (previousChunk != newChunk) {

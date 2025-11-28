@@ -3,8 +3,7 @@ package application.use_cases.generate_entity.train;
 import application.use_cases.generate_entity.GenerateEntityInputData;
 import application.use_cases.generate_entity.GenerateEntityStrategy;
 import domain.entities.Entity;
-import domain.entities.EntityType;
-import domain.entities.Train; // Import your specific Train class
+import domain.entities.Train;
 
 public class GenerateTrainStrategy implements GenerateEntityStrategy {
     @Override
@@ -12,11 +11,6 @@ public class GenerateTrainStrategy implements GenerateEntityStrategy {
         // We set isVisible to true since the train needs to be rendered initially.
         // It's crucial to use the data passed via inputData to maintain the pattern.
 
-        return new Train(
-            inputData.getId(),
-            EntityType.TRAIN, // Passed from GenerateTrainInputData
-            inputData.getPosition(),
-            true // We assume the train is visible upon creation
-        );
+        return new Train(inputData.getId(), inputData.getPosition());
     }
 }

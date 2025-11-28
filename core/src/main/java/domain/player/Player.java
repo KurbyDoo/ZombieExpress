@@ -1,17 +1,19 @@
 package domain.player;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import domain.AmmoType;
+import domain.entities.Rideable;
+import domain.entities.Train;
 import domain.items.Item;
 import static domain.AmmoType.*;
 
 public class Player {
-    private final Vector3 startingPosition;
-    private final Vector3 position;
-    private final Vector3 direction;
-    private final Vector3 up;
+    private final GamePosition startingPosition;
+    private final GamePosition position;
+    private final GamePosition direction;
+    private final GamePosition up;
 
-    private final float movementSpeed = 5.0f;
+    private final float movementSpeed = 25.0f;
     private final float sprintSpeed = movementSpeed * 5;
     private final float rotationSpeed = 0.2f;
 
@@ -24,13 +26,18 @@ public class Player {
     private int currentHealth = maxHealth;
     private float passiveHealTimer = 0;
 
-    public Player(Vector3 startingPosition) {
-        this.startingPosition = new Vector3(startingPosition);
-        this.position = new Vector3(startingPosition);
-        this.direction = new Vector3(1, 0, 0);
-        this.up = new Vector3(Vector3.Y);
+    private Rideable currentRide;
+
+    public Player(GamePosition startingPosition) {
+        this.startingPosition = new GamePosition(startingPosition);
+        this.position = new GamePosition(startingPosition);
+        this.direction = new GamePosition(1, 0, 0);
+        this.up = new GamePosition(GamePosition.Y);
         this.inventory = new Inventory();
 
+//        this.currentRide = new Train(-1, this.position);
+
+//        inventory.addItem(BASEBALL_BAT);
 //        inventory.addItem(RUSTY_PISTOL);
 //        inventory.addItem(COAL, 2);
         addAmmo(PISTOL, 250);
@@ -40,12 +47,9 @@ public class Player {
     /**
      * Updates the player's position based on a velocity vector.
      * @param velocity The direction of movement (should be normalized).
-     * @param deltaTime The time since the last frame.
-     * @param isSprinting Whether the player is sprinting.
      */
-    public void updatePosition(Vector3 velocity, float deltaTime, boolean isSprinting) {
-        float speed = isSprinting ? sprintSpeed : movementSpeed;
-        position.add(velocity.nor().scl(speed * deltaTime));
+    public void updatePosition(GamePosition velocity) {
+        position.add(velocity);
     }
 
     /**
@@ -64,7 +68,7 @@ public class Player {
         float actualRotationRadians = clampedPitchRadians - (float) Math.asin(direction.y);
 
         if (Math.abs(actualRotationRadians) > 0.0001f) {
-            Vector3 pitchAxis = new Vector3(direction).crs(up).nor();
+            GamePosition pitchAxis = new GamePosition(direction).crs(up).nor();
             direction.rotate(pitchAxis, (float) Math.toDegrees(actualRotationRadians));
         }
     }
@@ -83,20 +87,20 @@ public class Player {
         }
     }
 
-    public Vector3 getStartingPosition() {
-        return new Vector3(startingPosition);
+    public GamePosition getStartingPosition() {
+        return new GamePosition(startingPosition);
     }
 
-    public Vector3 getPosition() {
-        return new Vector3(position);
+    public GamePosition getPosition() {
+        return new GamePosition(position);
     }
 
-    public Vector3 getDirection() {
-        return new Vector3(direction);
+    public GamePosition getDirection() {
+        return new GamePosition(direction);
     }
 
-    public Vector3 getUp() {
-        return new Vector3(up);
+    public GamePosition getUp() {
+        return new GamePosition(up);
     }
 
     public Inventory getInventory() {
@@ -105,6 +109,14 @@ public class Player {
 
     public int getCurrentSlot() {
         return currentSlot;
+    }
+
+    public void setCurrentRide(Rideable currentRide) {
+        this.currentRide = currentRide;
+    }
+
+    public Rideable getCurrentRide() {
+        return currentRide;
     }
 
     public int getMaxHealth() {
@@ -136,6 +148,10 @@ public class Player {
 
     public boolean isDead() {
         return currentHealth <= 0;
+    }
+
+    public float getMovementSpeed() {
+        return movementSpeed;
     }
 
     public void addAmmo(AmmoType type, int amount) {
@@ -195,5 +211,9 @@ public class Player {
      */
     public void drop() {
         inventory.removeItem(currentSlot);
+    }
+
+    public void setPosition(GamePosition newPlayerPos) {
+        position.set(newPlayerPos);
     }
 }

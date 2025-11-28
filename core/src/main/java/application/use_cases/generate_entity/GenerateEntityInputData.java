@@ -1,15 +1,15 @@
 package application.use_cases.generate_entity;
 
-import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import domain.Chunk;
 import domain.entities.EntityType;
 
 public class GenerateEntityInputData {
     private int id;
     private final EntityType type;
-    private final Vector3 position;
+    private final GamePosition position;
 
-    public GenerateEntityInputData(EntityType type, Vector3 position) {
+    public GenerateEntityInputData(EntityType type, GamePosition position) {
         this.type = type;
         this.position = position;
     }
@@ -26,7 +26,7 @@ public class GenerateEntityInputData {
         return type;
     }
 
-    public Vector3 getPosition() {
+    public GamePosition getPosition() {
         return position;
     }
 }
