@@ -3,6 +3,9 @@ package presentation.view;
 import application.use_cases.dismount_entity.DismountEntityInputBoundary;
 import application.use_cases.dismount_entity.DismountEntityInteractor;
 import application.use_cases.exit_game.ExitGameUseCase;
+import application.use_cases.ports.ApplicationLifecyclePort;
+import application.use_cases.win_condition.WinConditionInputBoundary;
+import application.use_cases.win_condition.WinConditionInteractor;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
 import application.use_cases.generate_entity.pickup.GeneratePickupStrategy;
 import application.use_cases.generate_chunk.GenerateChunkInputBoundary;
@@ -80,6 +83,7 @@ public class GameView implements Viewable{
 //    private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
     private PickupController pickupController;
+    private WinConditionInputBoundary WinConditionInteractor;
 
 //    private EntityStorage entityStorage;
     private GameHUD hud;
@@ -178,6 +182,7 @@ public class GameView implements Viewable{
         );
 
         hud = new GameHUD(player, entityStorage, pickupController);
+        WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
     }
 
     @Override
@@ -196,6 +201,8 @@ public class GameView implements Viewable{
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
             gameSimulationController.update(TIME_STEP);
+
+            WinConditionInteractor.execute();
         }
 
 

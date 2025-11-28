@@ -36,7 +36,9 @@ public class ObjectRenderer {
         sceneManager.environment.add(light);
 
         this.environment = sceneManager.environment;
-        Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f);
+        // Color skyColor = new Color(0.5f, 0.7f, 1.0f, 1f); // blue
+        // Color skyColor = new Color(0.5f, 0.55f, 0.65f, 1f); // grey
+        Color skyColor = new Color(0.1f, 0.15f, 0.25f, 1f); // dark blue
         this.environment.set(new ColorAttribute(ColorAttribute.Fog, skyColor));
 
         this.camera.far = 100f;
