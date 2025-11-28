@@ -83,6 +83,7 @@ public class GameView implements Viewable{
 //    private EntityBehaviourSystem entityBehaviourSystem;
     private GameSimulationController gameSimulationController;
     private PickupController pickupController;
+    private WinConditionInputBoundary WinConditionInteractor;
 
 //    private EntityStorage entityStorage;
     private GameHUD hud;
@@ -181,6 +182,7 @@ public class GameView implements Viewable{
         );
 
         hud = new GameHUD(player, entityStorage, pickupController);
+        WinConditionInteractor = new WinConditionInteractor(world, player);
     }
 
     @Override
@@ -199,6 +201,8 @@ public class GameView implements Viewable{
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
             gameSimulationController.update(TIME_STEP);
+
+            WinConditionInteractor.execute();
         }
 
 
