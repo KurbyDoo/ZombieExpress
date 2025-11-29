@@ -48,7 +48,7 @@ public class UpdateWorldInteractor implements UpdateWorldInputBoundary {
                 new GenerateChunkInputData(pos, world.getWorldDepthChunks() * Chunk.CHUNK_SIZE)
             );
             world.addChunk(pos, outputData.getChunk());
-            chunkPopulator.execute(new PopulateChunkInputData(world, outputData.getChunk()));
+            chunkPopulator.execute(new PopulateChunkInputData(outputData.getChunk()));
 
         }
 

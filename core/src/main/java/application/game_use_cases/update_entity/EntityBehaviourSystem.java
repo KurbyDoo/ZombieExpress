@@ -2,7 +2,7 @@ package application.game_use_cases.update_entity;
 
 import application.game_use_cases.ports.PhysicsControlPort;
 import domain.GamePosition;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.Chunk;
 import domain.World;
 import domain.entities.Entity;

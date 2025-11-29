@@ -1,7 +1,7 @@
 package infrastructure.rendering;
 
 import infrastructure.rendering.strategies.GenerateMeshInputData;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.entities.Entity;
 
 public class EntityRenderer {

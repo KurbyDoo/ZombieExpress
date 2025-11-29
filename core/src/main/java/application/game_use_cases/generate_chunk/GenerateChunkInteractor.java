@@ -1,8 +1,7 @@
 package application.game_use_cases.generate_chunk;
 
-import application.game_use_cases.ports.BlockRepository;
+import domain.repositories.BlockRepository;
 import domain.Chunk;
-import domain.World;
 import infrastructure.noise.PerlinNoise;
 
 public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
