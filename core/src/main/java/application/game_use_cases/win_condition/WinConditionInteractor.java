@@ -38,7 +38,6 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             String message = "Game Over! Your health reached zero. You succumbed to the Zombie Express.";
 
             System.out.println("--- GAME LOST: Player Died ---");
-            exitGameUseCase.execute();
             return new WinConditionOutputData(true, message);
         }
 
@@ -49,12 +48,11 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
         // The win condition only applies if the player is actively riding the train
         if (currentRide != null) {
 
-            // FIX: We must use the position of the RIDEABLE (the train) for the world boundary check,
-            // not the player's position (which is offset relative to the train).
             GamePosition trackedPosition = currentRide.getPosition();
 
             float trackedX = trackedPosition.x;
             float worldEndX = world.getWorldEndCoordinateX();
+
 
             if (trackedX >= worldEndX) {
                 isGameOver = true;
