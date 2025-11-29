@@ -1,7 +1,7 @@
 package presentation.view;
 
-import application.use_cases.win_condition.WinConditionInputBoundary;
-import application.use_cases.win_condition.WinConditionInteractor;
+import application.game_use_cases.win_condition.WinConditionInputBoundary;
+import application.game_use_cases.win_condition.WinConditionInteractor;
 import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
 import application.game_use_cases.dismount_entity.DismountEntityInteractor;
 import application.game_use_cases.exit_game.ExitGameUseCase;
