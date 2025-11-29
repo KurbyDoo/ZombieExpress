@@ -17,6 +17,7 @@ import application.game_use_cases.update_world.UpdateWorldInteractor;
 import application.game_use_cases.populate_chunk.PopulateChunkEntities;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
+import application.game_use_cases.win_condition.WinConditionOutputData;
 import data_access.IdToEntityStorage;
 import interface_adapter.game.EntityStorage;
 import domain.GamePosition;
@@ -42,6 +43,7 @@ import presentation.view.hud.GameHUD;
 import infrastructure.rendering.*;
 import infrastructure.input_boundary.*;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 
 public class GameView implements Viewable{
     private final float FPS = 120.0f;
@@ -123,8 +125,6 @@ public class GameView implements Viewable{
         ExitGameUseCase exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
 
         gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
-        Gdx.input.setInputProcessor(gameInputAdapter);
-        Gdx.input.setCursorCatched(true);
         inventoryInputAdapter = new InventoryInputAdapter(player);
 
 
@@ -152,8 +152,16 @@ public class GameView implements Viewable{
             worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, world
         );
 
-        hud = new GameHUD(player, entityStorage, pickupController);
-        WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
+        this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
+        hud = new GameHUD(player, entityStorage, pickupController, exitGameUseCase);
+
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(hud.getUiStage());
+        multiplexer.addProcessor(gameInputAdapter);
+        multiplexer.addProcessor(inventoryInputAdapter);
+        multiplexer.addProcessor(pickupInputAdapter);
+        Gdx.input.setInputProcessor(multiplexer);
+        Gdx.input.setCursorCatched(true);
     }
 
     @Override
@@ -173,7 +181,10 @@ public class GameView implements Viewable{
             gameInputAdapter.processInput(TIME_STEP);
             gameSimulationController.update(TIME_STEP);
 
-            WinConditionInteractor.execute();
+            WinConditionOutputData output = WinConditionInteractor.execute();
+            if (output.isGameOver()) {
+                hud.showEndGameDialog(output.getMessage());
+            }
         }
 
 
