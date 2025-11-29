@@ -3,6 +3,7 @@ package application.game_use_cases.win_condition;
 import application.game_use_cases.exit_game.ExitGameUseCase;
 import domain.GamePosition;
 import domain.World;
+import domain.entities.Rideable;
 import domain.player.Player;
 
 /**
@@ -61,11 +62,11 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
                 System.out.println("--- GAME WON: " + message + " ---");
 
-                return new CheckWinConditionOutputData(true, message);
+                return new WinConditionOutputData(true, message);
             }
         }
 
         // Return default state if no end condition is met
-        return new CheckWinConditionOutputData(false, "");
+        return new WinConditionOutputData(false, "");
     }
 }
