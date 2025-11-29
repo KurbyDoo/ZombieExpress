@@ -4,7 +4,6 @@ import application.game_use_cases.generate_entity.pickup.GeneratePickupStrategy;
 import application.game_use_cases.generate_entity.train.GenerateTrainStrategy;
 import application.game_use_cases.generate_entity.zombie.GenerateZombieStrategy;
 import data_access.MockEntityStorage;
-import domain.Block;
 import domain.Chunk;
 import domain.GamePosition;
 import domain.World;
