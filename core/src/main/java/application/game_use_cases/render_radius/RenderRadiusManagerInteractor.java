@@ -25,6 +25,7 @@ public class RenderRadiusManagerInteractor implements RenderRadiusManagerInputBo
     // Tracks chunks currently in the world
     private final Set<GamePosition> renderedChunks = new HashSet<>();
 
+    // TODO: Why did i do this, need to refactor later
     public RenderRadiusManagerInteractor(World world) {
         MAX_WORLD_X_CHUNKS = world.getWorldDepthChunks() + 12;
     }
@@ -124,18 +125,12 @@ public class RenderRadiusManagerInteractor implements RenderRadiusManagerInputBo
     }
 
     private boolean isWithinWorldBounds(int x, int y, int z) {
-        if (z < MIN_WORLD_Z_CHUNKS || z > MAX_WORLD_Z_CHUNKS) {
-            return false;
-        }
-
-        if (x < MIN_WORLD_X_CHUNKS || x > MAX_WORLD_X_CHUNKS) {
-            return false;
-        }
-
-        if (y < MIN_WORLD_Y_CHUNKS || y > MAX_WORLD_Y_CHUNKS) {
-            return false;
-        }
-        return true;
+        return z >= MIN_WORLD_Z_CHUNKS &&
+            z <= MAX_WORLD_Z_CHUNKS &&
+            x >= MIN_WORLD_X_CHUNKS &&
+            x <= MAX_WORLD_X_CHUNKS &&
+            y >= MIN_WORLD_Y_CHUNKS &&
+            y <= MAX_WORLD_Y_CHUNKS;
     }
 
     private boolean isWithinRadius(int chunkX, int chunkZ, int centerX, int centerZ, int radius) {
