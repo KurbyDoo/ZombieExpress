@@ -1,4 +1,4 @@
-package application.use_cases.win_condition;
+package application.game_use_cases.win_condition;
 
 import application.game_use_cases.exit_game.ExitGameUseCase;
 import domain.GamePosition;

@@ -1,4 +1,4 @@
-package application.use_cases.win_condition;
+package application.game_use_cases.win_condition;
 
 /**
  * Defines the contract for checking if the win condition has been met.
