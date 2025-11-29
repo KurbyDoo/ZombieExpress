@@ -2,7 +2,7 @@ package domain.entities;
 
 import application.game_use_cases.generate_entity.GenerateEntityStrategy;
 import application.game_use_cases.generate_entity.GenerateEntityInputData;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 
 import java.util.HashMap;
 import java.util.Map;

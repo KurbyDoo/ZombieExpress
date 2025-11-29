@@ -5,15 +5,9 @@ import domain.World;
 
 public class PopulateChunkInputData {
     private final Chunk chunk;
-    private final World world;
 
-    public PopulateChunkInputData(World world, Chunk chunk) {
-        this.world = world;
+    public PopulateChunkInputData(Chunk chunk) {
         this.chunk = chunk;
-    }
-
-    public World getWorld() {
-        return world;
     }
 
     public Chunk getChunk() {

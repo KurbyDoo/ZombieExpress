@@ -1,6 +1,6 @@
 package infrastructure.rendering;
 
-import application.game_use_cases.ports.BlockRepository;
+import domain.repositories.BlockRepository;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;

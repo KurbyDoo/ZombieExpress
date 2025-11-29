@@ -1,4 +1,4 @@
-package application.game_use_cases.ports;
+package domain.repositories;
 
 import domain.Block;
 import java.util.Collection;

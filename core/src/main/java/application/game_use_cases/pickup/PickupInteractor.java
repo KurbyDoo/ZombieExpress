@@ -1,6 +1,6 @@
 package application.game_use_cases.pickup;
 
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import domain.entities.*;
 import domain.items.FuelItem;

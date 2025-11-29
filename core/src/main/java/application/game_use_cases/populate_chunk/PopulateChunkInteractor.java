@@ -11,11 +11,11 @@ import domain.items.ItemTypes;
 import infrastructure.noise.PerlinNoise;
 import java.util.Random;
 
-public class PopulateChunkEntities implements PopulateChunkInputBoundary {
+public class PopulateChunkInteractor implements PopulateChunkInputBoundary {
     private final EntityFactory entityFactory;
     private final Random random = new Random();
 
-    public PopulateChunkEntities(EntityFactory entityFactory) {
+    public PopulateChunkInteractor(EntityFactory entityFactory) {
         this.entityFactory = entityFactory;
     }
 

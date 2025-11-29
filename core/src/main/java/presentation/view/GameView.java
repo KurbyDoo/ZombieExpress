@@ -14,17 +14,17 @@ import application.game_use_cases.mount_entity.MountEntityInputBoundary;
 import application.game_use_cases.mount_entity.MountEntityInteractor;
 import application.game_use_cases.update_world.UpdateWorldInputBoundary;
 import application.game_use_cases.update_world.UpdateWorldInteractor;
-import application.game_use_cases.populate_chunk.PopulateChunkEntities;
+import application.game_use_cases.populate_chunk.PopulateChunkInteractor;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
 import data_access.IdToEntityStorage;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
-import application.game_use_cases.ports.BlockRepository;
+import domain.repositories.BlockRepository;
 import application.game_use_cases.pickup.PickupInteractor;
 import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
 import application.game_use_cases.player_movement.PlayerMovementInteractor;
@@ -94,7 +94,7 @@ public class GameView implements Viewable{
 
         // Chunk Generation
         GenerateChunkInputBoundary chunkGenerator = new GenerateChunkInteractor(blockRepository);
-        PopulateChunkInputBoundary chunkPopulator = new PopulateChunkEntities(entityFactory);
+        PopulateChunkInputBoundary chunkPopulator = new PopulateChunkInteractor(entityFactory);
         RenderRadiusManagerInputBoundary renderRadiusManager = new RenderRadiusManagerInteractor(world);
         UpdateWorldInputBoundary updateWorld = new UpdateWorldInteractor(renderRadiusManager, chunkGenerator, chunkPopulator, world, player);
 

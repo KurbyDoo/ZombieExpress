@@ -10,7 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import application.game_use_cases.exit_game.ExitGameUseCase;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.player.Player;
 import presentation.controllers.PickupController;
 import com.badlogic.gdx.graphics.Pixmap;

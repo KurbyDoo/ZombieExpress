@@ -1,6 +1,6 @@
 package application.game_use_cases.generate_chunk;
 
-import application.game_use_cases.ports.BlockRepository;
+import domain.repositories.BlockRepository;
 import data_access.InMemoryBlockRepository;
 import domain.Chunk;
 import domain.GamePosition;
