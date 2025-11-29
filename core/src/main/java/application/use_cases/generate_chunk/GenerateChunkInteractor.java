@@ -110,8 +110,8 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
 
         // bullet
         if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
-            Vector3 bulletPosition = new Vector3(1f, 3f, 0);
-            entityFactory.create(new GenerateBulletInputData(bulletPosition, chunk));
+            Vector3 pos = new Vector3(1f, 3f, 1f);
+            entityFactory.create(new GenerateBulletInputData(pos, chunk));
         }
 
         return new GenerateChunkOutputData(chunk);
