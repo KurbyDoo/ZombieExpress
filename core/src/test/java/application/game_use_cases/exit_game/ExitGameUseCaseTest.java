@@ -28,23 +28,17 @@ class TestApplicationLifecyclePort implements ApplicationLifecyclePort {
 
 /**
  * Unit tests for the ExitGameUseCase, ensuring the core responsibility of
- * delegating the exit command to the infrastructure port is fulfilled,
- * using a manual test double instead of Mockito.
+ * delegating the exit command to the infrastructure port is fulfilled.
  */
 class ExitGameUseCaseTest {
 
     private TestApplicationLifecyclePort testLifecyclePort;
     private ExitGameUseCase exitGameUseCase;
 
-    /*
-     * This runs before every test, setting up the environment without Mockito.
-     */
     @BeforeEach
     void setUp() {
-        // 1. Create the manual test double
         testLifecyclePort = new TestApplicationLifecyclePort();
 
-        // 2. Inject the test double into the Use Case
         exitGameUseCase = new ExitGameUseCase(testLifecyclePort);
     }
 
@@ -59,10 +53,8 @@ class ExitGameUseCaseTest {
         @Test
         @DisplayName("Successfully calls closeApplication() once")
         void shouldCallCloseApplicationOnce() {
-            // Act: Run the Use Case
             exitGameUseCase.execute();
 
-            // Assert: Verify the expected behavior (call count == 1)
             assertEquals(1, testLifecyclePort.getCloseCallCount(),
                 "closeApplication() should be called exactly once.");
         }
@@ -79,7 +71,6 @@ class ExitGameUseCaseTest {
             exitGameUseCase.execute();
             exitGameUseCase.execute();
 
-            // Assert: Verify the expected behavior (call count == 3)
             assertEquals(3, testLifecyclePort.getCloseCallCount(),
                 "closeApplication() should be called three times.");
         }
@@ -90,9 +81,7 @@ class ExitGameUseCaseTest {
         @Test
         @DisplayName("Does not interact with port before execution")
         void shouldNotCallCloseApplicationBeforeExecute() {
-            // Arrange (Use Case is initialized in @BeforeEach, but not executed here)
 
-            // Assert: Verify that the method has not been called yet (call count == 0)
             assertEquals(0, testLifecyclePort.getCloseCallCount(),
                 "closeApplication() should not be called before execute().");
         }
