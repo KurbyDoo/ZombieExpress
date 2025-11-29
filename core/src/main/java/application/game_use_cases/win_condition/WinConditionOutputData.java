@@ -1,4 +1,4 @@
-package application.use_cases.win_condition;
+package application.game_use_cases.win_condition;
 
 /**
  * Data structure holding the result of the win condition check.
