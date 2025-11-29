@@ -97,3 +97,5 @@ class ExitGameUseCaseTest {
                 "closeApplication() should not be called before execute().");
         }
     }
+ }
+
