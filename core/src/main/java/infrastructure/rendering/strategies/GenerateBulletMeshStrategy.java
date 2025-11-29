@@ -15,7 +15,7 @@ import physics.GameMesh;
 import physics.MeshMotionState;
 
 public class GenerateBulletMeshStrategy implements GenerateMeshStrategy {
-    private SceneAsset bulletAsset = new GLTFLoader().load(Gdx.files.internal("models/bullet/scene.gltf"));
+    private SceneAsset bulletAsset = new GLTFLoader().load(Gdx.files.internal("models/bullet/bullet.gltf"));
 
     @Override
     public GameMesh execute(GenerateMeshInputData inputData) {
