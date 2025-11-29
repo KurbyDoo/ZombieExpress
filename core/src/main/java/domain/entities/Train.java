@@ -3,35 +3,36 @@ package domain.entities;
 import domain.GamePosition;
 
 public class Train extends Entity implements Rideable {
-    private final int MAX_FUEL = 10000;
-    private final float MAX_THROTTLE = 1f;
-    private float currentThrottle = 0f; // Range -1 to 1
+    private final float MAX_FUEL = 100;
+    private final float MAX_THROTTLE = 2f;
+    private float currentThrottle = 0f;
 
-    private int fuel;
+    private float fuel;
     private int speed;
     public Train(Integer id, GamePosition position) {
         super(id, EntityType.TRAIN, position, true);
-        fuel = 2000;
+        fuel = 20;
         speed = 30;
     }
 
-    public int getCurrentFuel() {
+    public void setCurrentFuel(float fuel) {
+        this.fuel = Math.min(fuel, MAX_FUEL);
+    }
+
+    public float getCurrentFuel() {
         return fuel;
     }
 
-    public int getMaxFuel() {
+    public float getMaxFuel() {
         return MAX_FUEL;
     }
 
-    public void addFuel(int amount) {
-        this.fuel += amount;
-        if (this.fuel > MAX_FUEL) {
-            this.fuel = MAX_FUEL;
-        }
+    public void addFuel(float amount) {
+        this.fuel = Math.min(this.fuel + amount, MAX_FUEL);
     }
 
-    public void consumeFuel(int amount) {
-        this.fuel -= amount;
+    public void consumeFuel(float amount) {
+        this.fuel = Math.max(this.fuel - amount, 0);
     }
 
     public GamePosition getRideOffset() {
@@ -59,11 +60,7 @@ public class Train extends Entity implements Rideable {
         this.currentThrottle = 0f;
     }
 
-    public void accelerate() {
-        setThrottle(currentThrottle + (MAX_THROTTLE - currentThrottle) * 0.02f);
-    }
-
-    public void decelerate() {
-        setThrottle(currentThrottle * 0.99f);
+    public float getRemainingThrottle() {
+        return MAX_THROTTLE - currentThrottle;
     }
 }

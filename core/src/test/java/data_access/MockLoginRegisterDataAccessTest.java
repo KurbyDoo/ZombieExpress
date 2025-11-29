@@ -1,8 +1,7 @@
 package data_access;
 
 
-import UseCases.Login.LoginInputBoundary;
-import data_access.login.MockLoginRegisterDataAccess;
+import data_access.mock_logic.login.MockLoginRegisterDataAccess;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

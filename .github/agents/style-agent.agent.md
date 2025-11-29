@@ -77,7 +77,7 @@ When reviewing code, structure your response as follows:
     public void move() { Gdx.input.getX(); }
 
     // ✅ Good (Inversion of Control)
-    // Define GameInputPort interface in UseCases
+    // Define GameInputPort interface in interface_use_cases
     public void move(GameInputPort input) { input.getX(); }
     ```
 

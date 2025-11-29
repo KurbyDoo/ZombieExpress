@@ -8,12 +8,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import data_access.EntityStorage;
+import interface_adapter.game.EntityStorage;
 import domain.entities.Entity;
-import domain.entities.IdToEntityStorage;
-import domain.entities.Rideable;
 import domain.entities.Train;
-import domain.player.Player;
 
 import static presentation.view.hud.UIAssetFactory.*;
 
@@ -72,10 +69,10 @@ public class FuelHudElement implements HudElement {
             return;
         }
 
-        int current = train.getCurrentFuel();
-        int max = train.getMaxFuel();
+        float current = train.getCurrentFuel();
+        float max = train.getMaxFuel();
 
-        float ratio = (current / (float) max);
+        float ratio = (current / max);
         if (ratio < 0) ratio = 0;
         if (ratio > 1) ratio = 1;
 

@@ -1,9 +1,9 @@
 package application.use_cases.win_condition;
 
+import application.game_use_cases.exit_game.ExitGameUseCase;
+import domain.GamePosition;
 import domain.World;
 import domain.player.Player;
-import com.badlogic.gdx.math.Vector3;
-import application.use_cases.exit_game.ExitGameUseCase;
 
 /**
  * The Interactor responsible for checking all possible game-ending conditions:
@@ -43,7 +43,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
         // --- CASE A: CHECK WIN CONDITION (TRAIN AT WORLD END) ---
         // Player.getTrackedPosition() correctly returns the Ridable's position (the train)
-        Vector3 trackedPosition = player.getPosition();
+        GamePosition trackedPosition = player.getPosition();
 
         float trackedX = trackedPosition.x;
         float worldEndX = world.getWorldEndCoordinateX();
