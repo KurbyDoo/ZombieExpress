@@ -2,9 +2,10 @@ package infrastructure.input_boundary;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import presentation.controllers.PickupController;
 
-public class PickUpInputAdapter {
+public class PickUpInputAdapter extends InputAdapter {
 
     private final PickupController pickupController;
 
