@@ -42,21 +42,30 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
         }
 
         // --- CASE A: CHECK WIN CONDITION (TRAIN AT WORLD END) ---
-        // Player.getTrackedPosition() correctly returns the Ridable's position (the train)
-        GamePosition trackedPosition = player.getPosition();
 
-        float trackedX = trackedPosition.x;
-        float worldEndX = world.getWorldEndCoordinateX();
+        Rideable currentRide = player.getCurrentRide();
 
-        if (trackedX >= worldEndX) {
-            isGameOver = true;
-            String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
+        // The win condition only applies if the player is actively riding the train
+        if (currentRide != null) {
 
-            System.out.println("--- GAME WON: " + message + " ---");
+            // FIX: We must use the position of the RIDEABLE (the train) for the world boundary check,
+            // not the player's position (which is offset relative to the train).
+            GamePosition trackedPosition = currentRide.getPosition();
 
-            return new WinConditionOutputData(true, message);
+            float trackedX = trackedPosition.x;
+            float worldEndX = world.getWorldEndCoordinateX();
+
+            if (trackedX >= worldEndX) {
+                isGameOver = true;
+                String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
+
+                System.out.println("--- GAME WON: " + message + " ---");
+
+                return new CheckWinConditionOutputData(true, message);
+            }
         }
+
         // Return default state if no end condition is met
-        return new WinConditionOutputData(false, "");
+        return new CheckWinConditionOutputData(false, "");
     }
 }
