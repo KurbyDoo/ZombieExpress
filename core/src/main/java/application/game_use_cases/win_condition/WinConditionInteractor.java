@@ -3,6 +3,7 @@ package application.game_use_cases.win_condition;
 import application.game_use_cases.exit_game.ExitGameUseCase;
 import domain.GamePosition;
 import domain.World;
+import domain.entities.Rideable;
 import domain.player.Player;
 
 /**
@@ -37,25 +38,32 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             String message = "Game Over! Your health reached zero. You succumbed to the Zombie Express.";
 
             System.out.println("--- GAME LOST: Player Died ---");
-            exitGameUseCase.execute();
             return new WinConditionOutputData(true, message);
         }
 
         // --- CASE A: CHECK WIN CONDITION (TRAIN AT WORLD END) ---
-        // Player.getTrackedPosition() correctly returns the Ridable's position (the train)
-        GamePosition trackedPosition = player.getPosition();
 
-        float trackedX = trackedPosition.x;
-        float worldEndX = world.getWorldEndCoordinateX();
+        Rideable currentRide = player.getCurrentRide();
 
-        if (trackedX >= worldEndX) {
-            isGameOver = true;
-            String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
+        // The win condition only applies if the player is actively riding the train
+        if (currentRide != null) {
 
-            System.out.println("--- GAME WON: " + message + " ---");
+            GamePosition trackedPosition = currentRide.getPosition();
 
-            return new WinConditionOutputData(true, message);
+            float trackedX = trackedPosition.x;
+            float worldEndX = world.getWorldEndCoordinateX();
+
+
+            if (trackedX >= worldEndX) {
+                isGameOver = true;
+                String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
+
+                System.out.println("--- GAME WON: " + message + " ---");
+
+                return new WinConditionOutputData(true, message);
+            }
         }
+
         // Return default state if no end condition is met
         return new WinConditionOutputData(false, "");
     }
