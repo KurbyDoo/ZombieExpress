@@ -1,6 +1,7 @@
 package presentation.view.hud;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -87,31 +88,38 @@ public class GameHUD {
         } catch (Exception e) {
             // Priority 2: Fallback to a programmatic skin using the custom fonts
             Skin skin = new Skin();
+
             BitmapFont font = UIFontFactory.createMainHudStyle().font;
-
+            font.getData().setScale(1.5f);
             skin.add("default-font", font);
-            Drawable dialogBackground = getColoredDrawable(new Color(0.1f, 0.1f, 0.1f, 0.95f));
 
-            Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.RED);
+            Drawable dialogBackground = getColoredDrawable(new Color(0.3f, 0.05f, 0.05f, 0.95f)); // Dark red, almost black
+
+            Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
             skin.add("default", labelStyle);
 
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
             textButtonStyle.font = font;
-            textButtonStyle.fontColor = Color.WHITE;
+            textButtonStyle.fontColor = Color.BLACK; // Black text on bright button
 
-            Color buttonColor = new Color(0.0f, 0.6f, 0.0f, 1f); // Bright Green
-            Color downColor = new Color(0.0f, 0.4f, 0.0f, 1f); // Darker Green
-            Color overColor = new Color(0.1f, 0.7f, 0.1f, 1f); // Lighter Green
+            Color buttonColor = new Color(0.5f, 0.8f, 0.0f, 1f); // Eerie Yellow-Green
+            Color downColor = new Color(0.4f, 0.6f, 0.0f, 1f); // Darker Green
+            Color overColor = new Color(0.6f, 0.9f, 0.1f, 1f); // Lighter Green/Yellow
 
+            TextureRegionDrawable upDrawable = (TextureRegionDrawable) getColoredDrawable(buttonColor);
+            upDrawable.setPadding(15, 15, 15, 15); // Increased button padding
 
-            textButtonStyle.up = getColoredDrawable(buttonColor);
+            textButtonStyle.up = upDrawable;
             textButtonStyle.down = getColoredDrawable(downColor);
             textButtonStyle.over = getColoredDrawable(overColor);
+
             skin.add("default", textButtonStyle);
 
             BitmapFont titleFont = UIFontFactory.createLargeHudStyle().font;
-            WindowStyle dialogStyle = new Dialog.WindowStyle(titleFont, Color.BLUE, dialogBackground);
+            titleFont.getData().setScale(1.5f); // Scale title font as well
+            WindowStyle dialogStyle = new Dialog.WindowStyle(titleFont, Color.YELLOW, dialogBackground);
             skin.add("default", dialogStyle);
+
             return skin;
         }
     }
@@ -133,19 +141,23 @@ public class GameHUD {
             }
         };
 
-        dialog.setWidth(Gdx.graphics.getWidth() * 0.6f);
-        dialog.center().pad(20);
+        float dialogWidth = Gdx.graphics.getWidth() * 0.7f;
+        float dialogHeight = Gdx.graphics.getHeight() * 0.5f;
+
+        dialog.setSize(dialogWidth, dialogHeight);
+        dialog.setPosition((Gdx.graphics.getWidth() - dialogWidth) / 2, (Gdx.graphics.getHeight() - dialogHeight) / 2);
         dialog.setMovable(false);
 
         dialog.getContentTable().clear();
         dialog.getButtonTable().clear();
 
         Label messageLabel = new Label(message, this.skin);
-        messageLabel.setFontScale(1.8f);
+        messageLabel.setFontScale(2.0f);
+        messageLabel.setColor(Color.YELLOW);
         messageLabel.setAlignment(Align.center);
 
         dialog.getContentTable().add(messageLabel)
-            .padTop(50).padBottom(50)
+            .padTop(60).padBottom(80)
             .expandX().fillX()
             .row();
 
@@ -153,7 +165,9 @@ public class GameHUD {
 
         dialog.getButtonTable().add(exitButton)
             .pad(30)
-            .minWidth(300).minHeight(70);
+            .minWidth(300).minHeight(80);
+
+        dialog.button(exitButton, true);
 
         dialog.show(uiStage);
         dialogShown = true;
