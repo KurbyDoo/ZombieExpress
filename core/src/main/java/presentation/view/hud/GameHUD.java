@@ -122,32 +122,39 @@ public class GameHUD {
      */
     public void showEndGameDialog(String message) {
         if (dialogShown) return;
-
-        // We use the stored skin field directly in the Dialog constructor
-
-        // Determine the title based on the message content (Win/Loss)
         String title = message.toLowerCase().contains("conquered") ?
             "!!! VICTORY ACHIEVED !!!" :
             "GAME OVER - FAILED";
 
-        Dialog dialog = new Dialog(title, this.skin, "default") { // <<< CORRECT USAGE OF this.skin
-            // Override result to ensure the exit use case is called when the button is pressed
+        Dialog dialog = new Dialog(title, this.skin, "default") {
             @Override
             protected void result(Object object) {
-                // Delegate the shutdown request to the Use Case (Clean Architecture)
                 exitGameUseCase.execute();
             }
         };
 
-        // Sets the requested text
-        dialog.text(message).pad(20).center();
+        dialog.setWidth(Gdx.graphics.getWidth() * 0.6f);
+        dialog.center().pad(20);
+        dialog.setMovable(false);
 
-        TextButton exitButton = new TextButton("Exit Game", this.skin); // <<< CORRECT USAGE OF this.skin
+        dialog.getContentTable().clear();
+        dialog.getButtonTable().clear();
 
-        // Add the button; clicking it calls the result(Object) method above.
-        dialog.button(exitButton, true);
+        Label messageLabel = new Label(message, this.skin);
+        messageLabel.setFontScale(1.8f);
+        messageLabel.setAlignment(Align.center);
 
-        // Show the dialog, making it modal and capturing input
+        dialog.getContentTable().add(messageLabel)
+            .padTop(50).padBottom(50)
+            .expandX().fillX()
+            .row();
+
+        TextButton exitButton = new TextButton("Exit Game", this.skin);
+
+        dialog.getButtonTable().add(exitButton)
+            .pad(30)
+            .minWidth(300).minHeight(70);
+
         dialog.show(uiStage);
         dialogShown = true;
     }
