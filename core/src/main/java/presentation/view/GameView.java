@@ -1,5 +1,7 @@
 package presentation.view;
 
+import application.game_use_cases.generate_entity.bullet.GenerateBulletStrategy;
+import application.game_use_cases.shoot.ShootInteractor;
 import application.game_use_cases.update_entity.BulletBehaviour;
 import application.game_use_cases.update_entity.TrainBehaviour;
 import application.game_use_cases.update_entity.ZombieBehaviour;
@@ -24,6 +26,7 @@ import application.game_use_cases.win_condition.WinConditionOutputData;
 import data_access.IdToEntityStorage;
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
+import infrastructure.rendering.strategies.GenerateBulletMeshStrategy;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
@@ -59,12 +62,14 @@ public class GameView implements Viewable{
     private GameInputAdapter gameInputAdapter;
     private InventoryInputAdapter inventoryInputAdapter;
     private PickUpInputAdapter  pickupInputAdapter;
+    private ShootInputAdapter shootInputAdapter;
 
     private WorldSyncController worldSyncController;
     private float accumulator;
 
     private GameSimulationController gameSimulationController;
     private PickupController pickupController;
+    private ShootController shootController;
     private WinConditionInputBoundary WinConditionInteractor;
 
     private GameHUD hud;
@@ -85,12 +90,14 @@ public class GameView implements Viewable{
         // Entity Generation
         GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
         GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
+        GenerateBulletStrategy bulletGenerateStrategy = new GenerateBulletStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
         EntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
+            .register(EntityType.BULLET, bulletGenerateStrategy)
             .register(EntityType.PICKUP, pickupGenerateStrategy)
             .build();
 
@@ -98,6 +105,7 @@ public class GameView implements Viewable{
             .register(EntityType.ZOMBIE, new ZombieBehaviour())
             .register(EntityType.BULLET, new BulletBehaviour())
             .register(EntityType.TRAIN, new TrainBehaviour())
+            .register(EntityType.BULLET, new BulletBehaviour())
             .build();
 
         // Chunk Generation
@@ -111,6 +119,7 @@ public class GameView implements Viewable{
         ChunkMeshGenerator chunkMeshGenerator = new ChunkMeshGenerator(world, blockRepository, (TexturedBlockMaterialRepository) materialRepository);
         GenerateZombieMeshStrategy zombieMeshStrategy = new GenerateZombieMeshStrategy();
         GenerateTrainMeshStrategy trainMeshStrategy = new GenerateTrainMeshStrategy();
+        GenerateBulletMeshStrategy bulletMeshStrategy = new GenerateBulletMeshStrategy();
         GeneratePickupMeshStrategy pickupMeshStrategy = new GeneratePickupMeshStrategy();
 
         CollisionHandler colHandler = new CollisionHandler();
@@ -119,6 +128,7 @@ public class GameView implements Viewable{
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
             .register(EntityType.ZOMBIE, zombieMeshStrategy)
             .register(EntityType.TRAIN, trainMeshStrategy)
+            .register(EntityType.BULLET, bulletMeshStrategy)
             .register(EntityType.PICKUP, pickupMeshStrategy)
             .build();
 
@@ -162,6 +172,11 @@ public class GameView implements Viewable{
             worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, world, player
         );
 
+        // Shoot
+        ShootInteractor shootInteractor = new ShootInteractor(entityFactory);
+        shootController = new ShootController(player, shootInteractor, meshStorage, entityRenderer);
+        shootInputAdapter = new ShootInputAdapter(shootController);
+
         this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
         hud = new GameHUD(player, entityStorage, pickupController, exitGameUseCase);
 
@@ -170,6 +185,7 @@ public class GameView implements Viewable{
         multiplexer.addProcessor(gameInputAdapter);
         multiplexer.addProcessor(inventoryInputAdapter);
         multiplexer.addProcessor(pickupInputAdapter);
+        multiplexer.addProcessor(shootInputAdapter);
         Gdx.input.setInputProcessor(multiplexer);
         Gdx.input.setCursorCatched(true);
     }
@@ -182,6 +198,7 @@ public class GameView implements Viewable{
         // Theses should be polled at most once per frame
         inventoryInputAdapter.pollInput();
         pickupInputAdapter.pollInput();
+        shootInputAdapter.pollInput();
 
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;
