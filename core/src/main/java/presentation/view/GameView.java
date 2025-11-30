@@ -1,5 +1,6 @@
 package presentation.view;
 
+import application.game_use_cases.generate_entity.bullet.GenerateBulletStrategy;
 import application.game_use_cases.win_condition.WinConditionInputBoundary;
 import application.game_use_cases.win_condition.WinConditionInteractor;
 import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
@@ -18,8 +19,8 @@ import application.game_use_cases.populate_chunk.PopulateChunkEntities;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
-import application.use_cases.generate_entity.bullet.GenerateBulletStrategy;
 import data_access.IdToEntityStorage;
+import infrastructure.rendering.strategies.GenerateBulletMeshStrategy;
 import interface_adapter.game.EntityStorage;
 import domain.GamePosition;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
@@ -83,16 +84,15 @@ public class GameView implements Viewable{
         // Entity Generation
         GenerateZombieStrategy zombieGenerateStrategy = new GenerateZombieStrategy();
         GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
+        GenerateBulletStrategy bulletGenerateStrategy = new GenerateBulletStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
         EntityStorage entityStorage = new IdToEntityStorage(world);
-        GenerateBulletStrategy bulletGenerationStrategy = new GenerateBulletStrategy();
-        application.use_cases.generate_mesh.GenerateBulletMeshStrategy bulletMeshStrategy = new application.use_cases.generate_mesh.GenerateBulletMeshStrategy();
 
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
-            .register(EntityType.BULLET, bulletGenerationStrategy)
+            .register(EntityType.BULLET, bulletGenerateStrategy)
             .register(EntityType.PICKUP, pickupGenerateStrategy)
             .build();
 
@@ -108,6 +108,7 @@ public class GameView implements Viewable{
         ChunkMeshGenerator chunkMeshGenerator = new ChunkMeshGenerator(world, blockRepository, (TexturedBlockMaterialRepository) materialRepository);
         GenerateZombieMeshStrategy zombieMeshStrategy = new GenerateZombieMeshStrategy();
         GenerateTrainMeshStrategy trainMeshStrategy = new GenerateTrainMeshStrategy();
+        GenerateBulletMeshStrategy bulletMeshStrategy = new GenerateBulletMeshStrategy();
         GeneratePickupMeshStrategy pickupMeshStrategy = new GeneratePickupMeshStrategy();
 
         CollisionHandler colHandler = new CollisionHandler();

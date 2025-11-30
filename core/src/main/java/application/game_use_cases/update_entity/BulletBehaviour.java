@@ -3,13 +3,14 @@ package application.game_use_cases.update_entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector3;
+import domain.GamePosition;
 import domain.entities.Entity;
 
 public class BulletBehaviour implements EntityBehaviour {
 
     private final float BULLET_SPEED = 10.0f;
-    private final Vector3 tempDir = new Vector3();
-    private final Vector3 tempVel = new Vector3();
+    private final GamePosition tempDir = new GamePosition();
+    private final GamePosition tempVel = new GamePosition();
 
     @Override
     public void update(Entity entity, BehaviourContext context) {
@@ -22,24 +23,22 @@ public class BulletBehaviour implements EntityBehaviour {
         // Or simple timeout logic:
         // if (entity.getAge() > 5.0f) destroy(entity);
 
-        // TODO: Move input processing to context
         if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            tempDir.set(context.player.getDirection()).nor();
+            tempDir.set(context.getPlayer().getDirection());
+            tempDir.y = 0;
+            tempDir.nor();
 
-            Vector3 currentVel = context.physics.getLinearVelocity(entity.getID());
-            if (currentVel == null) return;
-
-            // Apply velocity to bullet body
-            context.physics.setLinearVelocity(
-                entity.getID(),
+            // Get physics state
+            entity.setVelocity(
                 tempDir.x * BULLET_SPEED,
-                currentVel.y,
+                tempDir.y * BULLET_SPEED,
                 tempDir.z * BULLET_SPEED
             );
 
-            // lookAt is not working for bullet?
-            //context.physics.lookAt(entity.getID(), context.player.getDirection());
-
+            // Apply movement
+            // rotate the bullet to face movement direction
+            float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
+            entity.setYaw(yaw);
         }
     }
 }

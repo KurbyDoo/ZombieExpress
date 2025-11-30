@@ -1,7 +1,7 @@
-package application.use_cases.generate_entity.bullet;
+package application.game_use_cases.generate_entity.bullet;
 
-import application.use_cases.generate_entity.GenerateEntityInputData;
-import application.use_cases.generate_entity.GenerateEntityStrategy;
+import application.game_use_cases.generate_entity.GenerateEntityInputData;
+import application.game_use_cases.generate_entity.GenerateEntityStrategy;
 import domain.entities.Bullet;
 import domain.entities.Entity;
 
