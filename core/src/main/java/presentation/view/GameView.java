@@ -27,7 +27,6 @@ import com.badlogic.gdx.graphics.GL20;
 import data_access.IdToEntityStorage;
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
-import infrastructure.rendering.strategies.GenerateBulletMeshStrategy;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
@@ -107,8 +106,7 @@ public class GameView implements Viewable{
         EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem.EntityBehaviourSystemFactory(entityStorage, world)
             .register(EntityType.ZOMBIE, new ZombieBehaviour())
             .register(EntityType.BULLET, new BulletBehaviour())
-            .register(EntityType.TRAIN, new TrainBehaviour())
-            .register(EntityType.BULLET, new BulletBehaviour())
+            .register(EntityType.TRAIN, new TrainBehaviour(player))
             .build();
 
         // Chunk Generation
