@@ -23,6 +23,7 @@ import application.game_use_cases.populate_chunk.PopulateChunkInteractor;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
+import com.badlogic.gdx.graphics.GL20;
 import data_access.IdToEntityStorage;
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
@@ -52,6 +53,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 
 public class GameView implements Viewable{
+    private boolean initialized = false;
+
     private final float FPS = 120.0f;
     private final float TIME_STEP = 1.0f / FPS;
     private final int RENDER_RADIUS = 6; // The radius in chunks where meshes are visible

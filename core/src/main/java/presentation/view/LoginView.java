@@ -105,6 +105,7 @@ public class LoginView extends JFrame implements PropertyChangeListener {
 
                 JOptionPane.showMessageDialog(this,
                     "Welcome back!\nHigh Score: " + session.getHeightScore());
+                System.out.println(">>> playerSession triggered in LoginView");
                 viewManager.switchTo(ViewType.GAME);
 
                 break;

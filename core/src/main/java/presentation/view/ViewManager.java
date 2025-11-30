@@ -7,6 +7,7 @@ public class ViewManager {
     private ViewType currentView;
     private JFrame currentSwing;
     private Viewable gameView;
+
     public ViewManager() {
         switchTo(ViewType.LOGIN);
     }
@@ -32,12 +33,12 @@ public class ViewManager {
 
             case GAME:
                 gameView  = new GameView();
-                gameView.createView();
                 break;
 
         }
     }
-    public void render() {
+    public void render()
+    {
         if (gameView != null) gameView.renderView();
     }
 
