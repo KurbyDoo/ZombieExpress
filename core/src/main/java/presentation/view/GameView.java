@@ -1,6 +1,7 @@
 package presentation.view;
 
 import application.game_use_cases.generate_entity.bullet.GenerateBulletStrategy;
+import application.game_use_cases.shoot.ShootInteractor;
 import application.game_use_cases.win_condition.WinConditionInputBoundary;
 import application.game_use_cases.win_condition.WinConditionInteractor;
 import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
@@ -125,7 +126,8 @@ public class GameView implements Viewable{
         // --- SETUP FRAMEWORKS ---
         ViewCamera camera = new ViewCamera();
         PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, player);
-        pickupController = new PickupController(player, pickupInteractor, mountEntity, dismountEntity, meshStorage);
+        ShootInteractor shootInteractor = new ShootInteractor(entityFactory);
+        pickupController = new PickupController(player, pickupInteractor, mountEntity, dismountEntity, shootInteractor, meshStorage);
         pickupInputAdapter = new PickUpInputAdapter(pickupController);
 
         ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();

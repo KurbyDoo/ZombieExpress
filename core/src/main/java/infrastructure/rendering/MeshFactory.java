@@ -1,5 +1,6 @@
 package infrastructure.rendering;
 
+import infrastructure.rendering.strategies.GenerateBulletMeshStrategy;
 import infrastructure.rendering.strategies.GenerateMeshInputData;
 import infrastructure.rendering.strategies.GenerateMeshStrategy;
 import domain.entities.EntityType;
@@ -23,6 +24,11 @@ public class MeshFactory {
     public void createMesh(GenerateMeshInputData inputData) {
         GameMesh mesh = registry.get(inputData.getEntity().getType()).execute(inputData);
         storage.addMesh(inputData.getId(), mesh);
+
+        // for debugging
+        if (registry.get(inputData.getEntity().getType()) instanceof GenerateBulletMeshStrategy) {
+            System.out.println("Generate Bullet Mesh");
+        }
     }
 
     public static class MeshFactoryBuilder {

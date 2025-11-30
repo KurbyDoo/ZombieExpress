@@ -1,5 +1,6 @@
 package infrastructure.rendering;
 
+import domain.entities.Bullet;
 import infrastructure.rendering.strategies.GenerateMeshInputData;
 import interface_adapter.game.EntityStorage;
 import domain.entities.Entity;
@@ -17,6 +18,9 @@ public class EntityRenderer {
     public void loadEntity(int id) {
         if (meshStorage.hasMesh(id)) return;
         Entity entity = entityStorage.getEntityByID(id);
+        if (entity instanceof Bullet) {
+            System.out.println("Preparing to create bullet mesh");
+        }
         meshFactory.createMesh(new GenerateMeshInputData(entity, id));
     }
 

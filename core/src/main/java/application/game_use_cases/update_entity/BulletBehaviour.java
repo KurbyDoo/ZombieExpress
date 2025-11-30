@@ -8,7 +8,7 @@ import domain.entities.Entity;
 
 public class BulletBehaviour implements EntityBehaviour {
 
-    private final float BULLET_SPEED = 10.0f;
+    private final float BULLET_SPEED = 1.0f;
     private final GamePosition tempDir = new GamePosition();
     private final GamePosition tempVel = new GamePosition();
 
@@ -23,22 +23,37 @@ public class BulletBehaviour implements EntityBehaviour {
         // Or simple timeout logic:
         // if (entity.getAge() > 5.0f) destroy(entity);
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
-            tempDir.set(context.getPlayer().getDirection());
-            tempDir.y = 0;
-            tempDir.nor();
+//        if (Gdx.input.isKeyJustPressed(Input.Keys.T)) {
+//            tempDir.set(context.getPlayer().getDirection());
+//            tempDir.y = 0;
+//            tempDir.nor();
+//
+//            // Get physics state
+//            entity.setVelocity(
+//                tempDir.x * BULLET_SPEED,
+//                tempDir.y * BULLET_SPEED,
+//                tempDir.z * BULLET_SPEED
+//            );
+//
+//            // Apply movement
+//            // rotate the bullet to face movement direction
+//            float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
+//            entity.setYaw(yaw);
+//        }
+        tempDir.set(context.getPlayer().getDirection());
+        tempDir.y = 0;
+        tempDir.nor();
 
-            // Get physics state
-            entity.setVelocity(
-                tempDir.x * BULLET_SPEED,
-                tempDir.y * BULLET_SPEED,
-                tempDir.z * BULLET_SPEED
-            );
+        // Get physics state
+        entity.setVelocity(
+            tempDir.x * BULLET_SPEED,
+            tempDir.y * BULLET_SPEED,
+            tempDir.z * BULLET_SPEED
+        );
 
-            // Apply movement
-            // rotate the bullet to face movement direction
-            float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
-            entity.setYaw(yaw);
-        }
+        // Apply movement
+        // rotate the bullet to face movement direction
+        float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
+        entity.setYaw(yaw);
     }
 }

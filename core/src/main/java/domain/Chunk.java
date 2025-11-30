@@ -93,4 +93,9 @@ public class Chunk {
     public Set<Integer> getEntityIds() {
         return entityIds;
     }
+
+    // For debugging
+    public boolean hasEntityId(int id) {
+        return entityIds.contains(id);
+    }
 }

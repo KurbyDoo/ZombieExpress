@@ -1,5 +1,6 @@
 package application.game_use_cases.populate_chunk;
 
+import application.game_use_cases.generate_entity.bullet.GenerateBulletInputData;
 import application.game_use_cases.generate_entity.pickup.GeneratePickupInputData;
 import application.game_use_cases.generate_entity.train.GenerateTrainInputData;
 import application.game_use_cases.generate_entity.zombie.GenerateZombieInputData;
@@ -65,15 +66,22 @@ public class PopulateChunkEntities implements PopulateChunkInputBoundary {
         }
 
         // train
-        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
-            GamePosition trainPosition = new GamePosition(
-                chunk.getChunkWorldX() + (chunkSize / 2f),
-                1f,
-                chunk.getChunkWorldZ() + (chunkSize / 2f)
-            );
-            GenerateTrainInputData trainInput = new GenerateTrainInputData(trainPosition);
-            entityFactory.create(trainInput);
-        }
+//        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
+//            GamePosition trainPosition = new GamePosition(
+//                chunk.getChunkWorldX() + (chunkSize / 2f),
+//                1f,
+//                chunk.getChunkWorldZ() + (chunkSize / 2f)
+//            );
+//            GenerateTrainInputData trainInput = new GenerateTrainInputData(trainPosition);
+//            entityFactory.create(trainInput);
+//        }
+
+        // bullet for testing
+//        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
+//            GamePosition pos = new GamePosition(0, 3f, 0);
+//            GenerateBulletInputData bulletInput = new GenerateBulletInputData(pos);
+//            entityFactory.create(bulletInput);
+//        }
     }
 
     private boolean isValidSpawn(Chunk chunk, int x, int y, int z, int validRadius) {

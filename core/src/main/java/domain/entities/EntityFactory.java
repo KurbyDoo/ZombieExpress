@@ -2,6 +2,8 @@ package domain.entities;
 
 import application.game_use_cases.generate_entity.GenerateEntityStrategy;
 import application.game_use_cases.generate_entity.GenerateEntityInputData;
+import application.game_use_cases.generate_entity.bullet.GenerateBulletInputData;
+import application.game_use_cases.generate_entity.bullet.GenerateBulletStrategy;
 import interface_adapter.game.EntityStorage;
 
 import java.util.HashMap;
@@ -24,6 +26,10 @@ public class EntityFactory {
         inputData.setId(idCounter);
         Entity e = registry.get(inputData.getType()).execute(inputData);
         storage.setIDEntityPair(e.getID(), e);
+
+        if (e instanceof Bullet) {
+            System.out.println(idCounter);
+        }
     }
 
     public static class EntityFactoryBuilder {

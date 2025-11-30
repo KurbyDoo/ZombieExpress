@@ -6,6 +6,8 @@ import application.game_use_cases.mount_entity.MountEntityInputBoundary;
 import application.game_use_cases.mount_entity.MountEntityInputData;
 import application.game_use_cases.mount_entity.MountEntityOutputData;
 import application.game_use_cases.pickup.PickupInteractor;
+import application.game_use_cases.shoot.ShootInputData;
+import application.game_use_cases.shoot.ShootInteractor;
 import domain.entities.PickupEntity;
 import domain.entities.Train;
 import domain.player.Player;
@@ -16,6 +18,7 @@ public class PickupController {
     private final PickupInteractor interactor;
     private final MountEntityInputBoundary mountEntity;
     private final DismountEntityInputBoundary dismountEntity;
+    private final ShootInteractor shootInteractor;
     private final MeshStorage meshStorage;
     private final Player player;
 
@@ -27,13 +30,14 @@ public class PickupController {
         Player player,
         PickupInteractor interactor,
         MountEntityInputBoundary mountEntity,
-        DismountEntityInputBoundary dismountEntity,
+        DismountEntityInputBoundary dismountEntity, ShootInteractor shootInteractor,
         MeshStorage meshStorage
     ) {
         this.player = player;
         this.interactor = interactor;
         this.mountEntity = mountEntity;
         this.dismountEntity = dismountEntity;
+        this.shootInteractor = shootInteractor;
         this.meshStorage = meshStorage;
     }
 
@@ -102,6 +106,10 @@ public class PickupController {
                 clearTargets();
             }
         }
+    }
+
+    public void onShootKeyPressed() {
+        shootInteractor.execute(new ShootInputData(player.getPosition()));
     }
 
     private void clearTargets() {
