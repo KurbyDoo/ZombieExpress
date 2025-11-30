@@ -1,17 +1,48 @@
 package presentation.view;
 
-public class ViewManager {
-    private Viewable mainView;
-    public ViewManager() {
-        mainView = new GameView();
-        mainView.createView();
-    }
+import javax.swing.*;
+import presentation.view.ViewFactory;
 
+public class ViewManager {
+    private ViewType currentView;
+    private JFrame currentSwing;
+    private Viewable gameView;
+    public ViewManager() {
+        switchTo(ViewType.LOGIN);
+    }
+    public void switchTo(ViewType viewType) {
+        if (currentSwing != null) {
+            currentSwing.dispose();
+            currentSwing = null;
+        }
+
+        if (gameView != null) {
+            gameView.disposeView();
+            gameView = null;
+        }
+        currentView = viewType;
+        switch (viewType) {
+            case LOGIN:
+                currentSwing = ViewFactory.createLoginView(this);
+                break;
+
+            case REGISTER:
+                currentSwing = ViewFactory.createRegisterView(this);
+                break;
+
+            case GAME:
+                gameView  = new GameView();
+                gameView.createView();
+                break;
+
+        }
+    }
     public void render() {
-        if (mainView != null) mainView.renderView();
+        if (gameView != null) gameView.renderView();
     }
 
     public void dispose() {
-        if (mainView != null) mainView.disposeView();
+        if (currentView != null) currentSwing.dispose();
+        if (gameView != null) gameView.disposeView();
     }
 }

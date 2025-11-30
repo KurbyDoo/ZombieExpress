@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class LoginView extends JFrame implements PropertyChangeListener {
+    private ViewManager viewManager;
     private LoginViewModel viewModel;
     private LoginController controller;
 
@@ -30,8 +31,9 @@ public class LoginView extends JFrame implements PropertyChangeListener {
     private final JButton loginButton = new JButton("Login");
     private final JLabel messageLabel = new JLabel("");
 
-    public LoginView(LoginController loginController, LoginViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
+    public LoginView(ViewManager viewManager,LoginController loginController, LoginViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
                      LoadPlayerDataInteractor loadPlayer) {
+        this.viewManager = viewManager;
         this.controller = loginController;
         this.viewModel = viewModel;
         // this.mockUserDB = mockUserDB;
@@ -74,13 +76,7 @@ public class LoginView extends JFrame implements PropertyChangeListener {
 
         });
         goRegister.addActionListener(e -> {
-            RegisterViewModel viewModel = new RegisterViewModel();
-            RegisterPresenter presenter = new RegisterPresenter(viewModel);
-            RegisterInteractor interactor = new RegisterInteractor(firebaseAuth, presenter);
-            RegisterController controller = new RegisterController(interactor);
-
-            new RegisterView(controller, viewModel, firebaseAuth, loadPlayer);
-            dispose();
+            viewManager.switchTo(ViewType.REGISTER);
         });
     }
     @Override
@@ -109,6 +105,7 @@ public class LoginView extends JFrame implements PropertyChangeListener {
 
                 JOptionPane.showMessageDialog(this,
                     "Welcome back!\nHigh Score: " + session.getHeightScore());
+                viewManager.switchTo(ViewType.GAME);
 
                 break;
         }
