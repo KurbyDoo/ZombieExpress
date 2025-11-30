@@ -104,16 +104,14 @@ public class GameHUD {
             Color overColor = new Color(0.1f, 0.7f, 0.1f, 1f); // Lighter Green
 
 
-            textButtonStyle.up = getColoredDrawable(new Color(0.2f, 0.4f, 0.7f, 1f)); // Blue background
-            textButtonStyle.down = getColoredDrawable(new Color(0.1f, 0.2f, 0.4f, 1f)); // Darker blue on press
-            textButtonStyle.over = getColoredDrawable(new Color(0.3f, 0.5f, 0.8f, 1f)); // Lighter blue on hover
+            textButtonStyle.up = getColoredDrawable(buttonColor);
+            textButtonStyle.down = getColoredDrawable(downColor);
+            textButtonStyle.over = getColoredDrawable(overColor);
             skin.add("default", textButtonStyle);
 
-            // 4. Add Dialog/Window Style (using the required 3-arg constructor)
-            // (Title Font, Title Color, Background Drawable)
-            Dialog.WindowStyle dialogStyle = new Dialog.WindowStyle(font, Color.WHITE, dialogBackground); // <<< FIXED CONSTRUCTOR
+            BitmapFont titleFont = UIFontFactory.createLargeHudStyle().font;
+            WindowStyle dialogStyle = new Dialog.WindowStyle(titleFont, Color.BLUE, dialogBackground);
             skin.add("default", dialogStyle);
-
             return skin;
         }
     }
@@ -129,8 +127,8 @@ public class GameHUD {
 
         // Determine the title based on the message content (Win/Loss)
         String title = message.toLowerCase().contains("conquered") ?
-            "VICTORY ACHIEVED" :
-            "GAME OVER";
+            "!!! VICTORY ACHIEVED !!!" :
+            "GAME OVER - FAILED";
 
         Dialog dialog = new Dialog(title, this.skin, "default") { // <<< CORRECT USAGE OF this.skin
             // Override result to ensure the exit use case is called when the button is pressed
