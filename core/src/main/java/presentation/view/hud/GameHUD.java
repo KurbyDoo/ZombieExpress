@@ -17,6 +17,8 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
+import com.badlogic.gdx.utils.Align;
 
 public class GameHUD {
 
@@ -85,24 +87,23 @@ public class GameHUD {
         } catch (Exception e) {
             // Priority 2: Fallback to a programmatic skin using the custom fonts
             Skin skin = new Skin();
-
-            // Get the font from your factory to ensure consistency
             BitmapFont font = UIFontFactory.createMainHudStyle().font;
 
-            // Note: Dispose is handled by the calling font factory, so we just add the reference
             skin.add("default-font", font);
+            Drawable dialogBackground = getColoredDrawable(new Color(0.1f, 0.1f, 0.1f, 0.95f));
 
-            // 1. Create a background drawable for the window/dialog
-            Drawable dialogBackground = getColoredDrawable(new Color(0.1f, 0.1f, 0.1f, 0.9f)); // Dark translucent background
-
-            // 2. Add Label Style (used for dialog body text)
             Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.RED);
             skin.add("default", labelStyle);
 
-            // 3. Add TextButton Style
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
             textButtonStyle.font = font;
             textButtonStyle.fontColor = Color.WHITE;
+
+            Color buttonColor = new Color(0.0f, 0.6f, 0.0f, 1f); // Bright Green
+            Color downColor = new Color(0.0f, 0.4f, 0.0f, 1f); // Darker Green
+            Color overColor = new Color(0.1f, 0.7f, 0.1f, 1f); // Lighter Green
+
+
             textButtonStyle.up = getColoredDrawable(new Color(0.2f, 0.4f, 0.7f, 1f)); // Blue background
             textButtonStyle.down = getColoredDrawable(new Color(0.1f, 0.2f, 0.4f, 1f)); // Darker blue on press
             textButtonStyle.over = getColoredDrawable(new Color(0.3f, 0.5f, 0.8f, 1f)); // Lighter blue on hover
