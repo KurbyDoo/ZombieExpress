@@ -39,13 +39,6 @@ class TestExitGameUseCase extends ExitGameUseCase {
         super(null);
     }
 
-    @Override
-    public void execute() {
-        callCount++;
-        // NOTE: The Interactor doesn't actually call this, but if it did, this spy would catch it.
-        // We keep this spy for completeness, matching the previous Mockito test's structure.
-    }
-
     public int getCallCount() {
         return callCount;
     }
@@ -70,9 +63,9 @@ class TestRideable implements Rideable {
 
     // Other Rideable methods needed for compile
     @Override
-    public GamePosition getPlayerPosition() { return new GamePosition(0, 0, 0); }
-    @Override
     public int getSpeed() { return 0; }
+    @Override
+    public GamePosition getRideOffset() { return new GamePosition(0, 0, 0); }
 }
 
 /** Stub for the Player entity, allowing control over its state. */
