@@ -1,13 +1,13 @@
 package presentation.view.hud;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import application.game_use_cases.exit_game.ExitGameUseCase;
 import interface_adapter.game.EntityStorage;
@@ -17,6 +17,10 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 public class GameHUD {
 
@@ -64,14 +68,12 @@ public class GameHUD {
      */
     private Drawable getColoredDrawable(Color color) {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
+        pixmap.setColor(color);
         pixmap.fill();
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
 
-        TextureRegionDrawable drawable = new TextureRegionDrawable(texture);
-        drawable.tint(color);
-        return drawable;
+        return new TextureRegionDrawable(texture);
     }
 
     /**
@@ -86,31 +88,19 @@ public class GameHUD {
             // Priority 2: Fallback to a programmatic skin using the custom fonts
             Skin skin = new Skin();
 
-            // Get the font from your factory to ensure consistency
             BitmapFont font = UIFontFactory.createMainHudStyle().font;
 
-            // Note: Dispose is handled by the calling font factory, so we just add the reference
+            font.getData().setScale(1.5f);
             skin.add("default-font", font);
 
-            // 1. Create a background drawable for the window/dialog
-            Drawable dialogBackground = getColoredDrawable(new Color(0.1f, 0.1f, 0.1f, 0.9f)); // Dark translucent background
+            Drawable dialogBackground = getColoredDrawable(new Color(0.35f, 0.0f, 0.05f, 0.95f));
 
-            // 2. Add Label Style (used for dialog body text)
-            Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.RED);
+            Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
             skin.add("default", labelStyle);
 
-            // 3. Add TextButton Style
-            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-            textButtonStyle.font = font;
-            textButtonStyle.fontColor = Color.WHITE;
-            textButtonStyle.up = getColoredDrawable(new Color(0.2f, 0.4f, 0.7f, 1f)); // Blue background
-            textButtonStyle.down = getColoredDrawable(new Color(0.1f, 0.2f, 0.4f, 1f)); // Darker blue on press
-            textButtonStyle.over = getColoredDrawable(new Color(0.3f, 0.5f, 0.8f, 1f)); // Lighter blue on hover
-            skin.add("default", textButtonStyle);
-
-            // 4. Add Dialog/Window Style (using the required 3-arg constructor)
-            // (Title Font, Title Color, Background Drawable)
-            Dialog.WindowStyle dialogStyle = new Dialog.WindowStyle(font, Color.WHITE, dialogBackground); // <<< FIXED CONSTRUCTOR
+            BitmapFont titleFont = UIFontFactory.createLargeHudStyle().font;
+            titleFont.getData().setScale(1.0f);
+            WindowStyle dialogStyle = new Dialog.WindowStyle(titleFont, new Color(0, 0, 0, 0), dialogBackground);
             skin.add("default", dialogStyle);
 
             return skin;
@@ -123,32 +113,59 @@ public class GameHUD {
      */
     public void showEndGameDialog(String message) {
         if (dialogShown) return;
+        String title = "";
 
-        // We use the stored skin field directly in the Dialog constructor
-
-        // Determine the title based on the message content (Win/Loss)
-        String title = message.toLowerCase().contains("conquered") ?
-            "VICTORY ACHIEVED" :
-            "GAME OVER";
-
-        Dialog dialog = new Dialog(title, this.skin, "default") { // <<< CORRECT USAGE OF this.skin
-            // Override result to ensure the exit use case is called when the button is pressed
+        Dialog dialog = new Dialog(title, this.skin, "default") {
             @Override
             protected void result(Object object) {
-                // Delegate the shutdown request to the Use Case (Clean Architecture)
                 exitGameUseCase.execute();
             }
         };
 
-        // Sets the requested text
-        dialog.text(message).pad(20).center();
+        float dialogWidth = Gdx.graphics.getWidth() * 0.8f;
+        float dialogHeight = Gdx.graphics.getHeight() * 0.6f;
 
-        TextButton exitButton = new TextButton("Exit Game", this.skin); // <<< CORRECT USAGE OF this.skin
+        dialog.setSize(dialogWidth, dialogHeight);
+        dialog.setPosition((Gdx.graphics.getWidth() - dialogWidth) / 2, (Gdx.graphics.getHeight() - dialogHeight) / 2);
+        dialog.setMovable(false);
 
-        // Add the button; clicking it calls the result(Object) method above.
-        dialog.button(exitButton, true);
+        dialog.getContentTable().clear();
+        dialog.getButtonTable().clear();
 
-        // Show the dialog, making it modal and capturing input
+        Label messageLabel = new Label(message, this.skin);
+        messageLabel.setWrap(true);
+        messageLabel.setFontScale(2.2f);
+        messageLabel.setColor(Color.YELLOW);
+        messageLabel.setAlignment(Align.center);
+
+        dialog.getContentTable().add(messageLabel)
+            .pad(40)
+            .width(dialogWidth * 0.9f)
+            .expand().fill()
+            .row();
+
+        Label instructionLabel = new Label("PRESS ESC TO EXIT", this.skin);
+        instructionLabel.setFontScale(1.5f);
+        instructionLabel.setColor(Color.RED);
+        instructionLabel.setAlignment(Align.center);
+
+        dialog.getButtonTable().add(instructionLabel)
+            .pad(30)
+            .expandX().fillX()
+            .center();
+
+        dialog.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    // FIX: Directly call the use case execute method instead of the protected dialog.result(null)
+                    exitGameUseCase.execute();
+                    return true; // Event consumed
+                }
+                return false;
+            }
+        });
+
         dialog.show(uiStage);
         dialogShown = true;
     }

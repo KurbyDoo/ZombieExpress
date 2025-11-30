@@ -53,8 +53,8 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             float trackedX = trackedPosition.x;
             float worldEndX = world.getWorldEndCoordinateX();
 
-
             if (trackedX >= worldEndX) {
+
                 isGameOver = true;
                 String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
 
