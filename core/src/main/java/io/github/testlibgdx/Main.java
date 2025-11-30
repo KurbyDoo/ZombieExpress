@@ -1,29 +1,22 @@
 package io.github.testlibgdx;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import presentation.view.ViewManager;
+import presentation.view.ViewType;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class Main extends ApplicationAdapter {
-    public ViewManager viewManager;
+public class Main extends Game {
 
-    public Main(ViewManager viewManager) {
-        this.viewManager = viewManager;
+    private final ViewManager viewManager;
+
+    public Main(ViewManager vm) {
+        this.viewManager = vm;
     }
 
     @Override
     public void create() {
-        Bullet.init(); // must be initialized before any bullet calls
-    }
-
-    @Override
-    public void render() {
-        viewManager.render();
-    }
-
-    @Override
-    public void dispose() {
-        viewManager.dispose();
+        Bullet.init();
+        viewManager.setGame(this);
+        viewManager.switchTo(ViewType.LOGIN);
     }
 }
