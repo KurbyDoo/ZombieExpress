@@ -108,11 +108,11 @@ public class GenerateChunkInteractor implements GenerateChunkInputBoundary {
             entityFactory.create(new GenerateZombieInputData(pos, chunk));
         }
 
-        // bullet
-        if (chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
-            Vector3 pos = new Vector3(1f, 3f, 1f);
-            entityFactory.create(new GenerateBulletInputData(pos, chunk));
-        }
+        // bullet (for testing purpose)
+//        if ((chunk.getChunkX() == 0 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0)) {
+//            Vector3 pos = new Vector3(1f, 3f, 0f);
+//            entityFactory.create(new GenerateBulletInputData(pos, chunk));
+//        }
 
         return new GenerateChunkOutputData(chunk);
     }
