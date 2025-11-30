@@ -15,7 +15,6 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         Bullet.init(); // must be initialized before any bullet calls
-        viewManager = new ViewManager();
     }
 
     @Override
