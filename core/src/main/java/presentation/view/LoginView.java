@@ -111,6 +111,15 @@ public class LoginView extends JFrame implements PropertyChangeListener {
                     "Welcome back!\nHigh Score: " + session.getHeightScore());
 
                 break;
+
+            case "shouldStartGame":
+                boolean start = (boolean) event.getNewValue();
+                if (start) {
+                    System.out.println("Switching to GAME view…");
+                    presentation.view.ViewManager.getInstance().switchTo(presentation.view.ViewType.GAME);
+                    dispose();
+                }
+                break;
         }
         }
     }

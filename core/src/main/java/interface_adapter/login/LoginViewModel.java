@@ -24,6 +24,7 @@ public class LoginViewModel {
     private String errorMessage; // Errors displayed by UI
     private boolean successfulLogin;
     private PlayerSession playerSession; // Player information loaded after logging in
+    private boolean shouldStartGame;
 
     // Setters
     public void setLoginEmail(String email) {
@@ -48,6 +49,11 @@ public class LoginViewModel {
         PlayerSession oldPlayerSession = this.playerSession;
         this.playerSession = playerSession;
         propertyChangeSupport.firePropertyChange("playerSession", oldPlayerSession, playerSession);
+    }
+    public void setShouldStartGame(boolean shouldStartGame) {
+        boolean oldShouldStartGame = this.shouldStartGame;
+        this.shouldStartGame = shouldStartGame;
+        propertyChangeSupport.firePropertyChange("shouldStartGame", oldShouldStartGame, shouldStartGame);
     }
 
     //Getters

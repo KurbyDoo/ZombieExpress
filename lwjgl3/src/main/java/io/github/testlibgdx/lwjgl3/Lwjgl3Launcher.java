@@ -1,8 +1,11 @@
 package io.github.testlibgdx.lwjgl3;
 
+import application.AppInitializer;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.testlibgdx.Main;
+
+import javax.swing.*;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -12,7 +15,13 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+        Lwjgl3Application app =
+            new Lwjgl3Application(new Main(),getDefaultConfiguration());
+        SwingUtilities.invokeLater(()->{
+            AppInitializer appInit = new AppInitializer();
+            appInit.buildLoginView();
+        });
+        return app;
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

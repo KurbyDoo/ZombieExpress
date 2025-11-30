@@ -41,6 +41,7 @@ public class LoginPresenter implements LoginOutputBoundary {
         viewModel.setSuccessfulLogin(true);
         viewModel.setErrorMessage(null);
         viewModel.setLoginEmail(data.getEmail());
+        viewModel.setShouldStartGame(true);
 
         // Load player's data
         PlayerSession session = null;

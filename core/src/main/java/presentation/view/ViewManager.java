@@ -1,17 +1,50 @@
 package presentation.view;
 
 public class ViewManager {
-    private Viewable mainView;
+
+    private static ViewManager instance;
+
+    public static ViewManager getInstance() {
+        return instance;
+    }
+
+    private ViewType currentViewType;
+    private Viewable currentView;
+
     public ViewManager() {
-        mainView = new GameView();
-        mainView.createView();
+        instance = this;
+        switchTo(ViewType.LOGIN);
+    }
+
+    public void switchTo(ViewType viewType) {
+        this.currentViewType = viewType;
+
+        // dispose old view
+        if (currentView != null) {
+            currentView.disposeView();
+        }
+
+        switch (viewType) {
+            case GAME:
+                currentView = new GameView();
+                currentView.createView();
+                break;
+
+            case LOGIN:
+                currentView = null;
+                break;
+        }
     }
 
     public void render() {
-        if (mainView != null) mainView.renderView();
+        if (currentView != null) {
+            currentView.renderView();
+        }
     }
 
     public void dispose() {
-        if (mainView != null) mainView.disposeView();
+        if (currentView != null) {
+            currentView.disposeView();
+        }
     }
 }
