@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import domain.entities.Entity;
 import domain.entities.Train;

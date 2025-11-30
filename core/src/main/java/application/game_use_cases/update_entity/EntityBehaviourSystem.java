@@ -1,8 +1,10 @@
 package application.game_use_cases.update_entity;
 
+import application.game_use_cases.generate_entity.GenerateEntityStrategy;
 import application.game_use_cases.ports.PhysicsControlPort;
 import domain.GamePosition;
-import interface_adapter.game.EntityStorage;
+import domain.entities.EntityFactory;
+import domain.repositories.EntityStorage;
 import domain.Chunk;
 import domain.World;
 import domain.entities.Entity;
@@ -15,47 +17,31 @@ import java.util.List;
 import java.util.Map;
 
 public class EntityBehaviourSystem {
-    private final PhysicsControlPort physicsControl;
-    private final Player player;
     private final EntityStorage storage;
     private final World world;
 
     // Map Enum types to specific strategies
-    private final Map<EntityType, EntityBehaviour> behaviors = new EnumMap<>(EntityType.class);
+    private final Map<EntityType, EntityBehaviour> behaviors;
 
     private Map<Integer, GamePosition> entityToPosition;
 
-    public EntityBehaviourSystem(PhysicsControlPort physicsControl, Player player, EntityStorage storage, World world) {
-        this.physicsControl = physicsControl;
-        this.player = player;
+    public EntityBehaviourSystem(
+        Map<EntityType, EntityBehaviour> behaviors, EntityStorage storage, World world
+    ) {
         this.storage = storage;
         this.world = world;
+        this.behaviors = behaviors;
 
         entityToPosition = new HashMap<>();
-
-        initializeBehaviors();
     }
 
-    // TODO: Convert to registry factory pattern
-    private void initializeBehaviors() {
-        // Register strategies here
-        behaviors.put(EntityType.ZOMBIE, new ZombieBehaviour());
-        behaviors.put(EntityType.BULLET, new BulletBehaviour());
-        behaviors.put(EntityType.TRAIN, new TrainBehaviour());
-        // Add more as needed
-    }
-
-    public void update(List<Integer> activeEntities, float deltaTime) {
+    public void update(List<Integer> activeEntities, BehaviourContext context) {
         // Create context once per frame
-        BehaviourContext context = new BehaviourContext(physicsControl, player, deltaTime);
-
         for (Integer entityID : activeEntities) {
             Entity entity = storage.getEntityByID(entityID);
             EntityBehaviour strategy = behaviors.get(entity.getType());
 
-            // TODO: this is a good behaviour to unit test
             if (strategy != null) {
-                // Update chunk if it moved
                 strategy.update(entity, context);
             }
         }
@@ -82,6 +68,29 @@ public class EntityBehaviourSystem {
                 newChunk.getEntityIds().add(entityID);
             }
         }
+    }
 
+    public static class EntityBehaviourSystemFactory {
+        private final EntityStorage storage;
+        private final World world;
+
+        private final Map<EntityType, EntityBehaviour> behaviours;
+
+        public EntityBehaviourSystemFactory(EntityStorage storage, World world) {
+            this.storage = storage;
+            this.world = world;
+
+            behaviours = new HashMap<>();
+        }
+
+
+        public EntityBehaviourSystemFactory register(EntityType type, EntityBehaviour behaviour) {
+            behaviours.put(type, behaviour);
+            return this;
+        }
+
+        public EntityBehaviourSystem build() {
+            return new EntityBehaviourSystem(behaviours, storage, world);
+        }
     }
 }

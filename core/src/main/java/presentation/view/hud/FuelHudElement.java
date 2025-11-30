@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.entities.Entity;
 import domain.entities.Train;
 

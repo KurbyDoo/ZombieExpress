@@ -22,7 +22,7 @@ public class MockLoginRegisterDataAccessTest {
        dataAccess.newUser("a@gmail.com", "password1");
        String uid2 = dataAccess.newUser("a@gmail.com","password2" );
 
-       assertNotNull(uid2);
+       assertNull(uid2);
        // The second registration should fail, and the returned user ID should be null.
     }
 

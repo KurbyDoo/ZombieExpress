@@ -1,5 +1,8 @@
 package presentation.view;
 
+import application.game_use_cases.update_entity.BulletBehaviour;
+import application.game_use_cases.update_entity.TrainBehaviour;
+import application.game_use_cases.update_entity.ZombieBehaviour;
 import application.game_use_cases.win_condition.WinConditionInputBoundary;
 import application.game_use_cases.win_condition.WinConditionInteractor;
 import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
@@ -14,17 +17,17 @@ import application.game_use_cases.mount_entity.MountEntityInputBoundary;
 import application.game_use_cases.mount_entity.MountEntityInteractor;
 import application.game_use_cases.update_world.UpdateWorldInputBoundary;
 import application.game_use_cases.update_world.UpdateWorldInteractor;
-import application.game_use_cases.populate_chunk.PopulateChunkEntities;
+import application.game_use_cases.populate_chunk.PopulateChunkInteractor;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
 import data_access.IdToEntityStorage;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
-import application.game_use_cases.ports.BlockRepository;
+import domain.repositories.BlockRepository;
 import application.game_use_cases.pickup.PickupInteractor;
 import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
 import application.game_use_cases.player_movement.PlayerMovementInteractor;
@@ -91,10 +94,15 @@ public class GameView implements Viewable{
             .register(EntityType.PICKUP, pickupGenerateStrategy)
             .build();
 
+        EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem.EntityBehaviourSystemFactory(entityStorage, world)
+            .register(EntityType.ZOMBIE, new ZombieBehaviour())
+            .register(EntityType.BULLET, new BulletBehaviour())
+            .register(EntityType.TRAIN, new TrainBehaviour())
+            .build();
 
         // Chunk Generation
         GenerateChunkInputBoundary chunkGenerator = new GenerateChunkInteractor(blockRepository);
-        PopulateChunkInputBoundary chunkPopulator = new PopulateChunkEntities(entityFactory);
+        PopulateChunkInputBoundary chunkPopulator = new PopulateChunkInteractor(entityFactory);
         RenderRadiusManagerInputBoundary renderRadiusManager = new RenderRadiusManagerInteractor(world);
         UpdateWorldInputBoundary updateWorld = new UpdateWorldInteractor(renderRadiusManager, chunkGenerator, chunkPopulator, world, player);
 
@@ -113,6 +121,9 @@ public class GameView implements Viewable{
             .register(EntityType.TRAIN, trainMeshStrategy)
             .register(EntityType.PICKUP, pickupMeshStrategy)
             .build();
+
+        EntityMeshSynchronizer meshSynchronizer = new EntityMeshSynchronizer(entityStorage, meshStorage);
+
 
         // TODO: invert this dependency, object renderer should be at the end
         // --- SETUP FRAMEWORKS ---
@@ -137,9 +148,6 @@ public class GameView implements Viewable{
         ChunkRenderer chunkRenderer = new ChunkRenderer(objectRenderer, chunkMeshGenerator, entityRenderer);
 
         // --- PHYSICS ---
-        PhysicsControlPort physicsAdapter = new BulletPhysicsAdapter(meshStorage);
-        EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem(physicsAdapter, player, entityStorage, world);
-        EntityMeshSynchronizer meshSynchronizer = new EntityMeshSynchronizer(entityStorage, meshStorage);
 
         worldSyncController = new WorldSyncController(
             RENDER_RADIUS,
@@ -148,8 +156,10 @@ public class GameView implements Viewable{
             chunkRenderer
         );
 
+
+        PhysicsControlPort physicsControlPort = new BulletPhysicsAdapter(meshStorage);
         gameSimulationController = new GameSimulationController(
-            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, world
+            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, world, player
         );
 
         this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
@@ -179,6 +189,7 @@ public class GameView implements Viewable{
 
             // --- GAME LOGIC ---
             gameInputAdapter.processInput(TIME_STEP);
+
             gameSimulationController.update(TIME_STEP);
 
             WinConditionOutputData output = WinConditionInteractor.execute();

@@ -3,7 +3,7 @@ package data_access;
 
 import domain.entities.Entity;
 import domain.entities.Train;
-import interface_adapter.game.EntityStorage;
+import domain.repositories.EntityStorage;
 import domain.Chunk;
 import domain.GamePosition;
 import domain.World;

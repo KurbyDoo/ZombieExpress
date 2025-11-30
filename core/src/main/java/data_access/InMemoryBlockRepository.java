@@ -1,6 +1,6 @@
 package data_access;
 
-import application.game_use_cases.ports.BlockRepository;
+import domain.repositories.BlockRepository;
 import domain.Block;
 import java.util.Collection;
 import java.util.HashMap;

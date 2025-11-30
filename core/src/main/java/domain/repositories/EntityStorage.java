@@ -1,4 +1,4 @@
-package interface_adapter.game;
+package domain.repositories;
 
 import domain.entities.Entity;
 
