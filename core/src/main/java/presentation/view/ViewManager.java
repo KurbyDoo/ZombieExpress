@@ -1,17 +1,37 @@
 package presentation.view;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
+
 public class ViewManager {
-    private Viewable mainView;
-    public ViewManager() {
-        mainView = new GameView();
-        mainView.createView();
+
+    private Game game;
+    private Screen currentScreen;
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
-    public void render() {
-        if (mainView != null) mainView.renderView();
-    }
+    public void switchTo(ViewType type) {
 
-    public void dispose() {
-        if (mainView != null) mainView.disposeView();
+        if (currentScreen != null) {
+            currentScreen.dispose();
+        }
+
+        switch (type) {
+            case LOGIN:
+                currentScreen = ViewFactory.createLoginView(this);
+                break;
+
+            case REGISTER:
+                currentScreen = ViewFactory.createRegisterView(this);
+                break;
+
+            case GAME:
+                currentScreen = new GameScreen();
+                break;
+        }
+
+        game.setScreen(currentScreen);
     }
 }

@@ -1,116 +1,110 @@
 package presentation.view;
 
-import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
-import application.interface_use_cases.register.RegisterInteractor;
-import data_access.firebase.FirebaseLoginRegisterDataAccess;
-import domain.player.PlayerSession;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
-import interface_adapter.register.RegisterController;
-import interface_adapter.register.RegisterPresenter;
-import interface_adapter.register.RegisterViewModel;
 
-import java.awt.*;
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class LoginView extends JFrame implements PropertyChangeListener {
-    private LoginViewModel viewModel;
-    private LoginController controller;
+public class LoginView extends ScreenAdapter implements PropertyChangeListener {
 
-    // private final MockLoginRegisterDataAccess mockUserDB;
+    private final ViewManager viewManager;
+    private final LoginController controller;
+    private final LoginViewModel viewModel;
 
-    private FirebaseLoginRegisterDataAccess firebaseAuth;
-    private final LoadPlayerDataInteractor loadPlayer;
+    private Stage stage;
+    private Skin skin;
 
-    private final JButton goRegister = new JButton("Create Account");
-    private final JTextField useremail = new JTextField(20);
-    private final JPasswordField password = new JPasswordField(20);
-    private final JButton loginButton = new JButton("Login");
-    private final JLabel messageLabel = new JLabel("");
+    private TextField emailField;
+    private TextField passwordField;
+    private Label messageLabel;
 
-    public LoginView(LoginController loginController, LoginViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
-                     LoadPlayerDataInteractor loadPlayer) {
-        this.controller = loginController;
+    public LoginView(ViewManager viewManager,
+                     LoginController controller,
+                     LoginViewModel viewModel) {
+        this.viewManager = viewManager;
+        this.controller = controller;
         this.viewModel = viewModel;
-        // this.mockUserDB = mockUserDB;
-        this.firebaseAuth = firebaseAuth;
-        this.loadPlayer = loadPlayer;
 
         viewModel.addPropertyChangeListener(this);
-
-        setSize(400, 300);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setResizable(false);
-        setLocationRelativeTo(null);
-        setTitle("LoginToAliveRail");
-
-        initUI();
-        addListeners();
-        setVisible(true);
-
     }
-    private void initUI() {
-        JPanel panel = new JPanel(new GridLayout(6,1,8,6));
 
-        panel.add(new JLabel("Email:"));
-        panel.add(useremail);
-
-        panel.add(new JLabel("Password:"));
-        panel.add(password);
-
-        panel.add(loginButton);
-        panel.add(goRegister);
-        panel.add(messageLabel);
-
-        add(panel);
-    }
-    private void addListeners() {
-        loginButton.addActionListener(e -> {
-            String email = useremail.getText();
-            String passwordText = new String(password.getPassword());
-            controller.login(email, passwordText);
-
-        });
-        goRegister.addActionListener(e -> {
-            RegisterViewModel viewModel = new RegisterViewModel();
-            RegisterPresenter presenter = new RegisterPresenter(viewModel);
-            RegisterInteractor interactor = new RegisterInteractor(firebaseAuth, presenter);
-            RegisterController controller = new RegisterController(interactor);
-
-            new RegisterView(controller, viewModel, firebaseAuth, loadPlayer);
-            dispose();
-        });
-    }
     @Override
-    public void propertyChange(PropertyChangeEvent event){
-        switch (event.getPropertyName()) {
-            case "successfulLogin":
-                boolean success = (boolean) event.getNewValue();
-                if (success) {
-                    messageLabel.setText("Login successful");
-                }
-                break;
+    public void show() {
+        stage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(stage);
+
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        emailField = new TextField("", skin);
+        passwordField = new TextField("", skin);
+        passwordField.setPasswordMode(true);
+        passwordField.setPasswordCharacter('●');
+        messageLabel = new Label("", skin);
+
+        TextButton loginBtn = new TextButton("Login", skin);
+        TextButton registerBtn = new TextButton("Create Account", skin);
+
+        loginBtn.addListener(event -> {
+            controller.login(emailField.getText(), passwordField.getText());
+            return true;
+        });
+
+        registerBtn.addListener(event -> {
+            viewManager.switchTo(ViewType.REGISTER);
+            return true;
+        });
+
+        table.add(new Label("Email:", skin)).pad(5); table.row();
+        table.add(emailField).width(300).pad(5); table.row();
+
+        table.add(new Label("Password:", skin)).pad(5); table.row();
+        table.add(passwordField).width(300).pad(5); table.row();
+
+        table.add(loginBtn).pad(10); table.row();
+        table.add(registerBtn).pad(10); table.row();
+        table.add(messageLabel).pad(10);
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        stage.act(delta);
+        stage.draw();
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        switch (evt.getPropertyName()) {
 
             case "errorMessage":
-                String errorMessage = (String) event.getNewValue();
-                if (errorMessage != null) {
-                    messageLabel.setText(errorMessage);
+                messageLabel.setText((String) evt.getNewValue());
+                break;
+
+            case "successfulLogin":
+                if ((boolean) evt.getNewValue()) {
+                    messageLabel.setText("Login Successful!");
                 }
                 break;
 
             case "playerSession":
-                PlayerSession session = (PlayerSession) event.getNewValue();
-
-                System.out.println("   Player data updated!");
-                System.out.println("   UID = " + session.getUid());
-                System.out.println("   Highest score = " + session.getHeightScore());
-
-                JOptionPane.showMessageDialog(this,
-                    "Welcome back!\nHigh Score: " + session.getHeightScore());
-
+                viewManager.switchTo(ViewType.GAME);
                 break;
         }
-        }
     }
+
+    @Override
+    public void dispose() {
+        stage.dispose();
+    }
+}
