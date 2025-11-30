@@ -12,13 +12,15 @@ public class ShootInteractor implements ShootInputBoundary{
     }
 
     @Override
-    public int execute(ShootInputData inputData) {
+    public ShootOutputData execute(ShootInputData inputData) {
         GamePosition bulletPos = new GamePosition(inputData.getPlayerPos());
         bulletPos.sub(0, 1.5f, -0.5f); // Bullet spawns at lower right corner of camera
         GamePosition bulletDir = new GamePosition(inputData.getPlayerDir());
         GenerateBulletInputData bulletInput = new GenerateBulletInputData(bulletPos, bulletDir);
         int id = entityFactory.create(bulletInput);
 
-        return id;
+        ShootOutputData outputData = new ShootOutputData(id);
+
+        return outputData;
     }
 }

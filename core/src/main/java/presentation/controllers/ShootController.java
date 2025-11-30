@@ -9,6 +9,7 @@ import application.game_use_cases.mount_entity.MountEntityOutputData;
 import application.game_use_cases.pickup.PickupInteractor;
 import application.game_use_cases.shoot.ShootInputData;
 import application.game_use_cases.shoot.ShootInteractor;
+import application.game_use_cases.shoot.ShootOutputData;
 import domain.entities.PickupEntity;
 import domain.entities.Train;
 import domain.player.Player;
@@ -35,8 +36,8 @@ public class ShootController {
 
     public void onShootKeyPressed() {
         ShootInputData inputData = new ShootInputData(player.getPosition(), player.getDirection());
-        int id = interactor.execute(inputData);
-        entityRenderer.loadEntity(id);
+        ShootOutputData outputData = interactor.execute(inputData);
+        entityRenderer.loadEntity(outputData.getEntityId());
     }
 
 }
