@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import application.game_use_cases.exit_game.ExitGameUseCase;
 import interface_adapter.game.EntityStorage;
@@ -20,6 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.ui.Window.WindowStyle;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 public class GameHUD {
 
@@ -67,14 +68,12 @@ public class GameHUD {
      */
     private Drawable getColoredDrawable(Color color) {
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.WHITE);
+        pixmap.setColor(color);
         pixmap.fill();
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
 
-        TextureRegionDrawable drawable = new TextureRegionDrawable(texture);
-        drawable.tint(color);
-        return drawable;
+        return new TextureRegionDrawable(texture);
     }
 
     /**
@@ -90,34 +89,18 @@ public class GameHUD {
             Skin skin = new Skin();
 
             BitmapFont font = UIFontFactory.createMainHudStyle().font;
+
             font.getData().setScale(1.5f);
             skin.add("default-font", font);
 
-            Drawable dialogBackground = getColoredDrawable(new Color(0.3f, 0.05f, 0.05f, 0.95f)); // Dark red, almost black
+            Drawable dialogBackground = getColoredDrawable(new Color(0.35f, 0.0f, 0.05f, 0.95f));
 
             Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
             skin.add("default", labelStyle);
 
-            TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-            textButtonStyle.font = font;
-            textButtonStyle.fontColor = Color.BLACK; // Black text on bright button
-
-            Color buttonColor = new Color(0.5f, 0.8f, 0.0f, 1f); // Eerie Yellow-Green
-            Color downColor = new Color(0.4f, 0.6f, 0.0f, 1f); // Darker Green
-            Color overColor = new Color(0.6f, 0.9f, 0.1f, 1f); // Lighter Green/Yellow
-
-            TextureRegionDrawable upDrawable = (TextureRegionDrawable) getColoredDrawable(buttonColor);
-            upDrawable.setPadding(15, 15, 15, 15); // Increased button padding
-
-            textButtonStyle.up = upDrawable;
-            textButtonStyle.down = getColoredDrawable(downColor);
-            textButtonStyle.over = getColoredDrawable(overColor);
-
-            skin.add("default", textButtonStyle);
-
             BitmapFont titleFont = UIFontFactory.createLargeHudStyle().font;
-            titleFont.getData().setScale(1.5f); // Scale title font as well
-            WindowStyle dialogStyle = new Dialog.WindowStyle(titleFont, Color.YELLOW, dialogBackground);
+            titleFont.getData().setScale(1.0f);
+            WindowStyle dialogStyle = new Dialog.WindowStyle(titleFont, new Color(0, 0, 0, 0), dialogBackground);
             skin.add("default", dialogStyle);
 
             return skin;
@@ -130,9 +113,7 @@ public class GameHUD {
      */
     public void showEndGameDialog(String message) {
         if (dialogShown) return;
-        String title = message.toLowerCase().contains("conquered") ?
-            "!!! VICTORY ACHIEVED !!!" :
-            "GAME OVER - FAILED";
+        String title = "";
 
         Dialog dialog = new Dialog(title, this.skin, "default") {
             @Override
@@ -141,8 +122,8 @@ public class GameHUD {
             }
         };
 
-        float dialogWidth = Gdx.graphics.getWidth() * 0.7f;
-        float dialogHeight = Gdx.graphics.getHeight() * 0.5f;
+        float dialogWidth = Gdx.graphics.getWidth() * 0.8f;
+        float dialogHeight = Gdx.graphics.getHeight() * 0.6f;
 
         dialog.setSize(dialogWidth, dialogHeight);
         dialog.setPosition((Gdx.graphics.getWidth() - dialogWidth) / 2, (Gdx.graphics.getHeight() - dialogHeight) / 2);
@@ -152,22 +133,38 @@ public class GameHUD {
         dialog.getButtonTable().clear();
 
         Label messageLabel = new Label(message, this.skin);
-        messageLabel.setFontScale(2.0f);
+        messageLabel.setWrap(true);
+        messageLabel.setFontScale(2.2f);
         messageLabel.setColor(Color.YELLOW);
         messageLabel.setAlignment(Align.center);
 
         dialog.getContentTable().add(messageLabel)
-            .padTop(60).padBottom(80)
-            .expandX().fillX()
+            .pad(40)
+            .width(dialogWidth * 0.9f)
+            .expand().fill()
             .row();
 
-        TextButton exitButton = new TextButton("Exit Game", this.skin);
+        Label instructionLabel = new Label("PRESS ESC TO EXIT", this.skin);
+        instructionLabel.setFontScale(1.5f);
+        instructionLabel.setColor(Color.RED);
+        instructionLabel.setAlignment(Align.center);
 
-        dialog.getButtonTable().add(exitButton)
+        dialog.getButtonTable().add(instructionLabel)
             .pad(30)
-            .minWidth(300).minHeight(80);
+            .expandX().fillX()
+            .center();
 
-        dialog.button(exitButton, true);
+        dialog.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    // FIX: Directly call the use case execute method instead of the protected dialog.result(null)
+                    exitGameUseCase.execute();
+                    return true; // Event consumed
+                }
+                return false;
+            }
+        });
 
         dialog.show(uiStage);
         dialogShown = true;
