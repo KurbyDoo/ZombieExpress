@@ -33,88 +33,10 @@ public class ShootController {
         this.entityRenderer = entityRenderer;
     }
 
-    /**
-     * Called every frame to update which pickup the player is looking at.
-     */
-//    public void refreshTarget() {
-//        clearTargets();
-//        StringBuilder sb = new StringBuilder();
-//
-//        Train train = interactor.findTrainInFront();
-//        if (player.getCurrentRide() != null) {
-//            sb.append("Press F to dismount");
-//        } else if (train != null) {
-//            currentTrainTarget = train;
-//            sb.append("Press F to drive Train");
-//            if (interactor.isHoldingFuel()) {
-//                sb.append("\nPress E to fuel Train");
-//            }
-//        }
-//
-//        if (train == null) {
-//            PickupEntity pickup = interactor.findPickupInFront();
-//            if (pickup != null) {
-//                currentPickupTarget = pickup;
-//                String itemName = pickup.getItem().getName();
-//                sb.append("Press E to pick up ").append(itemName);
-//            }
-//        }
-//        currentMessage = sb.toString();
-//    }
-
-    /**
-     * Called when the user presses E (from PickUpInputAdapter).
-     * Runs the use case and cleans up the mesh if pickup succeeded.
-     */
-//    public void onActionKeyPressed() {
-//        if (currentTrainTarget != null) {
-//            boolean fueled = interactor.attemptFuelTrain(currentTrainTarget);
-//            if (fueled) {
-//                // optional: play sound, log, etc.
-//                clearTargets();
-//                return;
-//            }
-//        }
-//        if (currentPickupTarget != null) {
-//            Integer pickedID = interactor.attemptPickup(currentPickupTarget);
-//            if (pickedID == null) {
-//                return;
-//            }
-//            // Remove the visual mesh for this entity ID
-//            meshStorage.removeMesh(pickedID);
-//            clearTargets();
-//        }
-//    }
-
-//    public void onRideKeyPressed() {
-//        if (player.getCurrentRide() != null) {
-//            dismountEntity.execute(new DismountEntityInputData());
-//        } else if (currentTrainTarget != null) {
-//            MountEntityOutputData outputData = mountEntity.execute(
-//                new MountEntityInputData(currentTrainTarget)
-//            );
-//            if (outputData.isMountSuccess()) {
-//                // optional: play sound, log, etc.
-//                clearTargets();
-//            }
-//        }
-//    }
-
     public void onShootKeyPressed() {
         ShootInputData inputData = new ShootInputData(player.getPosition(), player.getDirection());
         int id = interactor.execute(inputData);
-        //meshStorage.addMesh(id, gameMesh);
         entityRenderer.loadEntity(id);
     }
 
-//
-//    private void clearTargets() {
-//        currentPickupTarget = null;
-//        currentTrainTarget = null;
-//        currentMessage = "";
-//    }
-
-//    public String getCurrentPickupMessage() {
-//        return currentMessage;
-//    }
 }
