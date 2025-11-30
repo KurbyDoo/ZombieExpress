@@ -15,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 public class RegisterView extends JFrame implements PropertyChangeListener{
-
+    private ViewManager viewManager;
     private RegisterViewModel viewModel;
     private RegisterController controller;
     // private MockLoginRegisterDataAccess mockUserDB;
@@ -31,8 +31,9 @@ public class RegisterView extends JFrame implements PropertyChangeListener{
     private final JButton registerButton = new JButton("Create Account");
     private final JLabel messageLabel = new JLabel("");
 
-    public RegisterView(RegisterController  controller, RegisterViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
+    public RegisterView(ViewManager viewManager,RegisterController controller, RegisterViewModel viewModel, FirebaseLoginRegisterDataAccess firebaseAuth,
                         LoadPlayerDataInteractor loadPlayer) {
+        this .viewManager = viewManager;
         this.controller = controller;
         this.viewModel = viewModel;
         //this.mockUserDB = mockUserDB;
@@ -86,16 +87,7 @@ public class RegisterView extends JFrame implements PropertyChangeListener{
                     messageLabel.setText("Account Created!");
 
                     SwingUtilities.invokeLater(() -> {
-                        LoginViewModel viewModel = new LoginViewModel();
-                        LoginPresenter presenter = new LoginPresenter(viewModel,loadPlayer);
-
-                        LoginInteractor loginInteractor = new LoginInteractor(
-                            firebaseAuth, presenter
-                        );
-                        LoginController loginController = new LoginController(loginInteractor);
-
-                        new LoginView(loginController, viewModel, firebaseAuth, loadPlayer);
-                        dispose();
+                        viewManager.switchTo(ViewType.LOGIN);
                     });
 
                 }
