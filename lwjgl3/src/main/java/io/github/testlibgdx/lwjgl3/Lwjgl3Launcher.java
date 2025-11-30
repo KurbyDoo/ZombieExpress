@@ -1,18 +1,27 @@
 package io.github.testlibgdx.lwjgl3;
 
+import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import data_access.firebase.FirebaseInitializer;
+import data_access.firebase.FirebaseLoginRegisterDataAccess;
+import data_access.firebase.FirebasePlayerDataAccess;
 import io.github.testlibgdx.Main;
+import presentation.view.ViewFactory;
+import presentation.view.ViewManager;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication();
-    }
+        FirebaseInitializer.init();
+        String apiKey = System.getenv("FIREBASE_API_KEY");
+        FirebaseLoginRegisterDataAccess firebaseAuth = new FirebaseLoginRegisterDataAccess(apiKey);
+        LoadPlayerDataInteractor loadPlayer = new LoadPlayerDataInteractor(new FirebasePlayerDataAccess());
+        ViewFactory.init(firebaseAuth, loadPlayer);
+        ViewManager manager = new ViewManager();
+        new Lwjgl3Application(new Main(manager),getDefaultConfiguration());
 
-    private static Lwjgl3Application createApplication() {
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

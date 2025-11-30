@@ -8,6 +8,10 @@ import presentation.view.ViewManager;
 public class Main extends ApplicationAdapter {
     public ViewManager viewManager;
 
+    public Main(ViewManager viewManager) {
+        this.viewManager = viewManager;
+    }
+
     @Override
     public void create() {
         Bullet.init(); // must be initialized before any bullet calls
