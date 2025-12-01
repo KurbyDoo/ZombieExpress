@@ -1,3 +1,35 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Domain (Level 1 - Enterprise Business Rules)
+ *
+ * DESIGN PATTERNS:
+ * - Data Transfer Object (DTO): Simple data container for player session info.
+ * - Value Object: Represents player session state.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure domain entity.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Manages player session data only.
+ * - [PASS] OCP: Simple data class, can be extended.
+ * - [N/A] LSP: No inheritance.
+ * - [N/A] ISP: No interfaces.
+ * - [N/A] DIP: No dependencies.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] JavaBean conventions for getters/setters.
+ * - [WARN] Field 'heightScore' should be 'highScore' (typo).
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level and method-level Javadoc.
+ * - [WARN] Possible typo: 'heightScore' should probably be 'highScore'.
+ */
 package domain.player;
 
 public class PlayerSession {

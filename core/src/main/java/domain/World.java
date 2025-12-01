@@ -1,3 +1,36 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Domain (Level 1 - Enterprise Business Rules)
+ *
+ * DESIGN PATTERNS:
+ * - Aggregate Root Pattern: World acts as the aggregate root for all chunks.
+ * - Repository Pattern (internal): Uses HashMap for chunk storage (could be abstracted).
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure domain aggregate.
+ *
+ * SOLID PRINCIPLES:
+ * - [WARN] SRP: World handles chunk management AND entity queries. Consider separating.
+ * - [PASS] OCP: Chunk types can be extended without modifying World.
+ * - [N/A] LSP: No inheritance hierarchy.
+ * - [N/A] ISP: No interfaces implemented.
+ * - [WARN] DIP: World directly uses HashMap<> instead of an abstraction (Map interface
+ *   is used but concrete type in return). getChunks() returns HashMap<> not Map<>.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Line 43: Hardcoded magic number 3 should be a named constant.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Magic number on line 43 (return 3).
+ * - [MINOR] Missing class-level Javadoc.
+ * - [PASS] Imports are not wildcard.
+ */
 package domain;
 
 import java.util.ArrayList;

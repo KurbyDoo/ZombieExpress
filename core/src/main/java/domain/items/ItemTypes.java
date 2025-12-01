@@ -1,3 +1,35 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Domain (Level 1 - Enterprise Business Rules)
+ *
+ * DESIGN PATTERNS:
+ * - Flyweight Pattern: Pre-defined item instances shared across the application.
+ * - Registry Pattern: Central registry of all available items.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure domain constants class.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - defines item type constants.
+ * - [PASS] OCP: Can add new items without modifying existing code.
+ * - [N/A] LSP: No inheritance.
+ * - [N/A] ISP: No interfaces.
+ * - [N/A] DIP: No dependencies.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Constants follow UPPER_SNAKE_CASE.
+ * - [PASS] Private constructor prevents instantiation.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc describing available items.
+ * - [PASS] Proper utility class structure with private constructor.
+ */
 package domain.items;
 
 import domain.AmmoType;

@@ -1,3 +1,36 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Domain (Level 1 - Enterprise Business Rules)
+ *
+ * DESIGN PATTERNS:
+ * - Entity Pattern: Base class for all game entities with identity (ID).
+ * - Template Method potential: Subclasses can override behavior.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies (uses GamePosition which has violations).
+ * - [PASS] Pure domain entity definition.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Manages entity identity and basic positioning.
+ * - [PASS] OCP: Open for extension via subclasses (Zombie, Train, Bullet, etc.).
+ * - [PASS] LSP: Subclasses can substitute for Entity.
+ * - [N/A] ISP: No interfaces implemented.
+ * - [N/A] DIP: No high-level dependencies.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] setID() method is empty (line 25) - should be implemented or removed.
+ * - [WARN] Protected fields expose internal state to subclasses - consider getters.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Empty method body on line 25: public void setID(Integer id) {}
+ * - [MINOR] Missing class-level and method-level Javadoc.
+ * - [PASS] Field visibility is protected for inheritance.
+ */
 package domain.entities;
 
 import domain.GamePosition;

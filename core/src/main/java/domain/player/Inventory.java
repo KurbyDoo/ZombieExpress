@@ -1,3 +1,36 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Domain (Level 1 - Enterprise Business Rules)
+ *
+ * DESIGN PATTERNS:
+ * - Aggregate Pattern: Inventory aggregates InventorySlots.
+ * - Collection Pattern: Manages a fixed-size array of slots.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure domain entity.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Manages inventory slot collection.
+ * - [PASS] OCP: Slot behavior can be extended via InventorySlot.
+ * - [N/A] LSP: No inheritance.
+ * - [N/A] ISP: No interfaces.
+ * - [N/A] DIP: No high-level dependencies.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Constants follow UPPER_SNAKE_CASE.
+ * - [PASS] Javadoc present for key methods.
+ * - [PASS] Proper exception handling for invalid indices.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ * - [PASS] Good documentation for addItem and removeItem methods.
+ * - [WARN] Extra blank lines at end of file (lines 63-65).
+ */
 package domain.player;
 
 import domain.items.Item;

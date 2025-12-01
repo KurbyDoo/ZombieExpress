@@ -1,3 +1,36 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Domain (Level 1 - Enterprise Business Rules)
+ *
+ * DESIGN PATTERNS:
+ * - Value Object Pattern: Represents an immutable item identity.
+ * - Template Method potential: Base class for item hierarchy.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure domain entity.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Manages basic item data (name, stackability).
+ * - [PASS] OCP: Open for extension via subclasses (Weapon, FuelItem).
+ * - [PASS] LSP: Subclasses can substitute for Item.
+ * - [N/A] ISP: No interfaces implemented.
+ * - [N/A] DIP: No dependencies.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Fields are private and final.
+ * - [PASS] equals() and hashCode() properly implemented.
+ * - [PASS] toString() provides meaningful output.
+ * - [MINOR] Javadoc present but could be more detailed.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [PASS] Well-structured class with proper encapsulation.
+ * - [PASS] Javadoc present for equals() method.
+ */
 package domain.items;
 
 import java.util.Objects;
