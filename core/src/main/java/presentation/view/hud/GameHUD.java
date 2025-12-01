@@ -42,14 +42,15 @@ public class GameHUD {
         Label.LabelStyle largeStyle = UIFontFactory.createLargeHudStyle();
 
         hudElements = new HudElement[] {
-            new TimeHudElement(uiStage, mainStyle),
             new DistanceHudElement(uiStage, mainStyle, player),
             new FuelHudElement(uiStage, mainStyle, entityStorage),
             new HealthHudElement(uiStage, player),
             new AmmoHudElement(uiStage, mainStyle, player),
             new HeldItemHudElement(uiStage, player),
+            new CrosshairHudElement(uiStage, player),
             new HotbarHudElement(uiStage, style, player),
             new PickupPromptHudElement(uiStage, largeStyle, pickupController),
+            new TimeHudElement(uiStage, mainStyle)
         };
     }
 
