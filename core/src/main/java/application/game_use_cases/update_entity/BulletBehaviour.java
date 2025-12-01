@@ -5,7 +5,7 @@ import domain.entities.Bullet;
 import domain.entities.Entity;
 
 public class BulletBehaviour implements EntityBehaviour {
-    private final float BULLET_SPEED = 30.0f;
+    private final float BULLET_SPEED = 100;
     private final GamePosition tempDir = new GamePosition();
 
     @Override

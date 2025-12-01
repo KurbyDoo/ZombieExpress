@@ -12,6 +12,11 @@ public class UIFontFactory {
     private UIFontFactory() {
     }
 
+    public static Label.LabelStyle createLoginStyle() {
+        BitmapFont font = createFont(16);
+        return new Label.LabelStyle(font, Color.WHITE);
+    }
+
     public static Label.LabelStyle createMainHudStyle() {
         BitmapFont font = createFont(32);
         return new Label.LabelStyle(font, Color.WHITE);

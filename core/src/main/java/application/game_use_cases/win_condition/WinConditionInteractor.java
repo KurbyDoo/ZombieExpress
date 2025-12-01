@@ -16,14 +16,12 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
     private final World world;
     private final Player player;
-    private final ExitGameUseCase exitGameUseCase;
 
     private boolean isGameOver = false;
 
     public WinConditionInteractor(World world, Player player, ExitGameUseCase exitGameUseCase) {
         this.world = world;
         this.player = player;
-        this.exitGameUseCase = exitGameUseCase;
     }
 
     @Override
@@ -35,7 +33,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
         // --- CASE B: CHECK LOSE CONDITION (PLAYER DEATH) ---
         if (player.isDead()) {
             isGameOver = true;
-            String message = "Game Over! Your health reached zero. You succumbed to the Zombie Express.";
+            String message = "Game Over! You died. You succumbed to the Zombie Express.";
 
             System.out.println("--- GAME LOST: Player Died ---");
 

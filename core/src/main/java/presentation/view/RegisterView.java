@@ -1,36 +1,28 @@
 package presentation.view;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import interface_adapter.register.RegisterController;
 import interface_adapter.register.RegisterViewModel;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class RegisterView extends ScreenAdapter implements PropertyChangeListener {
+public class RegisterView extends BaseAuthView implements PropertyChangeListener {
 
-    private final ViewManager viewManager;
     private final RegisterController controller;
     private final RegisterViewModel viewModel;
-
-    private Stage stage;
-    private Skin skin;
 
     private TextField emailField;
     private TextField passwordField;
     private TextField confirmField;
     private Label messageLabel;
 
-    public RegisterView(ViewManager vm,
+    public RegisterView(ViewManager viewManager,
                         RegisterController controller,
                         RegisterViewModel vmRegister) {
-
-        this.viewManager = vm;
+        super(viewManager);
         this.controller = controller;
         this.viewModel = vmRegister;
 
@@ -38,56 +30,46 @@ public class RegisterView extends ScreenAdapter implements PropertyChangeListene
     }
 
     @Override
-    public void show() {
-        stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage);
-
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-        Table table = new Table();
-        table.setFillParent(true);
-        stage.addActor(table);
-
+    protected void buildContent(Table root) {
         emailField = new TextField("", skin);
         passwordField = new TextField("", skin);
         confirmField = new TextField("", skin);
 
-        passwordField.setPasswordCharacter('●');
         passwordField.setPasswordMode(true);
+        passwordField.setPasswordCharacter('●');
 
-        confirmField.setPasswordCharacter('●');
         confirmField.setPasswordMode(true);
+        confirmField.setPasswordCharacter('●');
 
         messageLabel = new Label("", skin);
         TextButton registerBtn = new TextButton("Register", skin);
+        TextButton backToLoginBtn = new TextButton("Back to Login", skin);
 
-        registerBtn.addListener(event -> {
-            controller.register(
-                emailField.getText(),
-                passwordField.getText(),
-                confirmField.getText()
-            );
-            return true;
+        registerBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                controller.register(
+                    emailField.getText(),
+                    passwordField.getText(),
+                    confirmField.getText()
+                );
+            }
         });
 
-        table.add(new Label("Email:", skin)).pad(5); table.row();
-        table.add(emailField).width(300).pad(5); table.row();
+        backToLoginBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                viewManager.switchTo(ViewType.LOGIN);
+            }
+        });
 
-        table.add(new Label("Password:", skin)).pad(5); table.row();
-        table.add(passwordField).width(300).pad(5); table.row();
+        addLabeledField(root, "Email:", emailField);
+        addLabeledField(root, "Password:", passwordField);
+        addLabeledField(root, "Confirm:", confirmField);
 
-        table.add(new Label("Confirm:", skin)).pad(5); table.row();
-        table.add(confirmField).width(300).pad(5); table.row();
-
-        table.add(registerBtn).pad(10); table.row();
-        table.add(messageLabel).pad(10);
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(delta);
-        stage.draw();
+        root.add(registerBtn).pad(10).row();
+        root.add(backToLoginBtn).pad(10).row();
+        root.add(messageLabel).pad(10);
     }
 
     @Override
@@ -106,10 +88,5 @@ public class RegisterView extends ScreenAdapter implements PropertyChangeListene
                 messageLabel.setText((String) event.getNewValue());
                 break;
         }
-    }
-
-    @Override
-    public void dispose() {
-        stage.dispose();
     }
 }
