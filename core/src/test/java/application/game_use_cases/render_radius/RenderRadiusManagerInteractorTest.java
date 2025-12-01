@@ -22,7 +22,7 @@ class RenderRadiusManagerInteractorTest {
     void emptyLoadChunks() {
         GamePosition playerPos = new GamePosition(0,0, 0);
         RenderRadiusOutputData output =  interactor.execute(
-            new RenderRadiusManagerInputData(playerPos, world, 2)
+            new RenderRadiusManagerInputData(playerPos, 2)
         );
         assertFalse(output.getChunksToGenerate().isEmpty(), "Generated chunks should be non-empty");
         assertTrue(output.getChunksToGenerate().containsAll(output.getChunksToLoad()),
@@ -35,12 +35,12 @@ class RenderRadiusManagerInteractorTest {
     void chunksToLoadShouldBeNonEmpty() {
         GamePosition playerPos = new GamePosition(0,0, 0);
         RenderRadiusOutputData output =  interactor.execute(
-            new RenderRadiusManagerInputData(playerPos, world, 2)
+            new RenderRadiusManagerInputData(playerPos, 2)
         );
 
         // Update again without moving
         RenderRadiusOutputData output2 =  interactor.execute(
-            new RenderRadiusManagerInputData(playerPos, world, 2)
+            new RenderRadiusManagerInputData(playerPos, 2)
         );
 
         assertTrue(output2.getChunksToLoad().isEmpty(), "Chunks to load should be empty");
@@ -57,13 +57,13 @@ class RenderRadiusManagerInteractorTest {
     void chunksToUnloadIsNonEmpty() {
         GamePosition playerPos = new GamePosition(0,0, 0);
         RenderRadiusOutputData output =  interactor.execute(
-            new RenderRadiusManagerInputData(playerPos, world, 2)
+            new RenderRadiusManagerInputData(playerPos, 2)
         );
 
         // Move to a new chunk
         playerPos = new GamePosition(16,0, 0);
         RenderRadiusOutputData output2 =  interactor.execute(
-            new RenderRadiusManagerInputData(playerPos, world, 2)
+            new RenderRadiusManagerInputData(playerPos, 2)
         );
         assertFalse(output2.getChunksToUnload().isEmpty(), "Chunks to unload should be non-empty");
     }

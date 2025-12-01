@@ -9,7 +9,7 @@ public class BulletBehaviour implements EntityBehaviour {
     private final GamePosition tempDir = new GamePosition();
 
     @Override
-    public void update(Entity entity, BehaviourContext context) {
+    public void execute(EntityBehaviourInputData inputData) {
         // Bullets usually have their velocity set once at creation.
         // But if we need constant propulsion (like a rocket):
 

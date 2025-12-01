@@ -6,12 +6,18 @@ import domain.entities.Train;
 import domain.player.Player;
 
 public class TrainBehaviour implements EntityBehaviour {
+    private final Player player;
+
+    public TrainBehaviour(Player player) {
+        this.player = player;
+    }
 
     @Override
-    public void update(Entity entity, BehaviourContext context) {
+    public void execute(EntityBehaviourInputData inputData) {
+        Entity entity = inputData.getEntity();
+        float deltaTime = inputData.getDeltaTime();
         if (!(entity instanceof Train)) return;
         Train train = (Train) entity;
-        float deltaTime = context.getDeltaTime();
         float throttle = train.getThrottle();
 
         // Only move if there is input and fuel
@@ -25,7 +31,6 @@ public class TrainBehaviour implements EntityBehaviour {
             train.setPosition(newTrainPos);
 
             // Move the Player to match the Train
-            Player player = context.getPlayer();
             if (player.getCurrentRide() == train) {
                 GamePosition seatOffset = train.getRideOffset();
                 GamePosition newPlayerPos = newTrainPos.cpy().add(seatOffset);

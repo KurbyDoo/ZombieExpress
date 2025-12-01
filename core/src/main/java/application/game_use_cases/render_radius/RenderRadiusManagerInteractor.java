@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 public class RenderRadiusManagerInteractor implements RenderRadiusManagerInputBoundary {
+    private final World world;
     // --- WORLD BOUNDARY CONSTANTS ---
     private final int MAX_WORLD_Z_CHUNKS = 8;
     private final int MIN_WORLD_Z_CHUNKS = -8;
@@ -25,14 +26,13 @@ public class RenderRadiusManagerInteractor implements RenderRadiusManagerInputBo
     // Tracks chunks currently in the world
     private final Set<GamePosition> renderedChunks = new HashSet<>();
 
-    // TODO: Why did i do this, need to refactor later
     public RenderRadiusManagerInteractor(World world) {
+        this.world = world;
         MAX_WORLD_X_CHUNKS = world.getWorldDepthChunks() + 12;
     }
 
     @Override
     public RenderRadiusOutputData execute(RenderRadiusManagerInputData inputData) {
-        World world = inputData.getWorld();
         GamePosition playerPos = inputData.getPlayerPosition();
         RenderRadiusOutputData result = new RenderRadiusOutputData();
 

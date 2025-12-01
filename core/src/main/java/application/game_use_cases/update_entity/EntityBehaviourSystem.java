@@ -1,17 +1,12 @@
 package application.game_use_cases.update_entity;
 
-import application.game_use_cases.generate_entity.GenerateEntityStrategy;
-import application.game_use_cases.ports.PhysicsControlPort;
 import domain.GamePosition;
-import domain.entities.EntityFactory;
 import domain.repositories.EntityStorage;
 import domain.Chunk;
 import domain.World;
 import domain.entities.Entity;
 import domain.entities.EntityType;
-import domain.player.Player;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,14 +30,14 @@ public class EntityBehaviourSystem {
         entityToPosition = new HashMap<>();
     }
 
-    public void update(List<Integer> activeEntities, BehaviourContext context) {
+    public void update(List<Integer> activeEntities, float deltaTime) {
         // Create context once per frame
         for (Integer entityID : activeEntities) {
             Entity entity = storage.getEntityByID(entityID);
             EntityBehaviour strategy = behaviors.get(entity.getType());
 
             if (strategy != null) {
-                strategy.update(entity, context);
+                strategy.execute(new EntityBehaviourInputData(entity, deltaTime));
             }
         }
     }

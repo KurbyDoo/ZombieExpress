@@ -16,20 +16,15 @@ import static org.mockito.Mockito.*;
 class TrainBehaviourTest {
 
     private TrainBehaviour behaviour;
-    private BehaviourContext context;
 
     private Train mockTrain;
     private Player mockPlayer;
-    private PhysicsControlPort mockPhysics;
 
     @BeforeEach
     void setUp() {
-        behaviour = new TrainBehaviour();
-        mockTrain = mock(Train.class);
         mockPlayer = mock(Player.class);
-        mockPhysics = mock(PhysicsControlPort.class);
-
-        context = new BehaviourContext(mockPhysics, mockPlayer, 1.0f); // DeltaTime = 1.0
+        behaviour = new TrainBehaviour(mockPlayer);
+        mockTrain = mock(Train.class);
 
         when(mockTrain.getPosition()).thenReturn(new GamePosition(0,0,0));
         when(mockTrain.getRideOffset()).thenReturn(new GamePosition(0, 2, 0));
@@ -41,7 +36,7 @@ class TrainBehaviourTest {
     void shouldNotMoveWithoutThrottle() {
         when(mockTrain.getThrottle()).thenReturn(0.0f);
 
-        behaviour.update(mockTrain, context);
+        behaviour.execute(new EntityBehaviourInputData(mockTrain, 1f));
 
         verify(mockTrain, never()).setPosition(any());
     }
@@ -53,7 +48,7 @@ class TrainBehaviourTest {
 
         ArgumentCaptor<GamePosition> posCaptor = ArgumentCaptor.forClass(GamePosition.class);
 
-        behaviour.update(mockTrain, context);
+        behaviour.execute(new EntityBehaviourInputData(mockTrain, 1f));
 
         verify(mockTrain).setPosition(posCaptor.capture());
         GamePosition newPos = posCaptor.getValue();
@@ -71,7 +66,7 @@ class TrainBehaviourTest {
         // Player should be at (10, 2, 0)
         ArgumentCaptor<GamePosition> playerPosCaptor = ArgumentCaptor.forClass(GamePosition.class);
 
-        behaviour.update(mockTrain, context);
+        behaviour.execute(new EntityBehaviourInputData(mockTrain, 1f));
 
         verify(mockPlayer).setPosition(playerPosCaptor.capture());
         GamePosition playerPos = playerPosCaptor.getValue();
@@ -85,7 +80,7 @@ class TrainBehaviourTest {
     void shouldDecayThrottle() {
         when(mockTrain.getThrottle()).thenReturn(1.0f);
 
-        behaviour.update(mockTrain, context);
+        behaviour.execute(new EntityBehaviourInputData(mockTrain, 1f));
 
         // throttle * (1f - 0.5f * deltaTime) -> 1.0 * (1 - 0.5) = 0.5
         verify(mockTrain).setThrottle(0.5f);
