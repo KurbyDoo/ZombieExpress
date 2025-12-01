@@ -5,6 +5,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import interface_adapter.register.RegisterController;
 import interface_adapter.register.RegisterViewModel;
@@ -61,13 +62,15 @@ public class RegisterView extends ScreenAdapter implements PropertyChangeListene
         messageLabel = new Label("", skin);
         TextButton registerBtn = new TextButton("Register", skin);
 
-        registerBtn.addListener(event -> {
-            controller.register(
-                emailField.getText(),
-                passwordField.getText(),
-                confirmField.getText()
-            );
-            return true;
+        registerBtn.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                controller.register(
+                    emailField.getText(),
+                    passwordField.getText(),
+                    confirmField.getText()
+                );
+            }
         });
 
         table.add(new Label("Email:", skin)).pad(5); table.row();

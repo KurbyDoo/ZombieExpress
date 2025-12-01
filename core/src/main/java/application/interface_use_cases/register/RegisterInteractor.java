@@ -37,6 +37,18 @@ public class RegisterInteractor implements RegisterInputBoundary{
             return;
         }
 
+        if (email == null||!email.contains("@")||!email.contains(".")){
+            presenter.registerFail("Invalid email format.Your email format should contains both of @ and .");
+            return;
+        }
+
+        // need to check the length of the password
+        if(password.length() < 6){
+            presenter.registerFail("Password must be at least 6 characters.");
+            return;
+        }
+
+
         // else create a new user
         String uid = dataAccess.newUser(email, password);
 

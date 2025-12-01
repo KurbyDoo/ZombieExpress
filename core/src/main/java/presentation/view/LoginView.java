@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
@@ -56,16 +57,21 @@ public class LoginView extends ScreenAdapter implements PropertyChangeListener {
         TextButton loginBtn = new TextButton("Login", skin);
         TextButton registerBtn = new TextButton("Create Account", skin);
 
-        loginBtn.addListener(new ChangeListener() {
+        loginBtn.addListener(new ClickListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                controller.login(emailField.getText(), passwordField.getText());
+            public void clicked(InputEvent event, float x, float y) {
+                controller.login(
+                    emailField.getText(),
+                    passwordField.getText()
+                );
             }
         });
 
-        registerBtn.addListener(event -> {
-            viewManager.switchTo(ViewType.REGISTER);
-            return true;
+        registerBtn.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                viewManager.switchTo(ViewType.REGISTER);
+            }
         });
 
         table.add(new Label("Email:", skin)).pad(5); table.row();
