@@ -21,7 +21,6 @@ import application.game_use_cases.populate_chunk.PopulateChunkInteractor;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
-import com.badlogic.gdx.graphics.GL20;
 import data_access.IdToEntityStorage;
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
@@ -40,6 +39,7 @@ import data_access.InMemoryBlockRepository;
 import domain.entities.*;
 import domain.player.Player;
 import domain.World;
+import application.game_use_cases.query_camera_data.PlayerCameraDataQuery;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
 import presentation.controllers.*;
@@ -141,10 +141,12 @@ public class GameView implements Viewable{
         gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
         inventoryInputAdapter = new InventoryInputAdapter(player);
 
+        PlayerCameraDataQuery playerCameraDataQuery = new PlayerCameraDataQuery(player);
+
 
         // --- MESH + COL ---
         objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
-        cameraController = new FirstPersonCameraController(camera, player);
+        cameraController = new CameraController(camera, playerCameraDataQuery);
 
         // CHUNK + ENTITY RENDERING
         EntityRenderer entityRenderer = new EntityRenderer(entityStorage, meshFactory, meshStorage);
