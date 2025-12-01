@@ -1,3 +1,33 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Data Access)
+ *
+ * DESIGN PATTERNS:
+ * - Repository Pattern: Implements BlockRepository interface.
+ * - Flyweight Factory Pattern: Caches and reuses Block instances.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] Implements domain interface (BlockRepository).
+ * - [PASS] No LibGDX dependencies - pure data storage.
+ * - [PASS] Correct layer for concrete repository implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - block storage.
+ * - [PASS] OCP: Can add new blocks without modification.
+ * - [PASS] LSP: Correctly implements BlockRepository.
+ * - [PASS] DIP: Implements domain abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Uses Java 8 Optional correctly.
+ * - [NOTE] TODO comment suggests future JSON configuration.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] TODO comment should be addressed.
+ * - [PASS] Generally well-structured.
+ */
 package data_access;
 
 import domain.repositories.BlockRepository;

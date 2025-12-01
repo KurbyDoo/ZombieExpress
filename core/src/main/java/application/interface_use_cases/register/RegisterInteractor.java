@@ -1,3 +1,30 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements registration use case.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure use case implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Handles registration logic.
+ * - [PASS] LSP: Correctly implements RegisterInputBoundary.
+ * - [PASS] DIP: Uses data access and output boundary abstractions.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Missing space before '{' on line 12.
+ * - [PASS] Good Javadoc documentation present.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Missing space before opening brace.
+ */
 package application.interface_use_cases.register;
 
 /**

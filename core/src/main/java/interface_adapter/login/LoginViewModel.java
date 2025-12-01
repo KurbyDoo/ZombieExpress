@@ -1,3 +1,30 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Interface Adapter (Level 3 - ViewModels)
+ *
+ * DESIGN PATTERNS:
+ * - ViewModel Pattern: Holds UI state for login screen.
+ * - Observer Pattern: Uses PropertyChangeSupport for reactive updates.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] Only imports domain types.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure ViewModel for Clean Architecture.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - holds login UI state.
+ * - [PASS] OCP: PropertyChangeSupport allows observers without modification.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Good Javadoc documentation present.
+ * - [PASS] Uses standard Java beans PropertyChangeSupport.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [PASS] Well-documented ViewModel.
+ */
 package interface_adapter.login;
 import domain.player.PlayerSession;
 

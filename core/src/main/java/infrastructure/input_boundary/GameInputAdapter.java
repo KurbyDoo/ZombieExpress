@@ -1,3 +1,29 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Infrastructure)
+ *
+ * DESIGN PATTERNS:
+ * - Adapter Pattern: Adapts LibGDX input to use case InputBoundary.
+ * - Extends LibGDX InputAdapter framework class.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] This is the correct layer for LibGDX code.
+ * - [PASS] Correctly uses InputBoundary abstraction to call use cases.
+ * - [PASS] Framework dependencies are appropriate for this layer.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Handles input adaptation.
+ * - [PASS] DIP: Depends on PlayerMovementInputBoundary abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package infrastructure.input_boundary;
 
 import application.game_use_cases.player_movement.PlayerMovementInputBoundary;

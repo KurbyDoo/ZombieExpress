@@ -1,3 +1,29 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Port Pattern (Data Access Interface): Defines abstraction for player data.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] Only imports domain types.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure port interface.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Player data access contract.
+ * - [PASS] ISP: Focused interface.
+ * - [PASS] DIP: Use cases depend on this abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Interface name follows PascalCase.
+ * - [PASS] Javadoc present.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [PASS] Properly documented.
+ */
 package application.interface_use_cases.player_data;
 import domain.player.PlayerSession;
 

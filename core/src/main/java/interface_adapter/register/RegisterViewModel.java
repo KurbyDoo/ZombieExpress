@@ -1,3 +1,28 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Interface Adapter (Level 3 - ViewModels)
+ *
+ * DESIGN PATTERNS:
+ * - ViewModel Pattern: Holds UI state for registration screen.
+ * - Observer Pattern: Uses PropertyChangeSupport.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No outer layer imports.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure ViewModel.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Holds registration UI state.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package interface_adapter.register;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
