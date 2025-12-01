@@ -23,7 +23,7 @@ public class Main extends Game {
     public void dispose() {
         super.dispose();
         if (viewManager != null) {
-            viewManager.handleManualExit();  // ← 拼写正确
+            viewManager.handleManualExit();
         }
     }
 }
