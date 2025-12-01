@@ -18,12 +18,14 @@ public class EntityFactory {
         this.storage = storage;
     }
 
-    public void create(GenerateEntityInputData inputData) {
+    public int create(GenerateEntityInputData inputData) {
         // TODO: Should the entity hold id? yes right?
         idCounter++;
         inputData.setId(idCounter);
         Entity e = registry.get(inputData.getType()).execute(inputData);
         storage.setIDEntityPair(e.getID(), e);
+
+        return idCounter;
     }
 
     public static class EntityFactoryBuilder {
