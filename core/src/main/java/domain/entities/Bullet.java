@@ -14,4 +14,8 @@ public class Bullet extends Entity{
     public GamePosition getDirection() {
         return direction;
     }
+
+    public void setDirection(GamePosition dir) {
+        this.direction = dir;
+    }
 }
