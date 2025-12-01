@@ -40,6 +40,7 @@ import data_access.InMemoryBlockRepository;
 import domain.entities.*;
 import domain.player.Player;
 import domain.World;
+import interface_adapter.PlayerCameraDataQuery;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
 import presentation.controllers.*;
@@ -141,10 +142,12 @@ public class GameView implements Viewable{
         gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
         inventoryInputAdapter = new InventoryInputAdapter(player);
 
+        PlayerCameraDataQuery playerCameraDataQuery = new PlayerCameraDataQuery(player);
+
 
         // --- MESH + COL ---
         objectRenderer = new ObjectRenderer(camera, colHandler, meshStorage);
-        cameraController = new FirstPersonCameraController(camera, player);
+        cameraController = new CameraController(camera, playerCameraDataQuery);
 
         // CHUNK + ENTITY RENDERING
         EntityRenderer entityRenderer = new EntityRenderer(entityStorage, meshFactory, meshStorage);
