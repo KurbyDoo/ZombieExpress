@@ -33,7 +33,7 @@ public class HeldItemHudElement implements HudElement {
             return;
         }
 
-        Drawable drawable = ItemImageFactory.getImageForItem(slot.getItem());
+        Drawable drawable = ItemIconFactory.getIconForItem(slot.getItem());
         heldItemImage.setDrawable(drawable);
     }
 }

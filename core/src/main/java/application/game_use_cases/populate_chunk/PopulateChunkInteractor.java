@@ -84,14 +84,26 @@ public class PopulateChunkInteractor implements PopulateChunkInputBoundary {
 
 
     private Item randomPickupItem() {
-        int r = random.nextInt(3);
+        int r = random.nextInt(9);
         switch (r) {
             case 0:
-                return ItemTypes.COAL;
+                return ItemTypes.WOOD_LOG;
             case 1:
                 return ItemTypes.OIL_BARREL;
+            case 2:
+                return ItemTypes.GOLDEN_PISTOL;
+            case 3:
+                return ItemTypes.RAINBOW_PISTOL;
+            case 4:
+                return ItemTypes.COMBAT_PISTOL;
+            case 5:
+                return ItemTypes.TACTICAL_RIFLE;
+            case 6:
+                return ItemTypes.GOLDEN_RIFLE;
+            case 7:
+                return ItemTypes.ZOMBIE_OBLITERATOR_RIFLE;
             default:
-                return ItemTypes.WOOD_LOG;
+                return ItemTypes.COAL;
         }
     }
 }
