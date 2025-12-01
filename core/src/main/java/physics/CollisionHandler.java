@@ -1,3 +1,11 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Physics)
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package physics;
 
 import com.badlogic.gdx.math.Vector3;

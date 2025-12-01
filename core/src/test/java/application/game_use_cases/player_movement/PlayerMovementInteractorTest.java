@@ -1,3 +1,11 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Test
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package application.game_use_cases.player_movement;
 
 import domain.GamePosition;

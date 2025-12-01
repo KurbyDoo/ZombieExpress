@@ -1,4 +1,12 @@
 /**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Data Access)
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
+/**
  * Data access implementation for player documents stored in Firestore.
  * Loads or creates PlayerSession objects using Firebase.
  * Used by login and register interactors.

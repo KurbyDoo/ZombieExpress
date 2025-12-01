@@ -1,3 +1,11 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Test
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package application.game_use_cases;
 
 import org.junit.jupiter.api.BeforeEach;

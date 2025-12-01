@@ -1,3 +1,11 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Presentation/Controllers)
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package presentation.controllers;
 
 import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;

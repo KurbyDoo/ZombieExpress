@@ -1,3 +1,11 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Entry Point/Runner)
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package runner;
 
 import application.interface_use_cases.login.LoginInteractor;

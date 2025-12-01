@@ -1,3 +1,14 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Infrastructure)
+ *
+ * NOTE: Use cases should not import this directly.
+ * Consider creating NoiseGenerator interface.
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package infrastructure.noise;
 
 // Adapted from https://adrianb.io/2014/08/09/perlinnoise.html

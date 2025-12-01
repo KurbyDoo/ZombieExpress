@@ -1,3 +1,11 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Frameworks & Drivers (Level 4 - Data Access)
+ *
+ * See docs/architecture_analysis.md for detailed analysis.
+ */
 package data_access.firebase;
 
 import application.interface_use_cases.login.LoginDataAccessInterface;
