@@ -21,5 +21,9 @@ public class PickUpInputAdapter extends InputAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             pickupController.onRideKeyPressed();
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            pickupController.onDropKeyPressed();
+        }
     }
 }

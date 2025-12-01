@@ -51,11 +51,8 @@ public class PopulateChunkInteractor implements PopulateChunkInputBoundary {
                 }
 
                 if (isValidSpawn(chunk, worldX, surfaceHeight + 1, worldZ, 80)) {
-                    double pickupNoise = PerlinNoise.perlin(
-                        worldX * scaleFactor * 8, 250f, worldZ * scaleFactor * 8
-                    );
-
-                    if (pickupNoise > 0.83) {
+                    float spawnChance = 0.00075f;
+                    if (random.nextFloat() < spawnChance) {
                         Item item = randomPickupItem();
                         GamePosition pickupPos = new GamePosition(worldX, surfaceHeight + 1, worldZ);
                         entityFactory.create(new GeneratePickupInputData(item, pickupPos));
@@ -84,14 +81,25 @@ public class PopulateChunkInteractor implements PopulateChunkInputBoundary {
 
 
     private Item randomPickupItem() {
-        int r = random.nextInt(3);
-        switch (r) {
-            case 0:
-                return ItemTypes.COAL;
-            case 1:
-                return ItemTypes.OIL_BARREL;
-            default:
-                return ItemTypes.WOOD_LOG;
+        int roll = random.nextInt(100); // 0–99
+        if (roll < 26) {                      // 26%
+            return ItemTypes.WOOD_LOG;
+        } else if (roll < 46) {               // 20% (60-40)
+            return ItemTypes.COAL;
+        } else if (roll < 56) {               // 10% (70-60)
+            return ItemTypes.OIL_BARREL;
+        } else if (roll < 66) {               // 10% (80-70)
+            return ItemTypes.COMBAT_PISTOL;
+        } else if (roll < 76) {               // 10%  (88-80)
+            return ItemTypes.TACTICAL_RIFLE;
+        } else if (roll < 83) {               // 7%  (93-88)
+            return ItemTypes.GOLDEN_PISTOL;
+        } else if (roll < 90) {               // 7%  (97-93)
+            return ItemTypes.GOLDEN_RIFLE;
+        } else if (roll < 95) {               // 5%  (99-97)
+            return ItemTypes.RAINBOW_PISTOL;
+        } else {                              // 5%  (99-100)
+            return ItemTypes.ZOMBIE_OBLITERATOR_RIFLE;
         }
     }
 }

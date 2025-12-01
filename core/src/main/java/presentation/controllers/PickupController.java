@@ -104,6 +104,10 @@ public class PickupController {
         }
     }
 
+    public void onDropKeyPressed(){
+        player.drop();
+    }
+
     private void clearTargets() {
         currentPickupTarget = null;
         currentTrainTarget = null;
