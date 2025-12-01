@@ -1,7 +1,5 @@
 package application.game_use_cases.update_entity;
 
-import domain.entities.Entity;
-
 public interface EntityBehaviour {
-    void update(Entity entity, BehaviourContext context);
+    void execute(EntityBehaviourInputData inputData);
 }

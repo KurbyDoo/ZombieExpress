@@ -12,17 +12,14 @@ import static org.mockito.Mockito.*;
 class ZombieBehaviourTest {
 
     private ZombieBehaviour behaviour;
-    private BehaviourContext context;
     private Entity mockZombie;
     private Player mockPlayer;
 
     @BeforeEach
     void setUp() {
-        behaviour = new ZombieBehaviour();
-        mockZombie = mock(Entity.class);
         mockPlayer = mock(Player.class);
-
-        context = new BehaviourContext(null, mockPlayer, 1.0f);
+        behaviour = new ZombieBehaviour(mockPlayer);
+        mockZombie = mock(Entity.class);
 
         // Start positions
         when(mockZombie.getPosition()).thenReturn(new GamePosition(0, 0, 0));
@@ -34,7 +31,7 @@ class ZombieBehaviourTest {
         // Player is at (10, 0, 0)
         when(mockPlayer.getPosition()).thenReturn(new GamePosition(10, 0, 0));
 
-        behaviour.update(mockZombie, context);
+        behaviour.execute(new EntityBehaviourInputData(mockZombie, 1f));
 
         // Zombie speed is 3.0f
         // Direction is (1,0,0)
@@ -47,7 +44,7 @@ class ZombieBehaviourTest {
     void shouldFacePlayer() {
         when(mockPlayer.getPosition()).thenReturn(new GamePosition(10, 0, 10));
 
-        behaviour.update(mockZombie, context);
+        behaviour.execute(new EntityBehaviourInputData(mockZombie, 1f));
 
         // Verify setYaw is called.
         verify(mockZombie).setYaw(anyFloat());
@@ -59,7 +56,7 @@ class ZombieBehaviourTest {
         // Player is high up, but on same XZ plane
         when(mockPlayer.getPosition()).thenReturn(new GamePosition(10, 50, 0));
 
-        behaviour.update(mockZombie, context);
+        behaviour.execute(new EntityBehaviourInputData(mockZombie, 1f));
 
         // Should still move purely along X axis, Y velocity should be 0
         verify(mockZombie).setVelocity(3.0f, 0, 0);
