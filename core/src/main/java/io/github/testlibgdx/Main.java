@@ -22,4 +22,11 @@ public class Main extends Game {
         viewManager.setGame(this);
         viewManager.switchTo(ViewType.LOGIN);
     }
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (viewManager != null) {
+            viewManager.handleManualExit();
+        }
+    }
 }

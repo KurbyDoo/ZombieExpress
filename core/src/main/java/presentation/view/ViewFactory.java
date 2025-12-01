@@ -2,8 +2,11 @@ package presentation.view;
 
 import application.interface_use_cases.login.LoginInteractor;
 import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
+import application.interface_use_cases.player_data.PlayerDataAccessInterface;
+import application.interface_use_cases.player_data.SavePlayerDataInteractor;
 import application.interface_use_cases.register.RegisterInteractor;
 import data_access.firebase.FirebaseLoginRegisterDataAccess;
+import domain.player.PlayerSession;
 import interface_adapter.login.*;
 import interface_adapter.register.*;
 
@@ -11,12 +14,15 @@ public class ViewFactory {
 
     private static FirebaseLoginRegisterDataAccess firebaseAuth;
     private static LoadPlayerDataInteractor loadPlayer;
+    private static PlayerSession currentSession;
+    private static PlayerDataAccessInterface playerDataAccess;
 
     public static void init(FirebaseLoginRegisterDataAccess auth,
-                            LoadPlayerDataInteractor loader) {
+                            LoadPlayerDataInteractor loader,PlayerDataAccessInterface dataAccess) {
 
         firebaseAuth = auth;
         loadPlayer = loader;
+        playerDataAccess = dataAccess;
     }
 
     public static LoginView createLoginView(ViewManager vm) {
@@ -33,5 +39,20 @@ public class ViewFactory {
         RegisterInteractor interactor = new RegisterInteractor(firebaseAuth, presenter);
         RegisterController controller = new RegisterController(interactor);
         return new RegisterView(vm, controller, vmRegister);
+    }
+
+    public static GameScreen createGameScreen() {
+        SavePlayerDataInteractor saveScore = new SavePlayerDataInteractor(playerDataAccess,currentSession);
+        return new GameScreen(currentSession,saveScore);
+    }
+    public static PlayerSession getCurrentSession() {
+        return currentSession;
+    }
+    public static PlayerDataAccessInterface getPlayerDataAccess() {
+        return playerDataAccess;
+    }
+
+    public static void setCurrentSession(PlayerSession session) {
+        currentSession = session;
     }
 }

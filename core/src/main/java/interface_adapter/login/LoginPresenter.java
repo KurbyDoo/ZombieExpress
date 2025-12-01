@@ -4,6 +4,7 @@ import application.interface_use_cases.login.LoginOutputBoundary;
 import application.interface_use_cases.login.LoginOutputData;
 import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
 import domain.player.PlayerSession;
+import presentation.view.ViewFactory;
 
 /**
  * Presenter for the Login use case
@@ -43,15 +44,12 @@ public class LoginPresenter implements LoginOutputBoundary {
         viewModel.setLoginEmail(data.getEmail());
 
         // Load player's data
-        PlayerSession session = null;
-
-        if (loadPlayerDataInteractor != null) {
-            session = loadPlayerDataInteractor.load(data.getEmail(), data.getUid());
-            if (session == null) {
-                System.out.println("WARNING: Failed to load player session");
-                return;
-            }
+        PlayerSession session = loadPlayerDataInteractor.load(data.getEmail(), data.getUid());
+        if (session == null) {
+            System.out.println("WARNING: Failed to load player session");
+            return;
         }
+        ViewFactory.setCurrentSession(session);
         viewModel.setPlayerSession(session);
 
         System.out.println("Login success = " + viewModel.isSuccessfulLogin());
