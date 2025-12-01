@@ -6,9 +6,9 @@ import domain.entities.Train;
 import domain.player.Player;
 
 public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
+    private final float MOVEMENT_SPEED = 5;
+    private final int SPRINT_MULTIPLIER = 2;
     private final Player player;
-
-    private final int SPRINT_MULTIPLIER = 5;
 
     public PlayerMovementInteractor(Player player) {
         this.player = player;
@@ -32,7 +32,7 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
                     train.getThrottle() + train.getRemainingThrottle() * 0.25f * inputData.getDeltaTime()
                 );
                 // Consume 1 fuel per second
-                train.consumeFuel(1f * inputData.getDeltaTime());
+                train.consumeFuel(3f * inputData.getDeltaTime());
             }
         } else {
             GamePosition playerDirection = new GamePosition(player.getDirection()).nor();
@@ -40,7 +40,7 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
 
             GamePosition velocity = getOnGroundVelocity(inputData, playerDirection, playerUp);
 
-            velocity.scl(player.getMovementSpeed());
+            velocity.scl(MOVEMENT_SPEED);
 
             if (inputData.isSprinting()) {
                 velocity.scl(SPRINT_MULTIPLIER);

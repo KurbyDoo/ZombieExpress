@@ -4,29 +4,23 @@ import domain.GamePosition;
 import domain.AmmoType;
 import domain.entities.Rideable;
 import domain.items.Item;
-import domain.AmmoType.*;
 import domain.items.ItemTypes;
-import domain.items.ItemTypes.*;
 
 public class Player {
+    private final float ROTATION_SPEED = 0.2f;
+    private final int MAX_HEALTH = 100;
+
     private final GamePosition startingPosition;
     private final GamePosition position;
     private final GamePosition direction;
     private final GamePosition up;
 
-    private final float movementSpeed = 25.0f;
-    private final float sprintSpeed = movementSpeed * 5;
-    private final float rotationSpeed = 0.2f;
-
     private final Inventory inventory;
     private int currentSlot = 0;
-    private int pistolAmmo = 0;
-    private int rifleAmmo = 0;
+    private int pistolAmmo = 250;
+    private int rifleAmmo = 100;
     private int score = 0;
-
-    private final int maxHealth = 100;
-    private int currentHealth = maxHealth;
-    private float passiveHealTimer = 0;
+    private int currentHealth = MAX_HEALTH;
 
     private Rideable currentRide;
 
@@ -42,8 +36,6 @@ public class Player {
         inventory.addItem(ItemTypes.RUSTY_PISTOL);
         inventory.addItem(ItemTypes.COAL);
         inventory.addItem(ItemTypes.COAL);
-        addAmmo(AmmoType.PISTOL, 250);
-        addAmmo(AmmoType.RIFLE, 100);
     }
 
     /**
@@ -62,30 +54,16 @@ public class Player {
      */
     public void updateRotation(float deltaX, float deltaY) {
         // Yaw (left/right) - Rotate around the world UP vector.
-        direction.rotate(up, -deltaX * rotationSpeed);
+        direction.rotate(up, -deltaX * ROTATION_SPEED);
 
         float maxPitchRadians = (float) Math.toRadians(89.0f);
-        float newPitchRadians = (float) Math.asin(direction.y) + (float) Math.toRadians(deltaY * rotationSpeed);
+        float newPitchRadians = (float) Math.asin(direction.y) + (float) Math.toRadians(deltaY * ROTATION_SPEED);
         float clampedPitchRadians = Math.max(-maxPitchRadians, Math.min(maxPitchRadians, newPitchRadians));
         float actualRotationRadians = clampedPitchRadians - (float) Math.asin(direction.y);
 
         if (Math.abs(actualRotationRadians) > 0.0001f) {
             GamePosition pitchAxis = new GamePosition(direction).crs(up).nor();
             direction.rotate(pitchAxis, (float) Math.toDegrees(actualRotationRadians));
-        }
-    }
-
-    public void updatePassiveHealing(float deltaTime) {
-        if (isDead() || currentHealth >= maxHealth) return;
-        passiveHealTimer += deltaTime;
-        float healInterval = 1; // heal every 1 second
-        int healAmount = 2;        // heal 2 HP each interval
-
-        if (passiveHealTimer >= healInterval) {
-            int intervals = (int) (passiveHealTimer / healInterval);
-            passiveHealTimer -= intervals * healInterval;
-
-            heal(healAmount * intervals);
         }
     }
 
@@ -122,7 +100,7 @@ public class Player {
     }
 
     public int getMaxHealth() {
-        return maxHealth;
+        return MAX_HEALTH;
     }
 
     public int getPistolAmmo() {
@@ -154,20 +132,8 @@ public class Player {
         this.score = 0;
     }
 
-
-    public void heal(int amount) {
-        currentHealth += amount;
-        if (currentHealth > maxHealth) {
-            currentHealth = maxHealth;
-        }
-    }
-
     public boolean isDead() {
         return currentHealth <= 0;
-    }
-
-    public float getMovementSpeed() {
-        return movementSpeed;
     }
 
     public void addAmmo(AmmoType type, int amount) {
