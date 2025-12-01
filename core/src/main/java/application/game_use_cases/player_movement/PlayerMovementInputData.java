@@ -1,3 +1,35 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Input Data Pattern: Encapsulates all input for player movement use case.
+ * - Immutable Data Transfer Object (DTO).
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure data structure for use case input.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - holds movement input data.
+ * - [PASS] OCP: Immutable, cannot be modified.
+ * - [N/A] LSP: No inheritance.
+ * - [N/A] ISP: No interfaces.
+ * - [N/A] DIP: Pure data class.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Fields are private and final (immutable).
+ * - [PASS] Boolean getters use 'is' prefix.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ * - [PASS] Single-line getters are acceptable for DTOs.
+ */
 package application.game_use_cases.player_movement;
 
 public class PlayerMovementInputData {

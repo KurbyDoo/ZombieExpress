@@ -1,3 +1,40 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements use case business logic.
+ * - Implements Input Boundary for Clean Architecture.
+ * - Strategy-like behavior: Different movement for walking vs. riding.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies (uses domain types).
+ * - [PASS] Implements InputBoundary interface correctly.
+ *
+ * SOLID PRINCIPLES:
+ * - [WARN] SRP: Handles both walking AND train riding movement.
+ *   Consider Strategy Pattern: MovementStrategy interface with
+ *   WalkingMovement and RidingMovement implementations.
+ * - [WARN] OCP: Adding new movement types requires modifying this class.
+ *   The instanceof check (line 25) violates OCP.
+ * - [PASS] LSP: Implements PlayerMovementInputBoundary correctly.
+ * - [N/A] ISP: No interfaces implemented beyond InputBoundary.
+ * - [PASS] DIP: Depends on domain abstractions.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] SPRINT_MULTIPLIER constant should be static final (line 11).
+ * - [WARN] Magic numbers (0.25f, 1f) should be named constants.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Instance constant should be static: 'private static final int SPRINT_MULTIPLIER'.
+ * - [WARN] Magic numbers in lines 31, 34.
+ * - [MINOR] Missing class-level and method-level Javadoc.
+ */
 package application.game_use_cases.player_movement;
 
 import domain.GamePosition;

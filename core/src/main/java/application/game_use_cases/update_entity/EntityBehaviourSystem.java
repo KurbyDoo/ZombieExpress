@@ -1,3 +1,38 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Strategy Context Pattern: Manages and delegates to EntityBehaviour strategies.
+ * - Factory Pattern: EntityBehaviourSystemFactory builds the system.
+ * - Registry Pattern: Maps EntityType to behaviors.
+ *
+ * ORCHESTRATOR: EntityBehaviourSystem orchestrates entity behavior updates,
+ * delegating to specific EntityBehaviour implementations based on entity type.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure use case implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Manages entity behavior execution.
+ * - [PASS] OCP: New entity types can be registered without modification.
+ * - [N/A] LSP: No inheritance.
+ * - [N/A] ISP: No interfaces implemented.
+ * - [PASS] DIP: Depends on EntityBehaviour abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Builder pattern correctly implemented.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ * - [PASS] Good use of inner factory class.
+ */
 package application.game_use_cases.update_entity;
 
 import domain.GamePosition;

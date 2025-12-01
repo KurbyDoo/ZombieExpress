@@ -1,3 +1,36 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Strategy Pattern: Concrete strategy for train behavior.
+ * - Implements EntityBehaviour interface.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure use case implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [WARN] SRP: Handles train movement AND player position update.
+ *   Consider separating player synchronization to a different component.
+ * - [PASS] OCP: Can add new behaviors without modifying existing code.
+ * - [PASS] LSP: Correctly implements EntityBehaviour.
+ * - [PASS] ISP: Implements focused EntityBehaviour interface.
+ * - [N/A] DIP: No high-level dependencies.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Magic numbers (0.5f) should be named constants.
+ * - [WARN] instanceof check (line 19) could be avoided with type-safe design.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Magic number on line 41 (0.5f).
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.update_entity;
 
 import domain.GamePosition;
