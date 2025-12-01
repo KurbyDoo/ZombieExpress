@@ -192,7 +192,7 @@ public class GameView implements Viewable{
         // Shoot
         ShootInteractor shootInteractor = new ShootInteractor(entityFactory);
         shootController = new ShootController(player, shootInteractor, meshStorage, entityRenderer);
-        shootInputAdapter = new ShootInputAdapter(shootController);
+        shootInputAdapter = new ShootInputAdapter(player, shootController);
 
         this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
         hud = new GameHUD(player, entityStorage, pickupController, exitGameUseCase);
@@ -215,7 +215,6 @@ public class GameView implements Viewable{
         // Theses should be polled at most once per frame
         inventoryInputAdapter.pollInput();
         pickupInputAdapter.pollInput();
-        shootInputAdapter.pollInput();
 
         while (accumulator >= TIME_STEP) {
             accumulator -= TIME_STEP;

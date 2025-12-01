@@ -20,8 +20,6 @@ public class ShootInteractor implements ShootInputBoundary{
         GenerateBulletInputData bulletInput = new GenerateBulletInputData(bulletPos, bulletDir);
         int id = entityFactory.create(bulletInput);
 
-        ShootOutputData outputData = new ShootOutputData(id, bulletPos, bulletDir);
-
-        return outputData;
+        return new ShootOutputData(id, bulletPos, bulletDir);
     }
 }
