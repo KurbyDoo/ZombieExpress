@@ -1,5 +1,3 @@
-package infrastructure.input_boundary;
-package infrastructure.input_boundary;
 /**
  * ARCHITECTURE ANALYSIS HEADER
  * ============================
@@ -15,6 +13,7 @@ package infrastructure.input_boundary;
  *
  * See docs/architecture_analysis.md for detailed analysis.
  */
+package infrastructure.input_boundary;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
