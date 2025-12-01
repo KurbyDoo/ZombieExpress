@@ -29,10 +29,10 @@ public class FirebaseLoginRegisterDataAccess
      * @return the newly created user's UID, or null if creation failed.
      */
     @Override
-    public String newUser(String email, String password) {
+    public String newUser(String useremail, String password) {
         try {
             UserRecord.CreateRequest request = new UserRecord.CreateRequest()
-                .setEmail(email)
+                .setEmail(useremail)
                 .setPassword(password);
 
             UserRecord user = FirebaseAuth.getInstance().createUser(request);

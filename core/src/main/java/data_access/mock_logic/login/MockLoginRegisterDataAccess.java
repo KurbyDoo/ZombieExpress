@@ -11,13 +11,13 @@ public class MockLoginRegisterDataAccess implements LoginDataAccessInterface,Reg
     private final Map<String, String> uids = new HashMap<>();
 
     @Override
-    public String newUser(String email, String password) {
-        if (accounts.containsKey(email)) {
+    public String newUser(String useremail, String password) {
+        if (accounts.containsKey(useremail)) {
             return null;
         }
-        accounts.put(email, password);
-        String uid = "uid-" + email.hashCode();
-        uids.put(email, uid);
+        accounts.put(useremail, password);
+        String uid = "uid-" + useremail.hashCode();
+        uids.put(useremail, uid);
 
         return uid;
     }
