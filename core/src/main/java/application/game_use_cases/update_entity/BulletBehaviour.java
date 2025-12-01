@@ -1,9 +1,12 @@
 package application.game_use_cases.update_entity;
 
+import domain.GamePosition;
+import domain.entities.Bullet;
 import domain.entities.Entity;
 
 public class BulletBehaviour implements EntityBehaviour {
-    private final float BULLET_SPEED = 20.0f;
+    private final float BULLET_SPEED = 30.0f;
+    private final GamePosition tempDir = new GamePosition();
 
     @Override
     public void execute(EntityBehaviourInputData inputData) {
@@ -15,5 +18,22 @@ public class BulletBehaviour implements EntityBehaviour {
 
         // Or simple timeout logic:
         // if (entity.getAge() > 5.0f) destroy(entity);
+        // Find player direction
+
+        tempDir.set(((Bullet)inputData.getEntity()).getDirection());
+
+        tempDir.y = 0;
+        tempDir.nor();
+
+        // Get physics state
+        inputData.getEntity().setVelocity(
+            tempDir.x * BULLET_SPEED,
+            0,
+            tempDir.z * BULLET_SPEED
+        );
+
+        // Apply movement
+        float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
+        inputData.getEntity().setYaw(yaw);
     }
 }
