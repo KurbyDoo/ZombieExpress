@@ -1,7 +1,5 @@
-package interface_adapter;
+package application.game_use_cases.query_camera_data;
 
-import application.game_use_cases.query_camera_data.CameraDataOutput;
-import application.game_use_cases.query_camera_data.QueryCameraDataInputBoundary;
 import domain.player.Player;
 
 /**
