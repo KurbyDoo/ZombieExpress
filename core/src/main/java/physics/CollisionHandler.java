@@ -24,7 +24,7 @@ public class CollisionHandler implements Disposable {
     private final btDiscreteDynamicsWorld dynamicsWorld;
     private final ObjectContactListener listener;
 
-    public CollisionHandler() {
+    public CollisionHandler(EntityContactFacade facade) {
         config = new btDefaultCollisionConfiguration();
         dispatch = new btCollisionDispatcher(config);
         broadphase = new btDbvtBroadphase();
@@ -32,7 +32,7 @@ public class CollisionHandler implements Disposable {
         dynamicsWorld = new btDiscreteDynamicsWorld(dispatch, broadphase, constraintSolver, config);
         dynamicsWorld.setGravity(new Vector3(0, -10f, 0));
 
-        listener = new ObjectContactListener();
+        listener = new ObjectContactListener(facade);
 
     }
 

@@ -10,12 +10,22 @@ public class Entity {
     protected float yaw;
     private final EntityType type;
 
+    protected boolean shouldRemove = false;
+
     public Entity(Integer id, EntityType type, GamePosition position, boolean isVisible) {
         this.id = id;
         this.type = type;
         this.position = position;
         this.isVisible = isVisible;
         this.velocity = new GamePosition(0, 0, 0);
+    }
+
+    public void markForRemoval() {
+        this.shouldRemove = true;
+    }
+
+    public boolean isMarkedForRemoval() {
+        return shouldRemove;
     }
 
     public Integer getID() {
