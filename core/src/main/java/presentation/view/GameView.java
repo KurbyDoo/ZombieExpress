@@ -95,9 +95,9 @@ public class GameView implements Viewable{
             .build();
 
         EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem.EntityBehaviourSystemFactory(entityStorage, world)
-            .register(EntityType.ZOMBIE, new ZombieBehaviour())
+            .register(EntityType.ZOMBIE, new ZombieBehaviour(player))
             .register(EntityType.BULLET, new BulletBehaviour())
-            .register(EntityType.TRAIN, new TrainBehaviour())
+            .register(EntityType.TRAIN, new TrainBehaviour(player))
             .build();
 
         // Chunk Generation
@@ -151,7 +151,6 @@ public class GameView implements Viewable{
 
         worldSyncController = new WorldSyncController(
             RENDER_RADIUS,
-            world,
             updateWorld,
             chunkRenderer
         );
@@ -159,7 +158,7 @@ public class GameView implements Viewable{
 
         PhysicsControlPort physicsControlPort = new BulletPhysicsAdapter(meshStorage);
         gameSimulationController = new GameSimulationController(
-            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, world, player
+            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, player
         );
 
         this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
@@ -195,6 +194,7 @@ public class GameView implements Viewable{
             WinConditionOutputData output = WinConditionInteractor.execute();
             if (output.isGameOver()) {
                 hud.showEndGameDialog(output.getMessage());
+
             }
         }
 

@@ -2,16 +2,25 @@ package application.game_use_cases.update_entity;
 
 import domain.GamePosition;
 import domain.entities.Entity;
+import domain.player.Player;
 
 public class ZombieBehaviour implements EntityBehaviour {
+    private final Player player;
+
     private final float MOVE_SPEED = 3.0f;
     private final GamePosition tempDir = new GamePosition();
     private final GamePosition tempVel = new GamePosition();
 
+    public ZombieBehaviour(Player player) {
+        this.player = player;
+    }
+
     @Override
-    public void update(Entity entity, BehaviourContext context) {
+    public void execute(EntityBehaviourInputData inputData) {
+        Entity entity = inputData.getEntity();
+
         // Find player direction
-        tempDir.set(context.getPlayer().getPosition()).sub(entity.getPosition());
+        tempDir.set(player.getPosition()).sub(entity.getPosition());
         tempDir.y = 0;
         tempDir.nor();
 

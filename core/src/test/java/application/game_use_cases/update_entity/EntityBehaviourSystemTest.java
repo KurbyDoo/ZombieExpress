@@ -23,7 +23,6 @@ class EntityBehaviourSystemTest {
     @Mock private EntityStorage storage;
     @Mock private World world;
     @Mock private EntityBehaviour mockStrategy;
-    @Mock private BehaviourContext context;
     @Mock private Entity mockEntity;
 
     private final int ENTITY_ID = 1;
@@ -68,9 +67,9 @@ class EntityBehaviourSystemTest {
         void shouldExecuteStrategy() {
             List<Integer> activeEntities = Collections.singletonList(ENTITY_ID);
 
-            system.update(activeEntities, context);
+            system.update(activeEntities, 1f);
 
-            verify(mockStrategy, times(1)).update(mockEntity, context);
+            verify(mockStrategy, times(1)).execute(any());
         }
 
         @Test
@@ -79,9 +78,9 @@ class EntityBehaviourSystemTest {
             when(mockEntity.getType()).thenReturn(EntityType.CHUNK); // Not registered in map
             List<Integer> activeEntities = Collections.singletonList(ENTITY_ID);
 
-            system.update(activeEntities, context);
+            system.update(activeEntities, 1f);
 
-            verify(mockStrategy, never()).update(any(), any());
+            verify(mockStrategy, never()).execute(any());
         }
     }
 

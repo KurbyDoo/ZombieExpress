@@ -1,29 +1,35 @@
 package application.game_use_cases.update_world;
 
+import domain.Chunk;
 import domain.GamePosition;
 
-import java.util.Set;
+import java.util.List;
+import java.util.Map;
 
 public class UpdateWorldOutputData {
-    private final Set<GamePosition> chunksToLoad;
-    private final Set<GamePosition> chunksToUpdate;
-    private final Set<GamePosition> chunksToUnload;
+    private final Map<GamePosition, Chunk> chunksToLoad;
+    private final Map<GamePosition, Chunk> chunksToUnload;
+    private final List<Integer> activeEntities;
 
-    public UpdateWorldOutputData(Set<GamePosition> toLoad, Set<GamePosition> toUpdate, Set<GamePosition> toUnload) {
+    public UpdateWorldOutputData(
+        Map<GamePosition, Chunk> toLoad,
+        Map<GamePosition, Chunk> toUnload,
+        List<Integer> activeEntities
+    ) {
         chunksToLoad = toLoad;
-        chunksToUpdate = toUpdate;
         chunksToUnload = toUnload;
+        this.activeEntities = activeEntities;
     }
 
-    public Set<GamePosition> getChunksToLoad() {
+    public Map<GamePosition, Chunk> getChunksToLoad() {
         return chunksToLoad;
     }
 
-    public Set<GamePosition> getChunksToUpdate() {
-        return chunksToUpdate;
+    public Map<GamePosition, Chunk> getChunksToUnload() {
+        return chunksToUnload;
     }
 
-    public Set<GamePosition> getChunksToUnload() {
-        return chunksToUnload;
+    public List<Integer> getActiveEntities() {
+        return activeEntities;
     }
 }
