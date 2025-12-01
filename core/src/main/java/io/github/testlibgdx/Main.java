@@ -2,8 +2,8 @@ package io.github.testlibgdx;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.physics.bullet.Bullet;
-import presentation.view.ViewManager;
-import presentation.view.ViewType;
+import framework.view.ViewManager;
+import framework.view.ViewType;
 
 public class Main extends Game {
 

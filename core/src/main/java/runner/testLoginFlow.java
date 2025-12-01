@@ -1,10 +1,10 @@
 package runner;
 
-import application.interface_use_cases.login.LoginInteractor;
-import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
-import data_access.firebase.FirebaseInitializer;
-import data_access.firebase.FirebaseLoginRegisterDataAccess;
-import data_access.firebase.FirebasePlayerDataAccess;
+import application.account_features.login.LoginInteractor;
+import application.account_features.player_data.LoadPlayerDataInteractor;
+import framework.data_access.firebase.FirebaseInitializer;
+import framework.data_access.firebase.FirebaseLoginRegisterDataAccess;
+import framework.data_access.firebase.FirebasePlayerDataAccess;
 import interface_adapter.login.*;
 
 public class testLoginFlow {

@@ -1,8 +1,8 @@
 package domain.entities;
 
-import application.game_use_cases.generate_entity.GenerateEntityStrategy;
-import application.game_use_cases.generate_entity.GenerateEntityInputData;
-import domain.repositories.EntityStorage;
+import application.game_features.generate_entity.GenerateEntityStrategy;
+import application.game_features.generate_entity.GenerateEntityInputData;
+import application.gateways.EntityStorage;
 
 import java.util.HashMap;
 import java.util.Map;

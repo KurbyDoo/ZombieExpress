@@ -1,8 +1,8 @@
 package interface_adapter.login;
 
-import application.interface_use_cases.login.LoginOutputBoundary;
-import application.interface_use_cases.login.LoginOutputData;
-import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
+import application.account_features.login.LoginOutputBoundary;
+import application.account_features.login.LoginOutputData;
+import application.account_features.player_data.LoadPlayerDataInteractor;
 import domain.player.PlayerSession;
 
 /**

@@ -1,10 +1,9 @@
 package data_access;
 
 import domain.entities.Entity;
-import domain.repositories.EntityStorage;
+import application.gateways.EntityStorage;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

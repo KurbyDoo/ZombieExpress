@@ -33,75 +33,213 @@ Note that most tasks that are not specific to a single project can be run with `
 For example, `core:clean` removes `build` folder only from the `core` project.
 
 
-File structure (As of nov 14th):
+File structure (As of nov 30th):
 ```
-java
-├── domain
-│   ├── entity
-│   │   ├── BlockType.java
-│   │   ├── Chunk.java
-│   │   ├── FuelItem.java
-│   │   ├── Player.java
-│   │   ├── Weapon.java
-│   │   └── World.java
-│
-├── usecases
-│   ├── ports
-│   │   ├── BlockMaterialRepository.java
-│   │   ├── BlockRepository.java
-│   ├── chunkgeneration
-│   │   ├── ChunkGenerationInputBoundary.java
-│   │   ├── ChunkGenerationInputData.java
-│   │   └── ChunkGenerationInteractor.java
-│   ├── chunkmeshgeneration
-│   │   ├── ChunkMeshGenerationInputBoundary.java
-│   │   ├── ChunkMeshGenerationInputData.java
-│   │   ├── ChunkMeshGenerationInteractor.java
-│   │   └── ChunkMeshGenerationOutputData.java
-│   ├── login
-│   │   ├── LoginDataAccessInterface.java
-│   │   ├── LoginInputBoundary.java
-│   │   ├── LoginInteractor.java
-│   │   └── LoginOutputBoundary.java
-│   └── playermovement
-│       ├── PlayerMovementInputBoundary.java
-│       ├── PlayerMovementInputData.java
-│       └── PlayerMovementInteractor.java
-│
-├── interfaceadapters
-│   ├── controllers
-│   │   ├── CameraController.java
-│   │   ├── FirstPersonCameraController.java
-│   │   └── WorldGenerationController.java
-│   ├── presenters
-│   │   └── LoginPresenter.java
-│   ├── viewmodels
-│   │   └── LoginViewModel.java
-│   └── input
-│       └── GameInputAdapter.java
-│
-└── frameworksanddrivers
-    ├── main
-    │   └── Main.java
-    ├── config
-    │   └── GameConfig.java
-    ├── dataaccess
-    │   ├── InMemoryBlockRepository.java
-    │   └── FirebaseAuthManager.java
-    ├── gdx
-    │   ├── view
-    │   │   ├── GameView.java
-    │   │   ├── LoginView.java
-    │   │   ├── Viewable.java
-    │   │   ├── ViewManager.java
-    │   │   └── ViewCamera.java
-    │   ├── rendering
-    │   │   ├── LibGDXMaterialRepository.java
-    │   │   ├── ChunkLoader.java
-    │   │   ├── GameMeshBuilder.java
-    │   │   └── ObjectRenderer.java
-    │   └── noise
-    │       └── PerlinNoise.java
+src
+└── java
+    ├── domain
+    │   ├── entities
+    │   │   ├── Entity.java
+    │   │   ├── EntityFactory.java
+    │   │   ├── EntityType.java
+    │   │   ├── PickupEntity.java
+    │   │   ├── Rideable.java
+    │   │   ├── Train.java
+    │   │   └── Zombie.java
+    │   ├── items
+    │   │   ├── FuelItem.java
+    │   │   ├── Item.java
+    │   │   ├── ItemTypes.java
+    │   │   ├── MeleeWeapon.java
+    │   │   ├── RangedWeapon.java
+    │   │   └── Weapon.java
+    │   ├── player
+    │   │   ├── Inventory.java
+    │   │   ├── InventorySlot.java
+    │   │   ├── Player.java
+    │   │   └── PlayerSession.java
+    │   └── world
+    │       ├── AmmoType.java
+    │       ├── Block.java
+    │       ├── Chunk.java
+    │       ├── GamePosition.java
+    │       ├── Structure.java
+    │       └── World.java
+    ├── application
+    │   ├── account_features
+    │   │   ├── login
+    │   │   │   ├── LoginDataAccessInterface.java
+    │   │   │   ├── LoginInputBoundary.java
+    │   │   │   ├── LoginInteractor.java
+    │   │   │   ├── LoginOutputBoundary.java
+    │   │   │   └── LoginOutputData.java
+    │   │   ├── player_data
+    │   │   │   ├── LoadPlayerDataInteractor.java
+    │   │   │   ├── PlayerDataAccessInterface.java
+    │   │   │   └── SavePlayerDataInteractor.java
+    │   │   └── register
+    │   │       ├── RegisterInputBoundary.java
+    │   │       ├── RegisterInteractor.java
+    │   │       ├── RegisterOutputBoundary.java
+    │   │       ├── RegisterOutputData.java
+    │   │       └── RegisterUserDataAccessInterface.java
+    │   ├── game_features
+    │   │   ├── dismount_entity
+    │   │   │   ├── DismountEntityInputBoundary.java
+    │   │   │   ├── DismountEntityInputData.java
+    │   │   │   ├── DismountEntityInteractor.java
+    │   │   │   └── DismountEntityOutputData.java
+    │   │   ├── exit_game
+    │   │   │   └── ExitGameUseCase.java
+    │   │   ├── generate_chunk
+    │   │   │   ├── noise
+    │   │   │   │   └── PerlinNoise.java
+    │   │   │   ├── GenerateChunkInputBoundary.java
+    │   │   │   ├── GenerateChunkInputData.java
+    │   │   │   ├── GenerateChunkInteractor.java
+    │   │   │   └── GenerateChunkOutputData.java
+    │   │   ├── generate_entity
+    │   │   │   ├── pickup
+    │   │   │   │   ├── GeneratePickupInputData.java
+    │   │   │   │   └── GeneratePickupStrategy.java
+    │   │   │   ├── train
+    │   │   │   │   ├── GenerateTrainInputData.java
+    │   │   │   │   └── GenerateTrainStrategy.java
+    │   │   │   ├── zombie
+    │   │   │   │   ├── GenerateZombieInputData.java
+    │   │   │   │   └── GenerateZombieStrategy.java
+    │   │   │   ├── GenerateEntityInputData.java
+    │   │   │   └── GenerateEntityStrategy.java
+    │   │   ├── mount_entity
+    │   │   │   ├── MountEntityInputBoundary.java
+    │   │   │   ├── MountEntityInputData.java
+    │   │   │   ├── MountEntityInteractor.java
+    │   │   │   └── MountEntityOutputData.java
+    │   │   ├── pickup
+    │   │   │   └── PickupInteractor.java
+    │   │   ├── player_movement
+    │   │   │   ├── PlayerMovementInputBoundary.java
+    │   │   │   ├── PlayerMovementInputData.java
+    │   │   │   └── PlayerMovementInteractor.java
+    │   │   ├── populate_chunk
+    │   │   │   ├── PopulateChunkInputBoundary.java
+    │   │   │   ├── PopulateChunkInputData.java
+    │   │   │   └── PopulateChunkInteractor.java
+    │   │   ├── render_radius
+    │   │   │   ├── RenderRadiusManagerInputBoundary.java
+    │   │   │   ├── RenderRadiusManagerInputData.java
+    │   │   │   ├── RenderRadiusManagerInteractor.java
+    │   │   │   └── RenderRadiusOutputData.java
+    │   │   ├── update_entity
+    │   │   │   ├── BulletBehaviour.java
+    │   │   │   ├── EntityBehaviour.java
+    │   │   │   ├── EntityBehaviourInputData.java
+    │   │   │   ├── EntityBehaviourSystem.java
+    │   │   │   ├── TrainBehaviour.java
+    │   │   │   └── ZombieBehaviour.java
+    │   │   ├── update_world
+    │   │   │   ├── UpdateWorldInputBoundary.java
+    │   │   │   ├── UpdateWorldInputData.java
+    │   │   │   ├── UpdateWorldInteractor.java
+    │   │   │   └── UpdateWorldOutputData.java
+    │   │   └── win_condition
+    │   │       ├── WinConditionInputBoundary.java
+    │   │       ├── WinConditionInteractor.java
+    │   │       └── WinConditionOutputData.java
+    │   ├── gateways
+    │   │   ├── BlockRepository.java
+    │   │   └── EntityStorage.java
+    │   └── ports
+    │       ├── ApplicationLifecyclePort.java
+    │       └── PhysicsControlPort.java
+    ├── interface_adapter
+    │   ├── controllers
+    │   │   ├── CameraController.java
+    │   │   ├── FirstPersonCameraController.java
+    │   │   ├── GameSimulationController.java
+    │   │   ├── LoginController.java
+    │   │   ├── PickupController.java
+    │   │   ├── RegisterController.java
+    │   │   └── WorldSyncController.java
+    │   ├── input
+    │   │   ├── GameInputAdapter.java
+    │   │   ├── InventoryInputAdapter.java
+    │   │   ├── LibGDXLifecycleAdapter.java
+    │   │   └── PickUpInputAdapter.java
+    │   ├── physics
+    │   │   └── BulletPhysicsAdapter.java
+    │   ├── presenters
+    │   │   ├── LoginPresenter.java
+    │   │   └── RegisterPresenter.java
+    │   └── view_models
+    │       ├── LoginViewModel.java
+    │       └── RegisterViewModel.java
+    └── framework
+        ├── app
+        │   ├── AppInitializer.java
+        │   └── Main.java
+        ├── data_access
+        │   ├── firebase
+        │   │   ├── FirebaseInitializer.java
+        │   │   ├── FirebaseLoginRegisterDataAccess.java
+        │   │   └── FirebasePlayerDataAccess.java
+        │   ├── mock_logic
+        │   │   ├── login
+        │   │   │   ├── MockfirebaseAuthManager.java
+        │   │   │   └── MockLoginRegisterDataAccess.java
+        │   │   └── player
+        │   │       └── MockPlayerDataAccess.java
+        │   ├── IdToEntityStorage.java
+        │   └── InMemoryBlockRepository.java
+        ├── physics
+        │   ├── CollisionHandler.java
+        │   ├── GameMesh.java
+        │   ├── HitBox.java
+        │   ├── MeshMotionState.java
+        │   └── ObjectContactListener.java
+        ├── rendering
+        │   ├── strategies
+        │   │   ├── GenerateMeshInputData.java
+        │   │   ├── GenerateMeshStrategy.java
+        │   │   ├── GeneratePickupMeshStrategy.java
+        │   │   ├── GenerateTrainMeshStrategy.java
+        │   │   └── GenerateZombieMeshStrategy.java
+        │   ├── BlockMaterialRepository.java
+        │   ├── ChunkMeshData.java
+        │   ├── ChunkMeshGenerator.java
+        │   ├── ChunkRenderer.java
+        │   ├── EntityMeshSynchronizer.java
+        │   ├── EntityRenderer.java
+        │   ├── IdToMeshStorage.java
+        │   ├── MeshFactory.java
+        │   ├── MeshStorage.java
+        │   ├── ObjectRenderer.java
+        │   └── TexturedBlockMaterialRepository.java
+        └── view
+            ├── assets
+            │   ├── ItemImageFactory.java
+            │   ├── UIAssetFactory.java
+            │   └── UIFontFactory.java
+            ├── hud
+            │   ├── AmmoHudElement.java
+            │   ├── DistanceHudElement.java
+            │   ├── FuelHudElement.java
+            │   ├── GameHUD.java
+            │   ├── HealthHudElement.java
+            │   ├── HeldItemHudElement.java
+            │   ├── HotbarHudElement.java
+            │   ├── HudElement.java
+            │   ├── PickupPromptHudElement.java
+            │   └── TimeHudElement.java
+            ├── GameScreen.java
+            ├── GameView.java
+            ├── LoginView.java
+            ├── RegisterView.java
+            ├── ViewCamera.java
+            ├── ViewFactory.java
+            ├── ViewManager.java
+            ├── ViewType.java
+            └── Viewable.java
 ```
 
 ## Firebase Authentication

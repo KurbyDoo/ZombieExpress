@@ -1,7 +1,7 @@
 package interface_adapter.register;
 
-import application.interface_use_cases.register.RegisterOutputBoundary;
-import application.interface_use_cases.register.RegisterOutputData;
+import application.account_features.register.RegisterOutputBoundary;
+import application.account_features.register.RegisterOutputData;
 
 /**
  * Presenter for the Register use case

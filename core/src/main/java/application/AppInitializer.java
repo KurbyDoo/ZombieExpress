@@ -1,10 +1,10 @@
 package application;
 
-import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
-import data_access.firebase.FirebaseLoginRegisterDataAccess;
-import data_access.firebase.FirebasePlayerDataAccess;
-import presentation.view.ViewFactory;
-import presentation.view.ViewManager;
+import application.account_features.player_data.LoadPlayerDataInteractor;
+import framework.data_access.firebase.FirebaseLoginRegisterDataAccess;
+import framework.data_access.firebase.FirebasePlayerDataAccess;
+import framework.view.ViewFactory;
+import framework.view.ViewManager;
 
 
 public class AppInitializer {

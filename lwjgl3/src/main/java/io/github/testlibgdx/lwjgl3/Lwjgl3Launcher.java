@@ -3,9 +3,9 @@ package io.github.testlibgdx.lwjgl3;
 import application.AppInitializer;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import data_access.firebase.FirebaseInitializer;
+import framework.data_access.firebase.FirebaseInitializer;
 import io.github.testlibgdx.Main;
-import presentation.view.ViewManager;
+import framework.view.ViewManager;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {

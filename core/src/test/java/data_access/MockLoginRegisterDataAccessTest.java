@@ -1,7 +1,7 @@
 package data_access;
 
 
-import data_access.mock_logic.login.MockLoginRegisterDataAccess;
+import framework.data_access.mock_logic.login.MockLoginRegisterDataAccess;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
