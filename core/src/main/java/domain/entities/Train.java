@@ -11,7 +11,7 @@ public class Train extends Entity implements Rideable {
     private int speed;
     public Train(Integer id, GamePosition position) {
         super(id, EntityType.TRAIN, position, true);
-        fuel = 20;
+        fuel = 0;
         speed = 30;
     }
 

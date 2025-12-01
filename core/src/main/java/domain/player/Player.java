@@ -3,9 +3,10 @@ package domain.player;
 import domain.GamePosition;
 import domain.AmmoType;
 import domain.entities.Rideable;
-import domain.entities.Train;
 import domain.items.Item;
-import static domain.AmmoType.*;
+import domain.AmmoType.*;
+import domain.items.ItemTypes;
+import domain.items.ItemTypes.*;
 
 public class Player {
     private final GamePosition startingPosition;
@@ -38,11 +39,11 @@ public class Player {
 
 //        this.currentRide = new Train(-1, this.position);
 
-//        inventory.addItem(BASEBALL_BAT);
-//        inventory.addItem(RUSTY_PISTOL);
-//        inventory.addItem(COAL, 2);
-        addAmmo(PISTOL, 250);
-        addAmmo(RIFLE, 100);
+        inventory.addItem(ItemTypes.RUSTY_PISTOL);
+        inventory.addItem(ItemTypes.COAL);
+        inventory.addItem(ItemTypes.COAL);
+        addAmmo(AmmoType.PISTOL, 250);
+        addAmmo(AmmoType.RIFLE, 100);
     }
 
     /**

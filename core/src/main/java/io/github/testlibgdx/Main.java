@@ -1,6 +1,8 @@
 package io.github.testlibgdx;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.physics.bullet.Bullet;
 import presentation.view.ViewManager;
 import presentation.view.ViewType;
@@ -15,6 +17,7 @@ public class Main extends Game {
 
     @Override
     public void create() {
+        Gdx.app.setLogLevel(Application.LOG_NONE);
         Bullet.init();
         viewManager.setGame(this);
         viewManager.switchTo(ViewType.LOGIN);
