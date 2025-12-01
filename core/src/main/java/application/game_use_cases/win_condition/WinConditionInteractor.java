@@ -29,7 +29,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
     @Override
     public WinConditionOutputData execute() {
         if (isGameOver) {
-            return new WinConditionOutputData(true, "Game Over.");
+            return new WinConditionOutputData(true, "Game Over.", player.getScore());
         }
 
         // --- CASE B: CHECK LOSE CONDITION (PLAYER DEATH) ---
@@ -38,7 +38,12 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             String message = "Game Over! Your health reached zero. You succumbed to the Zombie Express.";
 
             System.out.println("--- GAME LOST: Player Died ---");
-            return new WinConditionOutputData(true, message);
+
+            int score = player.getScore();
+            System.out.println("[WinCondition] GameOver=" + isGameOver
+                + "  Message=" + message
+                + "  Score=" + score);
+            return new WinConditionOutputData(true, message,  player.getScore());
         }
 
         // --- CASE A: CHECK WIN CONDITION (TRAIN AT WORLD END) ---
@@ -60,11 +65,16 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
                 System.out.println("--- GAME WON: " + message + " ---");
 
-                return new WinConditionOutputData(true, message);
+                int score = player.getScore();
+                System.out.println("[WinCondition] GameOver=" + isGameOver
+                    + "  Message=" + message
+                    + "  Score=" + score);
+
+                return new WinConditionOutputData(true, message,  player.getScore());
             }
         }
 
         // Return default state if no end condition is met
-        return new WinConditionOutputData(false, "");
+        return new WinConditionOutputData(false, "", player.getScore());
     }
 }

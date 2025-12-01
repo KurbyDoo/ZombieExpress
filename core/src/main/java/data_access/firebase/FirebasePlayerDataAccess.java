@@ -57,6 +57,10 @@ public class FirebasePlayerDataAccess implements PlayerDataAccessInterface {
         map.put("email", playerSession.getEmail());
         map.put("lastScore", playerSession.getLastScore());
         map.put("heightScore", playerSession.getHeightScore());
+
+        System.out.println("[Firebase] Writing to Firestore: " + map);
+
         return map;
+
     }
 }

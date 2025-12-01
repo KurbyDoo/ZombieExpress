@@ -9,11 +9,11 @@ public interface PlayerDataAccessInterface {
 
     /**
      * Load the stored player session associated with given user
-     * @param uid
      * @param email
+     * @param uid
      * @return
      */
-    PlayerSession loadPlayerData(String uid, String email);
+    PlayerSession loadPlayerData(String email,String uid);
 
     /**
      * Saves the player's session back to persistent storage

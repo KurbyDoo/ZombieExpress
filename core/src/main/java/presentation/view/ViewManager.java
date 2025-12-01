@@ -28,10 +28,18 @@ public class ViewManager {
                 break;
 
             case GAME:
-                currentScreen = new GameScreen();
+                currentScreen = ViewFactory.createGameScreen();
                 break;
         }
 
         game.setScreen(currentScreen);
+    }
+
+    public void handleManualExit() {
+        if (currentScreen != null && currentScreen instanceof GameScreen) {
+            GameScreen gs = (GameScreen) currentScreen;
+            gs.saveOnExit();
+
+        }
     }
 }

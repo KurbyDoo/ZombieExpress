@@ -21,8 +21,10 @@ import application.game_use_cases.populate_chunk.PopulateChunkInteractor;
 import application.game_use_cases.populate_chunk.PopulateChunkInputBoundary;
 import application.game_use_cases.ports.ApplicationLifecyclePort;
 import application.game_use_cases.win_condition.WinConditionOutputData;
-import com.badlogic.gdx.graphics.GL20;
+import application.interface_use_cases.player_data.SavePlayerDataInputData;
+import application.interface_use_cases.player_data.SavePlayerDataInteractor;
 import data_access.IdToEntityStorage;
+import domain.player.PlayerSession;
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
@@ -50,6 +52,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 
 public class GameView implements Viewable{
+    private Player player;
+    private PlayerSession playerSession;
+    private SavePlayerDataInteractor saveScore;
+    private boolean winConditionCheckedOnce = false;
+
+    public GameView(PlayerSession playerSession, SavePlayerDataInteractor saveScore) {
+        this.playerSession = playerSession;
+        this.saveScore = saveScore;
+    }
+
+
     private boolean initialized = false;
 
     private final float FPS = 120.0f;
@@ -79,7 +92,7 @@ public class GameView implements Viewable{
         BlockRepository blockRepository = new InMemoryBlockRepository();
 
         GamePosition startingPosition = new GamePosition(0, 3f, 0);
-        Player player = new Player(startingPosition);
+        this.player = new Player(startingPosition);
         MountEntityInputBoundary mountEntity = new MountEntityInteractor(player);
         DismountEntityInputBoundary dismountEntity = new DismountEntityInteractor(player);
 
@@ -197,7 +210,24 @@ public class GameView implements Viewable{
 
             WinConditionOutputData output = WinConditionInteractor.execute();
             if (output.isGameOver()) {
+                int score = output.getScore();
+                System.out.println("[GameView] Final score from WinCondition = " + score);
+                System.out.println("[GameView] PlayerSession BEFORE: last="
+                    + playerSession.getLastScore()
+                    + " top=" + playerSession.getHeightScore());
+
+                playerSession.setLastScore(score);
+                playerSession.setHeightScore(Math.max(playerSession.getHeightScore(),score));
+                System.out.println("[GameView] PlayerSession AFTER: last="
+                    + playerSession.getLastScore()
+                    + " top=" + playerSession.getHeightScore());
+
+                saveScore.execute(new SavePlayerDataInputData(score));
+
+                System.out.println("[GameView] SaveScore interactor CALLED.");
+
                 hud.showEndGameDialog(output.getMessage());
+                // TODO: add store score logic here!!
             }
         }
 
@@ -213,9 +243,35 @@ public class GameView implements Viewable{
         hud.update(deltaTime);
         hud.render();
     }
+    public void saveOnExit(){
+        int score = player.getScore();
+
+        System.out.println("[GameView] Manual Exit → Saving score: " + score);
+        if (playerSession == null){
+            System.out.println("[GameView] PlayerSession NULL, cannot save score to the fire store");
+            return;
+        }
+
+        playerSession.setLastScore(score);
+        playerSession.setHeightScore(Math.max(playerSession.getHeightScore(), score));
+        saveScore.execute(new SavePlayerDataInputData(score));
+    }
 
     @Override
     public void disposeView() {
+        if (!winConditionCheckedOnce){
+            int score = player.getScore();
+            System.out.println("[GameView] Manual Exit → Saving score: " + score);
+
+            if (playerSession != null){
+                playerSession.setLastScore(score);
+                playerSession.setHeightScore(Math.max(playerSession.getHeightScore(), score));
+                saveScore.execute(new SavePlayerDataInputData(score));
+            }else {
+                System.out.println("[GameView] PlayerSession NULL, cannot save score");
+            }
+
+        }
         // Dispose world-related components first
         worldSyncController.dispose();
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
@@ -55,9 +56,11 @@ public class LoginView extends ScreenAdapter implements PropertyChangeListener {
         TextButton loginBtn = new TextButton("Login", skin);
         TextButton registerBtn = new TextButton("Create Account", skin);
 
-        loginBtn.addListener(event -> {
-            controller.login(emailField.getText(), passwordField.getText());
-            return true;
+        loginBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                controller.login(emailField.getText(), passwordField.getText());
+            }
         });
 
         registerBtn.addListener(event -> {
@@ -98,6 +101,7 @@ public class LoginView extends ScreenAdapter implements PropertyChangeListener {
                 break;
 
             case "playerSession":
+                System.out.println("[LoginView] PlayerSession received → switching to GAME");
                 viewManager.switchTo(ViewType.GAME);
                 break;
         }

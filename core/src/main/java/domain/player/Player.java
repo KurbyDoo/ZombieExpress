@@ -21,6 +21,7 @@ public class Player {
     private int currentSlot = 0;
     private int pistolAmmo = 0;
     private int rifleAmmo = 0;
+    private int score = 0;
 
     private final int maxHealth = 100;
     private int currentHealth = maxHealth;
@@ -138,6 +139,20 @@ public class Player {
     public void takeDamage(int amount) {
         currentHealth -= amount;
     }
+
+    public int getScore() {
+        GamePosition start = getStartingPosition();
+        GamePosition current = getPosition();
+
+        int distance = Math.max(0, (int)(current.x - start.x));
+
+        return distance * 10;
+    }
+
+    public void resetScore() {
+        this.score = 0;
+    }
+
 
     public void heal(int amount) {
         currentHealth += amount;
