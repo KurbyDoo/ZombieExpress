@@ -2,7 +2,7 @@ package io.github.testlibgdx;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.physics.bullet.Bullet;
-import presentation.view.ViewManager;
+import interface_adapter.view.ViewManager;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {

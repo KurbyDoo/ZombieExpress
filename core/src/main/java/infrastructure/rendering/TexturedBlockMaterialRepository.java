@@ -22,6 +22,9 @@ public class TexturedBlockMaterialRepository implements BlockMaterialRepository 
     }
 
     public TexturedBlockMaterialRepository() {
+        Gdx.app.log("Game", "Path is :" + Gdx.files.internal(""));
+        Gdx.app.log("Game", "Path is :" + Gdx.files.internal(""));
+        Gdx.app.log("Game", "Path is :" + Gdx.files.internal(""));
         Texture texture = new Texture(Gdx.files.internal("minecraft_texture_atlas.png"));
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
 

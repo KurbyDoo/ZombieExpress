@@ -6,7 +6,7 @@ import data_access.mock_logic.login.MockfirebaseAuthManager;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginPresenter;
 import interface_adapter.login.LoginViewModel;
-import presentation.view.LoginView;
+import interface_adapter.view.LoginView;
 
 public class testLogin {
     public static void main(String[] args) {

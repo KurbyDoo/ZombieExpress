@@ -6,7 +6,7 @@ import data_access.firebase.FirebaseInitializer;
 import data_access.firebase.FirebaseLoginRegisterDataAccess;
 import data_access.firebase.FirebasePlayerDataAccess;
 import interface_adapter.login.*;
-import presentation.view.LoginView;
+import interface_adapter.view.LoginView;
 
 /**
  * This is the Application entry point.
