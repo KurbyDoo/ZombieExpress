@@ -20,13 +20,13 @@ public class BulletBehaviour implements EntityBehaviour {
         // if (entity.getAge() > 5.0f) destroy(entity);
         // Find player direction
 
-        tempDir.set(((Bullet)entity).getDirection());
+        tempDir.set(((Bullet)inputData.getEntity()).getDirection());
 
         tempDir.y = 0;
         tempDir.nor();
 
         // Get physics state
-        entity.setVelocity(
+        inputData.getEntity().setVelocity(
             tempDir.x * BULLET_SPEED,
             0,
             tempDir.z * BULLET_SPEED
@@ -34,6 +34,6 @@ public class BulletBehaviour implements EntityBehaviour {
 
         // Apply movement
         float yaw = (float) Math.toDegrees(Math.atan2(-tempDir.x, -tempDir.z));
-        entity.setYaw(yaw);
+        inputData.getEntity().setYaw(yaw);
     }
 }
