@@ -20,8 +20,6 @@ public class BulletBehaviour implements EntityBehaviour {
         // if (entity.getAge() > 5.0f) destroy(entity);
         // Find player direction
 
-        //System.out.println("Bullet behaviour update");
-        //tempDir.set(context.getPlayer().getDirection());
         tempDir.set(((Bullet)entity).getDirection());
 
         tempDir.y = 0;
