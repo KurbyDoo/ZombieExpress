@@ -1,3 +1,32 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements login use case business logic.
+ * - Uses Output Boundary for presenter communication.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [WARN] Imports com.google.gson classes for JSON parsing.
+ *   While Gson is a common library, parsing logic could be moved to
+ *   the data access layer to keep use cases pure.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - handles login logic.
+ * - [PASS] LSP: Correctly implements LoginInputBoundary.
+ * - [PASS] DIP: Uses data access and output boundary abstractions.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Good Javadoc documentation present.
+ * - [WARN] Typo in Javadoc: "sucdcess" should be "success".
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Typo in Javadoc comment.
+ * - [PASS] Generally well-documented.
+ */
 package application.interface_use_cases.login;
 
 import com.google.gson.JsonObject;

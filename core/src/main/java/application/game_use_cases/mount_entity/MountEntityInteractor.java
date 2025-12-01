@@ -1,3 +1,30 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements mount entity use case business logic.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure use case implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - handles mount logic.
+ * - [PASS] LSP: Correctly implements MountEntityInputBoundary.
+ * - [N/A] ISP: Single interface implemented.
+ * - [N/A] DIP: Depends on domain abstractions.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.mount_entity;
 
 import domain.GamePosition;

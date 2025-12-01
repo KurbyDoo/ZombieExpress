@@ -1,3 +1,37 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements chunk generation use case.
+ * - Uses Perlin Noise algorithm for terrain generation.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [CRITICAL VIOLATION] Imports infrastructure.noise.PerlinNoise.
+ *   Use case layer should NOT depend on infrastructure layer.
+ *   PerlinNoise should be injected via a NoiseGenerator interface.
+ *
+ * RECOMMENDED FIX:
+ *   Create interface: domain/noise/NoiseGenerator.java
+ *   Inject via constructor: NoiseGenerator noiseGenerator
+ *   Move PerlinNoise to infrastructure implementing the interface.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - generates terrain chunks.
+ * - [PASS] LSP: Correctly implements GenerateChunkInputBoundary.
+ * - [WARN] DIP: Depends on concrete PerlinNoise instead of abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Magic numbers (0.05f, 1.0f, 8, 4, 0.6) should be named constants.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Multiple magic numbers throughout.
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.generate_chunk;
 
 import domain.repositories.BlockRepository;

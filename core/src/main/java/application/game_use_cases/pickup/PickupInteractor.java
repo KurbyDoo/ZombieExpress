@@ -1,3 +1,35 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements pickup logic.
+ * - Query Pattern: Checks proximity to pickupable entities.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure use case implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [WARN] SRP: Handles multiple concerns (proximity check, item pickup, fuel handling).
+ *   Consider separating proximity logic into its own class.
+ * - [N/A] LSP: No interface implemented (VIOLATION - should implement InputBoundary).
+ *
+ * RECOMMENDED FIX:
+ *   Create PickupInputBoundary interface for this interactor.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Wildcard import 'domain.entities.*' not recommended.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Avoid wildcard imports.
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.pickup;
 
 import domain.repositories.EntityStorage;

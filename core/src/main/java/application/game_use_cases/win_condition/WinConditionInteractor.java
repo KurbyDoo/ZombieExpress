@@ -1,3 +1,30 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements win/lose condition checking.
+ * - State Management: Tracks game over state.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Uses ApplicationLifecyclePort abstraction for framework calls.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Checks game-ending conditions.
+ * - [PASS] LSP: Correctly implements WinConditionInputBoundary.
+ * - [PASS] DIP: Uses ExitGameUseCase abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Good Javadoc documentation present.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [PASS] Well-documented class.
+ */
 package application.game_use_cases.win_condition;
 
 import application.game_use_cases.exit_game.ExitGameUseCase;

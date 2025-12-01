@@ -1,3 +1,36 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements chunk population use case.
+ * - Factory Usage: Uses EntityFactory for entity creation.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [CRITICAL VIOLATION] Imports infrastructure.noise.PerlinNoise.
+ *   Use case layer should NOT depend on infrastructure layer.
+ *   PerlinNoise should be injected via a NoiseGenerator interface.
+ *
+ * RECOMMENDED FIX:
+ *   Inject NoiseGenerator interface via constructor instead of
+ *   directly using infrastructure.noise.PerlinNoise.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - populates chunks with entities.
+ * - [PASS] LSP: Correctly implements PopulateChunkInputBoundary.
+ * - [WARN] DIP: Depends on concrete PerlinNoise instead of abstraction.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Magic numbers (0.05f, etc.) should be named constants.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Multiple magic numbers throughout.
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.populate_chunk;
 
 import application.game_use_cases.generate_entity.pickup.GeneratePickupInputData;

@@ -1,3 +1,34 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Implements render radius calculation logic.
+ * - Manager Pattern: Manages chunk loading/unloading decisions.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure use case implementation.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Manages render radius chunk calculations.
+ * - [PASS] LSP: Correctly implements RenderRadiusManagerInputBoundary.
+ * - [WARN] Instance constants should be static final.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [WARN] Constants should be 'private static final' not 'private final'.
+ * - [WARN] TODO comment indicates incomplete synchronization.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [WARN] Instance constants should be static.
+ * - [WARN] TODO comment should be addressed.
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.render_radius;
 
 import domain.GamePosition;

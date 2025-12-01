@@ -1,3 +1,28 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Output Data Pattern (DTO): Transfers camera data to controllers.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Pure data transfer object.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Single responsibility - holds camera data.
+ * - [PASS] Immutable data class (final fields).
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [PASS] Good Javadoc documentation present.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [PASS] Well-documented class.
+ */
 package application.game_use_cases.query_camera_data;
 
 import domain.GamePosition;

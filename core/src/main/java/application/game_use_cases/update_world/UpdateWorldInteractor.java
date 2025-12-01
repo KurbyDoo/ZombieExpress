@@ -1,3 +1,33 @@
+/**
+ * ARCHITECTURE ANALYSIS HEADER
+ * ============================
+ *
+ * LAYER: Application (Level 2 - Application Business Rules / Use Cases)
+ *
+ * DESIGN PATTERNS:
+ * - Interactor Pattern: Orchestrates world update use case.
+ * - Facade Pattern: Coordinates multiple sub-use-cases (render radius, chunk gen, population).
+ *
+ * ORCHESTRATOR: UpdateWorldInteractor is the main orchestrator for world updates,
+ * coordinating RenderRadiusManager, GenerateChunk, and PopulateChunk use cases.
+ *
+ * CLEAN ARCHITECTURE COMPLIANCE:
+ * - [PASS] No imports from outer layers.
+ * - [PASS] No LibGDX/framework dependencies.
+ * - [PASS] Uses InputBoundary abstractions for dependencies.
+ *
+ * SOLID PRINCIPLES:
+ * - [PASS] SRP: Orchestrates world update workflow.
+ * - [PASS] LSP: Correctly implements UpdateWorldInputBoundary.
+ * - [PASS] DIP: Depends on InputBoundary abstractions.
+ *
+ * JAVA CONVENTIONS (Java 8):
+ * - [PASS] Class name follows PascalCase.
+ * - [MINOR] Missing Javadoc documentation.
+ *
+ * CHECKSTYLE OBSERVATIONS:
+ * - [MINOR] Missing class-level Javadoc.
+ */
 package application.game_use_cases.update_world;
 
 import application.game_use_cases.generate_chunk.GenerateChunkInputBoundary;
