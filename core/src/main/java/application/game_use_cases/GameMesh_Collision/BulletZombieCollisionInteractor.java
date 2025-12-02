@@ -12,7 +12,7 @@ public class BulletZombieCollisionInteractor implements BulletZombieCollisionInp
 
         bullet.markForRemoval();
 
-        zombie.takeDamage(-25f);
+        zombie.takeDamage(25f);
 
         System.out.println("Collision Logic: Bullet hit Zombie ID " + zombie.getID());
     }

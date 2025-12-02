@@ -15,6 +15,7 @@ public class Zombie extends Entity {
         this.health -= amount;
         if (this.health <= 0) {
             this.markForRemoval(); // Die
+            System.out.println("zombie died");
         }
     }
 
