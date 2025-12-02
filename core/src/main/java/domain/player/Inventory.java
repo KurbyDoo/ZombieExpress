@@ -27,6 +27,7 @@ public class Inventory {
     /**
      * Adds the specified item to the inventory.
      * Do nothing if inventory is full.
+     *
      * @param item The item to add to the inventory.
      */
     public boolean addItem(Item item) {
@@ -51,6 +52,7 @@ public class Inventory {
     /**
      * Removes one instance of the item from the specified inventory slot.
      * Do nothing if the slot is empty.
+     *
      * @param slotIndex The index of the inventory slot.
      */
     public void removeItem(int slotIndex) {

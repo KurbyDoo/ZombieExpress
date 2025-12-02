@@ -1,10 +1,10 @@
 package domain.player;
 
-import domain.GamePosition;
-import domain.AmmoType;
 import domain.entities.Rideable;
 import domain.items.Item;
 import domain.items.ItemTypes;
+import domain.world.AmmoType;
+import domain.world.GamePosition;
 
 public class Player {
     private final float ROTATION_SPEED = 0.2f;
@@ -42,6 +42,7 @@ public class Player {
 
     /**
      * Updates the player's position based on a velocity vector.
+     *
      * @param velocity The direction of movement (should be normalized).
      */
     public void updatePosition(GamePosition velocity) {
@@ -51,6 +52,7 @@ public class Player {
     /**
      * Updates the player's viewing direction based on mouse input.
      * The Y delta is now pre-inverted to be intuitive (mouse up = look up).
+     *
      * @param deltaX The change in mouse X position.
      * @param deltaY The change in mouse Y position.
      */
@@ -77,6 +79,10 @@ public class Player {
         return new GamePosition(position);
     }
 
+    public void setPosition(GamePosition newPlayerPos) {
+        position.set(newPlayerPos);
+    }
+
     public GamePosition getDirection() {
         return new GamePosition(direction);
     }
@@ -93,12 +99,23 @@ public class Player {
         return currentSlot;
     }
 
-    public void setCurrentRide(Rideable currentRide) {
-        this.currentRide = currentRide;
+    /**
+     * Set the current selected inventory slot.
+     *
+     * @param index The index of the selected inventory slot.
+     */
+    public void setCurrentSlot(int index) {
+        if (index >= 0 && index < inventory.getSize()) {
+            this.currentSlot = index;
+        }
     }
 
     public Rideable getCurrentRide() {
         return currentRide;
+    }
+
+    public void setCurrentRide(Rideable currentRide) {
+        this.currentRide = currentRide;
     }
 
     public float getMaxHealth() {
@@ -117,7 +134,9 @@ public class Player {
         return currentHealth;
     }
 
-    public void setCurrentHealth(float health){this.currentHealth = health;}
+    public void setCurrentHealth(float health) {
+        this.currentHealth = health;
+    }
 
     public void takeDamage(int amount) {
         currentHealth -= amount;
@@ -127,10 +146,10 @@ public class Player {
         GamePosition start = getStartingPosition();
         GamePosition current = getPosition();
 
-        float distance = Math.max(0, (int)(current.x - start.x));
+        float distance = Math.max(0, (int) (current.x - start.x));
         float time = getTotalTime();
-        float score = (distance/time) * 100f;
-        return (int)score;
+        float score = (distance / time) * 100f;
+        return (int) score;
 
     }
 
@@ -169,22 +188,13 @@ public class Player {
                 return false;
         }
     }
-    public void addTime(float delta){
+
+    public void addTime(float delta) {
         totalTime += delta;
     }
 
     public float getTotalTime() {
         return Math.max(totalTime, 0.1f);
-    }
-
-    /**
-     * Set the current selected inventory slot.
-     * @param index The index of the selected inventory slot.
-     */
-    public void setCurrentSlot(int index) {
-        if (index >= 0 && index < inventory.getSize()) {
-            this.currentSlot = index;
-        }
     }
 
     /**
@@ -204,9 +214,5 @@ public class Player {
      */
     public void drop() {
         inventory.removeItem(currentSlot);
-    }
-
-    public void setPosition(GamePosition newPlayerPos) {
-        position.set(newPlayerPos);
     }
 }

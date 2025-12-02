@@ -1,8 +1,8 @@
 package domain.entities;
 
-import domain.GamePosition;
+import domain.world.GamePosition;
 
-public class Bullet extends Entity{
+public class Bullet extends Entity {
 
     private GamePosition direction;
 

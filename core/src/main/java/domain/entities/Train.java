@@ -1,6 +1,6 @@
 package domain.entities;
 
-import domain.GamePosition;
+import domain.world.GamePosition;
 
 public class Train extends Entity implements Rideable {
     private final float MAX_FUEL = 100;
@@ -9,18 +9,19 @@ public class Train extends Entity implements Rideable {
 
     private float fuel;
     private int speed;
+
     public Train(Integer id, GamePosition position) {
         super(id, EntityType.TRAIN, position, true);
         fuel = 0;
         speed = 30;
     }
 
-    public void setCurrentFuel(float fuel) {
-        this.fuel = Math.min(fuel, MAX_FUEL);
-    }
-
     public float getCurrentFuel() {
         return fuel;
+    }
+
+    public void setCurrentFuel(float fuel) {
+        this.fuel = Math.min(fuel, MAX_FUEL);
     }
 
     public float getMaxFuel() {
@@ -48,12 +49,12 @@ public class Train extends Entity implements Rideable {
         this.speed = speed;
     }
 
-    public void setThrottle(float throttle) {
-        this.currentThrottle = throttle;
-    }
-
     public float getThrottle() {
         return currentThrottle;
+    }
+
+    public void setThrottle(float throttle) {
+        this.currentThrottle = throttle;
     }
 
     public void resetThrottle() {

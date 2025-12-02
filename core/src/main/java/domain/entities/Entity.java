@@ -1,15 +1,14 @@
 package domain.entities;
 
-import domain.GamePosition;
+import domain.world.GamePosition;
 
 public class Entity {
+    private final EntityType type;
     protected Integer id;
     protected GamePosition position;
     protected GamePosition velocity;
     protected boolean isVisible;
     protected float yaw;
-    private final EntityType type;
-
     protected boolean shouldRemove = false;
 
     public Entity(Integer id, EntityType type, GamePosition position, boolean isVisible) {
@@ -32,7 +31,8 @@ public class Entity {
         return id;
     }
 
-    public void setID(Integer id) {}
+    public void setID(Integer id) {
+    }
 
     public EntityType getType() {
         return type;
