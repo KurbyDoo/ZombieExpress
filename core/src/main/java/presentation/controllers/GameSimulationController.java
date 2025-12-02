@@ -13,19 +13,21 @@ public class GameSimulationController {
     private final CollisionHandler collisionHandler;
     private final EntityBehaviourSystem entityBehaviorSystem;
     private final EntityMeshSynchronizer meshSynchronizer;
-
+    private final EntityCleanupController cleanupController;
     public GameSimulationController(
         WorldSyncController worldSyncController,
         CollisionHandler collisionHandler,
         EntityBehaviourSystem entityBehaviorSystem,
         EntityMeshSynchronizer meshSynchronizer,
         PhysicsControlPort controlPort,
-        Player player
+        Player player,
+        EntityCleanupController cleanupController
     ) {
         this.worldSyncController = worldSyncController;
         this.collisionHandler = collisionHandler;
         this.entityBehaviorSystem = entityBehaviorSystem;
         this.meshSynchronizer = meshSynchronizer;
+        this.cleanupController = cleanupController;
     }
 
     public void update(float deltaTime) {
@@ -45,6 +47,10 @@ public class GameSimulationController {
         // unload chunks
         entityBehaviorSystem.unloadCache(activeEntities);
         worldSyncController.unloadUpdate();
+
+        // remove dead entities
+        cleanupController.processCleanup();
+
     }
 
     public void dispose() {

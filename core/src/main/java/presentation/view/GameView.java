@@ -48,6 +48,7 @@ import domain.World;
 import application.game_use_cases.query_camera_data.PlayerCameraDataQuery;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
+import physics.EntityContactFacade;
 import presentation.controllers.*;
 import presentation.view.hud.GameHUD;
 import infrastructure.rendering.*;
@@ -88,8 +89,11 @@ public class GameView implements Viewable{
     private PickupController pickupController;
     private ShootController shootController;
     private WinConditionInputBoundary WinConditionInteractor;
+    private EntityCleanupController cleanupController;
 
     private GameHUD hud;
+
+    private EntityContactFacade contactFacade;
 
     @Override
     public void createView() {
@@ -138,7 +142,8 @@ public class GameView implements Viewable{
         GenerateBulletMeshStrategy bulletMeshStrategy = new GenerateBulletMeshStrategy();
         GeneratePickupMeshStrategy pickupMeshStrategy = new GeneratePickupMeshStrategy();
 
-        CollisionHandler colHandler = new CollisionHandler();
+        contactFacade = new EntityContactFacade(entityStorage);     // for usecases
+        CollisionHandler colHandler = new CollisionHandler(contactFacade);
 
         MeshStorage meshStorage = new IdToMeshStorage(colHandler);
         MeshFactory meshFactory = new MeshFactory.MeshFactoryBuilder(meshStorage)
@@ -174,6 +179,7 @@ public class GameView implements Viewable{
         // CHUNK + ENTITY RENDERING
         EntityRenderer entityRenderer = new EntityRenderer(entityStorage, meshFactory, meshStorage);
         ChunkRenderer chunkRenderer = new ChunkRenderer(objectRenderer, chunkMeshGenerator, entityRenderer);
+        cleanupController = new EntityCleanupController(entityStorage, meshStorage);
 
         // --- PHYSICS ---
 
@@ -186,7 +192,7 @@ public class GameView implements Viewable{
 
         PhysicsControlPort physicsControlPort = new BulletPhysicsAdapter(meshStorage);
         gameSimulationController = new GameSimulationController(
-            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, player
+            worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, player, cleanupController
         );
 
         // Shoot

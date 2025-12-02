@@ -11,6 +11,16 @@ public class Bullet extends Entity{
         this.direction = direction;
     }
 
+    @Override
+    public void markForRemoval() {
+        super.markForRemoval();
+    }
+
+    @Override
+    public boolean isMarkedForRemoval() {
+        return super.isMarkedForRemoval();
+    }
+
     public GamePosition getDirection() {
         return direction;
     }
