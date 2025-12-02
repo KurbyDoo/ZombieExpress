@@ -12,17 +12,16 @@ public class RemoveEntityInteractor implements RemoveEntityInputBoundary {
         MeshStorage meshStorage = inputData.getMeshStorage();
         List<Integer> pendingRemoval = inputData.getPendingRemoval();
 
-        // Clear the list from the last frame
         pendingRemoval.clear();
 
-        // 1. COLLECT: Find what needs to die
+        // COLLECT: Find what needs to die
         for (Integer id : entityStorage.getAllIds()) {
             if (entityStorage.getEntityByID(id).isMarkedForRemoval()) {
                 pendingRemoval.add(id);
             }
         }
 
-        // 2. KILL: Remove them using the IDs we collected
+        // KILL: Remove them using the IDs we collected
         for (Integer id : pendingRemoval) {
             // Remove Physics/Visuals
             if (meshStorage.hasMesh(id)) {
