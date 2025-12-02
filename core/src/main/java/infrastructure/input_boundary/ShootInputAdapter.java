@@ -2,6 +2,7 @@ package infrastructure.input_boundary;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import domain.AmmoType;
 import domain.items.Item;
 import domain.items.RangedWeapon;
 import domain.player.Inventory;
@@ -19,22 +20,33 @@ public class ShootInputAdapter extends InputAdapter {
         this.shootController = shootController;
     }
 
-@Override
-public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-    if (button == Input.Buttons.LEFT) {
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button != Input.Buttons.LEFT) {
+            return false;
+        }
         Inventory inv = player.getInventory();
         int slotIndex = player.getCurrentSlot();
         InventorySlot slot = inv.getSlot(slotIndex);
 
-        if (slot != null && !slot.isEmpty()) {
-            Item held = slot.getItem();
-            if (held instanceof RangedWeapon) {
-                shootController.onShootKeyPressed();
-                return true;
-            }
+        if (slot == null || slot.isEmpty()) {
+            return false;
         }
-        return false;
+
+        Item held = slot.getItem();
+        if (!(held instanceof RangedWeapon)) {
+            return false;
+        }
+
+        RangedWeapon gun = (RangedWeapon) held;
+        AmmoType ammoType = gun.getAmmoType();
+
+        boolean hasAmmo = player.consumeAmmo(ammoType);
+        if (!hasAmmo) {
+            return false;
+        }
+        shootController.onShootKeyPressed();
+        return true;
     }
-    return false;
 }
-}
+

@@ -15,6 +15,11 @@ public class Train extends Entity implements Rideable {
         speed = 30;
     }
 
+    public void stop() {
+        this.speed = 0;
+        this.currentThrottle = 0;
+    }
+
     public void setCurrentFuel(float fuel) {
         this.fuel = Math.min(fuel, MAX_FUEL);
     }

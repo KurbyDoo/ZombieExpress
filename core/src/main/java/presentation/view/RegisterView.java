@@ -36,10 +36,10 @@ public class RegisterView extends BaseAuthView implements PropertyChangeListener
         confirmField = new TextField("", skin);
 
         passwordField.setPasswordMode(true);
-        passwordField.setPasswordCharacter('●');
+        passwordField.setPasswordCharacter('*');
 
         confirmField.setPasswordMode(true);
-        confirmField.setPasswordCharacter('●');
+        confirmField.setPasswordCharacter('*');
 
         messageLabel = new Label("", skin);
         TextButton registerBtn = new TextButton("Register", skin);

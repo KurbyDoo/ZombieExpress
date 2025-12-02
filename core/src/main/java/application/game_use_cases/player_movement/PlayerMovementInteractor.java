@@ -31,8 +31,8 @@ public class PlayerMovementInteractor implements PlayerMovementInputBoundary {
                 train.setThrottle(
                     train.getThrottle() + train.getRemainingThrottle() * 0.25f * inputData.getDeltaTime()
                 );
-                // Consume 1 fuel per second
-                train.consumeFuel(3f * inputData.getDeltaTime());
+                // Consume 3 fuels per second
+                train.consumeFuel(3 * inputData.getDeltaTime());
             }
         } else {
             GamePosition playerDirection = new GamePosition(player.getDirection()).nor();

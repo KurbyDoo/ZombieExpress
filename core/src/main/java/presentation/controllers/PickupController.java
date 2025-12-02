@@ -74,7 +74,6 @@ public class PickupController {
         if (currentTrainTarget != null) {
             boolean fueled = interactor.attemptFuelTrain(currentTrainTarget);
             if (fueled) {
-                // optional: play sound, log, etc.
                 clearTargets();
                 return;
             }
@@ -84,7 +83,6 @@ public class PickupController {
             if (pickedID == null) {
                 return;
             }
-            // Remove the visual mesh for this entity ID
             meshStorage.removeMesh(pickedID);
             clearTargets();
         }
@@ -98,7 +96,6 @@ public class PickupController {
                 new MountEntityInputData(currentTrainTarget)
             );
             if (outputData.isMountSuccess()) {
-                // optional: play sound, log, etc.
                 clearTargets();
             }
         }

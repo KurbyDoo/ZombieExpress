@@ -39,5 +39,4 @@ public class ShootController {
         ShootOutputData outputData = interactor.execute(inputData);
         entityRenderer.loadEntity(outputData.getEntityId());
     }
-
 }

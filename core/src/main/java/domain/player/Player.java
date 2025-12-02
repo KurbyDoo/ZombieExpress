@@ -148,18 +148,16 @@ public class Player {
         }
     }
 
-    public boolean consumeAmmo(AmmoType type, int amount) {
-        if (amount <= 0) return false;
-
+    public boolean consumeAmmo(AmmoType type) {
         switch (type) {
             case PISTOL:
-                if (pistolAmmo < amount) return false;
-                pistolAmmo -= amount;
+                if (pistolAmmo <= 0) return false;
+                pistolAmmo -= 1;
                 return true;
 
             case RIFLE:
-                if (rifleAmmo < amount) return false;
-                rifleAmmo -= amount;
+                if (rifleAmmo <= 0) return false;
+                rifleAmmo -= 1;
                 return true;
             default:
                 return false;

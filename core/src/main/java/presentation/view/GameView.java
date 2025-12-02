@@ -110,7 +110,7 @@ public class GameView implements Viewable{
         GenerateBulletStrategy bulletGenerateStrategy = new GenerateBulletStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
-        EntityStorage entityStorage = new IdToEntityStorage(world);
+        IdToEntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
@@ -194,7 +194,7 @@ public class GameView implements Viewable{
         shootController = new ShootController(player, shootInteractor, meshStorage, entityRenderer);
         shootInputAdapter = new ShootInputAdapter(player, shootController);
 
-        this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
+        this.WinConditionInteractor = new WinConditionInteractor(world, player, entityStorage, exitGameUseCase);
         hud = new GameHUD(player, entityStorage, pickupController, exitGameUseCase);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
