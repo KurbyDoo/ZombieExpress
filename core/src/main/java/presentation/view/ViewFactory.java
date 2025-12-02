@@ -1,6 +1,6 @@
 package presentation.view;
 
-import application.interface_use_cases.Leaderboard.LeaderboardInteractor;
+import application.interface_use_cases.leaderboard.LeaderboardInteractor;
 import application.interface_use_cases.login.LoginInteractor;
 import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
 import application.interface_use_cases.player_data.PlayerDataAccessInterface;
