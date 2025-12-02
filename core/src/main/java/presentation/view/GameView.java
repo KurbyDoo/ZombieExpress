@@ -33,8 +33,7 @@ import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
 import domain.repositories.BlockRepository;
-import application.game_use_cases.item_interaction.PickupInteractor;
-import application.game_use_cases.item_interaction.FuelTrainInteractor;
+import application.game_use_cases.item_interaction.ItemInteractionInteractor;
 import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
 import application.game_use_cases.player_movement.PlayerMovementInteractor;
 import application.game_use_cases.ports.PhysicsControlPort;
@@ -154,9 +153,8 @@ public class GameView implements Viewable{
         // TODO: invert this dependency, object renderer should be at the end
         // --- SETUP FRAMEWORKS ---
         ViewCamera camera = new ViewCamera();
-        PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, player);
-        FuelTrainInteractor fuelTrainInteractor = new FuelTrainInteractor(entityStorage, player);
-        itemInteractionController = new ItemInteractionController(player, pickupInteractor, fuelTrainInteractor, mountEntity, dismountEntity, meshStorage);
+        ItemInteractionInteractor itemInteractionInteractor = new ItemInteractionInteractor(entityStorage, player, mountEntity, dismountEntity);
+        itemInteractionController = new ItemInteractionController(itemInteractionInteractor, meshStorage);
         pickupInputAdapter = new ItemInteractionInputAdapter(itemInteractionController);
 
         ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();

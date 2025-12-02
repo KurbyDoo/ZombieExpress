@@ -1,118 +1,69 @@
 package presentation.controllers;
 
-import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
-import application.game_use_cases.dismount_entity.DismountEntityInputData;
-import application.game_use_cases.mount_entity.MountEntityInputBoundary;
-import application.game_use_cases.mount_entity.MountEntityInputData;
-import application.game_use_cases.mount_entity.MountEntityOutputData;
-import application.game_use_cases.item_interaction.PickupInteractor;
-import application.game_use_cases.item_interaction.FuelTrainInteractor;
-import domain.entities.PickupEntity;
-import domain.entities.Train;
-import domain.player.Player;
+import application.game_use_cases.item_interaction.ItemInteractionInputBoundary;
+import application.game_use_cases.item_interaction.ItemInteractionInputData;
+import application.game_use_cases.item_interaction.ItemInteractionInputData.ActionType;
+import application.game_use_cases.item_interaction.ItemInteractionOutputData;
 import infrastructure.rendering.MeshStorage;
 
 public class ItemInteractionController {
 
-    private final PickupInteractor pickupInteractor;
-    private final FuelTrainInteractor fuelTrainInteractor;
-    private final MountEntityInputBoundary mountEntity;
-    private final DismountEntityInputBoundary dismountEntity;
+    private final ItemInteractionInputBoundary itemInteractionInteractor;
     private final MeshStorage meshStorage;
-    private final Player player;
 
-    private PickupEntity currentPickupTarget;
-    private Train currentTrainTarget;
     private String currentMessage = "";
 
     public ItemInteractionController(
-        Player player,
-        PickupInteractor pickupInteractor,
-        FuelTrainInteractor fuelTrainInteractor,
-        MountEntityInputBoundary mountEntity,
-        DismountEntityInputBoundary dismountEntity,
+        ItemInteractionInputBoundary itemInteractionInteractor,
         MeshStorage meshStorage
     ) {
-        this.player = player;
-        this.pickupInteractor = pickupInteractor;
-        this.fuelTrainInteractor = fuelTrainInteractor;
-        this.mountEntity = mountEntity;
-        this.dismountEntity = dismountEntity;
+        this.itemInteractionInteractor = itemInteractionInteractor;
         this.meshStorage = meshStorage;
     }
 
     /**
-     * Called every frame to update which pickup the player is looking at.
+     * Called every frame to update which pickup/train the player is looking at.
      */
     public void refreshTarget() {
-        clearTargets();
-        StringBuilder sb = new StringBuilder();
-
-        Train train = fuelTrainInteractor.findTrainInFront();
-        if (player.getCurrentRide() != null) {
-            sb.append("Press F to dismount");
-        } else if (train != null) {
-            currentTrainTarget = train;
-            sb.append("Press F to drive Train");
-            if (fuelTrainInteractor.isHoldingFuel()) {
-                sb.append("\nPress E to fuel Train");
-            }
-        }
-
-        if (train == null) {
-            PickupEntity pickup = pickupInteractor.findPickupInFront();
-            if (pickup != null) {
-                currentPickupTarget = pickup;
-                String itemName = pickup.getItem().getName();
-                sb.append("Press E to pick up ").append(itemName);
-            }
-        }
-        currentMessage = sb.toString();
+        ItemInteractionOutputData output = itemInteractionInteractor.execute(
+            new ItemInteractionInputData(ActionType.REFRESH_TARGET)
+        );
+        this.currentMessage = output.getMessage();
     }
 
     /**
      * Called when the user presses E (from PickUpInputAdapter).
-     * Runs the use case and cleans up the mesh if pickup succeeded.
      */
     public void onActionKeyPressed() {
-        if (currentTrainTarget != null) {
-            boolean fueled = fuelTrainInteractor.attemptFuelTrain(currentTrainTarget);
-            if (fueled) {
-                clearTargets();
-                return;
-            }
+        ItemInteractionOutputData output = itemInteractionInteractor.execute(
+            new ItemInteractionInputData(ActionType.ACTION_KEY_PRESSED)
+        );
+
+        Integer removedId = output.getRemovedPickupEntityId();
+        if (removedId != null) {
+            meshStorage.removeMesh(removedId);
         }
-        if (currentPickupTarget != null) {
-            Integer pickedID = pickupInteractor.attemptPickup(currentPickupTarget);
-            if (pickedID == null) {
-                return;
-            }
-            meshStorage.removeMesh(pickedID);
-            clearTargets();
-        }
+
+        this.currentMessage = output.getMessage();
     }
 
+    /**
+     * Called when the user presses F (ride / dismount).
+     */
     public void onRideKeyPressed() {
-        if (player.getCurrentRide() != null) {
-            dismountEntity.execute(new DismountEntityInputData());
-        } else if (currentTrainTarget != null) {
-            MountEntityOutputData outputData = mountEntity.execute(
-                new MountEntityInputData(currentTrainTarget)
-            );
-            if (outputData.isMountSuccess()) {
-                clearTargets();
-            }
-        }
+        ItemInteractionOutputData output = itemInteractionInteractor.execute(
+            new ItemInteractionInputData(ActionType.RIDE_KEY_PRESSED)
+        );
+        this.currentMessage = output.getMessage();
     }
 
-    public void onDropKeyPressed(){
-        player.drop();
-    }
-
-    private void clearTargets() {
-        currentPickupTarget = null;
-        currentTrainTarget = null;
-        currentMessage = "";
+    /**
+     * Called when the user presses drop key (Q or similar).
+     */
+    public void onDropKeyPressed() {
+        itemInteractionInteractor.execute(
+            new ItemInteractionInputData(ActionType.DROP_KEY_PRESSED)
+        );
     }
 
     public String getCurrentPickupMessage() {
