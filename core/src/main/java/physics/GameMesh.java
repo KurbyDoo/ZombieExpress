@@ -24,7 +24,6 @@ public class GameMesh {
     private boolean isStatic;
     private final btMotionState motionState;
 
-
     private ModelInstance hitboxInstance;
     private Model hitboxModel;
     private boolean showHitbox = false;

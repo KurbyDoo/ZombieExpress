@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody;
+import domain.entities.PlayerEntity;
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import domain.entities.Entity;
@@ -38,7 +39,7 @@ public class EntityMeshSynchronizer {
                 Entity entity = entityStorage.getEntityByID(id);
                 GameMesh mesh = meshStorage.getMesh(id);
 
-                if (entity instanceof Train) {
+                if (entity instanceof Train || entity instanceof PlayerEntity) {
                     syncKinematic(entity, mesh);
                 } else {
                     syncDynamic(entity, mesh);

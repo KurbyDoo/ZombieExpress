@@ -2,6 +2,8 @@ package physics;
 
 import application.game_use_cases.GameMesh_Collision.BulletZombieCollisionInputData;
 import application.game_use_cases.GameMesh_Collision.BulletZombieCollisionInteractor;
+import application.game_use_cases.GameMesh_Collision.PlayerZombieCollisionInputData;
+import application.game_use_cases.GameMesh_Collision.PlayerZombieCollisionInteractor;
 import domain.entities.Entity;
 import domain.entities.EntityType;
 import domain.repositories.EntityStorage;
@@ -10,7 +12,7 @@ public class EntityContactFacade {
     EntityStorage storage; // interface
 
     BulletZombieCollisionInputData bulletZombieCollisionInputData;
-
+    PlayerZombieCollisionInputData playerZombieCollisionInputData;
     public EntityContactFacade(EntityStorage storage){
         this.storage = storage;
     }
@@ -29,12 +31,13 @@ public class EntityContactFacade {
             bulletZombieCollisionInputData = new BulletZombieCollisionInputData(a, b);
             new BulletZombieCollisionInteractor().execute(bulletZombieCollisionInputData);
 
+        }else if ((a.getType() == EntityType.PLAYER && b.getType() == EntityType.ZOMBIE) ||
+            (b.getType() == EntityType.PLAYER && a.getType() == EntityType.ZOMBIE)){
+
+            playerZombieCollisionInputData = new PlayerZombieCollisionInputData(a, b);
+            new PlayerZombieCollisionInteractor().execute(playerZombieCollisionInputData);
         }
 
     }
-//
-//    public void contactIntiated(){
-//
-//    }
 
 }

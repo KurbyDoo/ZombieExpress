@@ -43,7 +43,6 @@ public class GameSimulationController {
         // Update physics
         collisionHandler.stepSimulation(deltaTime);
 
-
         // unload chunks
         entityBehaviorSystem.unloadCache(activeEntities);
         worldSyncController.unloadUpdate();

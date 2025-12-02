@@ -1,6 +1,7 @@
 package application.game_use_cases.populate_chunk;
 
 import application.game_use_cases.generate_entity.pickup.GeneratePickupInputData;
+import application.game_use_cases.generate_entity.player_entity.GeneratePlayerEntityInputData;
 import application.game_use_cases.generate_entity.train.GenerateTrainInputData;
 import application.game_use_cases.generate_entity.zombie.GenerateZombieInputData;
 import domain.Chunk;
@@ -70,6 +71,15 @@ public class PopulateChunkInteractor implements PopulateChunkInputBoundary {
             );
             GenerateTrainInputData trainInput = new GenerateTrainInputData(trainPosition);
             entityFactory.create(trainInput);
+        }
+        if (chunk.getChunkX() == 1 && chunk.getChunkY() == 0 && chunk.getChunkZ() == 0) {
+            GamePosition playerPosition = new GamePosition(
+                chunk.getChunkWorldX() + (chunkSize / 2f),
+                1f,
+                chunk.getChunkWorldZ() + (chunkSize / 2f)
+            );
+            GeneratePlayerEntityInputData playerInput = new GeneratePlayerEntityInputData(playerPosition);
+            entityFactory.create(playerInput);
         }
     }
 
