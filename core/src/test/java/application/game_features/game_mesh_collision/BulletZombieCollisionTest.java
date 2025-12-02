@@ -6,8 +6,7 @@ import domain.world.GamePosition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BulletZombieCollisionTest {
 
@@ -47,6 +46,27 @@ public class BulletZombieCollisionTest {
         assertTrue(bullet.isMarkedForRemoval());
         assertEquals(initialHealth - 25f, zombie.getHealth());
 
+    }
+
+    @Test
+    void gettersTest(){
+        BulletZombieCollisionInputData inputData = new BulletZombieCollisionInputData(zombie, bullet);
+        assertSame(zombie, inputData.getZombie(), "Returns the same zombie entity");
+        assertSame(bullet, inputData.getBullet(), "Returns the same bullet object");
+    }
+
+    @Test
+    void returnsZombieTest(){
+        BulletZombieCollisionInputData inputData = new BulletZombieCollisionInputData(zombie, bullet);
+
+        Zombie zombie1 = new Zombie(3, position, true);
+        Bullet bullet1 = new Bullet(4, position, new GamePosition(0,1,1), true);
+
+        inputData.setBullet(bullet1);
+        inputData.setZombie(zombie1);
+
+        assertSame(zombie1, inputData.getZombie(), "Replaced zombie using setZombie()");
+        assertSame(bullet1, inputData.getBullet(), "Replaced bullet using setBullet()");
     }
 
 }
