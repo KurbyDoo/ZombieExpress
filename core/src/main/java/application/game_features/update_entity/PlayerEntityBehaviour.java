@@ -23,9 +23,8 @@ public class PlayerEntityBehaviour implements EntityBehaviour {
 
         PlayerEntity playerEntity = (PlayerEntity) entity;
 
-        // update playerEntity position
+        // sync health and collision
         playerEntity.setPosition(player.getPosition());
-        // update heatlh
         player.setCurrentHealth(playerEntity.getHealth());
 
     }

@@ -130,10 +130,8 @@ public class PerlinNoise {
                 return -y + z;
             case 0xE:
                 return y - x;
-            case 0xF:
+            default: // There should be no other case
                 return -y - z;
-            default:
-                return 0; // never happens
         }
     }
 
