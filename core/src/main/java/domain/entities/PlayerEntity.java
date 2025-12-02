@@ -4,15 +4,15 @@ import domain.GamePosition;
 
 public class PlayerEntity extends Entity{
 
-    private float health = 300f;
+    private float health = 100f;
     private boolean lifeStatus = true;
-    public PlayerEntity (Integer id, EntityType type, GamePosition position, boolean isVisible){
-        super(id, type, position, isVisible);
+    public PlayerEntity (Integer id, GamePosition position){
+        super(id, EntityType.PLAYER, position, false);
     }
 
     public float getHealth(){return health;}
 
-    public void setHealth(float f){heatlh = f;}
+    public void setHealth(float f){health = f;}
 
     public void lostHealth(float damage){
         health -= damage;
@@ -21,7 +21,8 @@ public class PlayerEntity extends Entity{
         }
     }
 
-    public void lifeTerminate(){lifeStatus = false;}
+    public void lifeTerminate(){lifeStatus = false;
+        System.out.println("player recorded death");}
 
     public boolean getLifeStatus(){return lifeStatus;}
 }

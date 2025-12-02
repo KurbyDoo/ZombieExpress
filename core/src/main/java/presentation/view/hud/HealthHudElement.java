@@ -50,8 +50,8 @@ public class HealthHudElement implements HudElement {
 
     @Override
     public void update(float deltaTime) {
-        int current = player.getCurrentHealth();
-        int max = player.getMaxHealth();
+        float current = player.getCurrentHealth();
+        float max = player.getMaxHealth();
         float ratio = (max > 0) ? (current / (float) max) : 0;
         if (ratio < 0) ratio = 0;
         if (ratio > 1) ratio = 1;

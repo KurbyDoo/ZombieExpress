@@ -11,7 +11,7 @@ public class RemoveEntityInputData {
     private final MeshStorage meshStorage;
     private final List<Integer> pendingRemoval = new ArrayList<>();
 
-    public RemoveEntityInputBoundary(EntityStorage entityStorage, MeshStorage meshStorage, List<Integer> pendingRemoval){
+    public RemoveEntityInputData(EntityStorage entityStorage, MeshStorage meshStorage, List<Integer> pendingRemoval){
         this.entityStorage = entityStorage;
         this.meshStorage = meshStorage;
     }

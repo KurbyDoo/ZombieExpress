@@ -8,7 +8,7 @@ import domain.items.ItemTypes;
 
 public class Player {
     private final float ROTATION_SPEED = 0.2f;
-    private final int MAX_HEALTH = 100;
+    private final float MAX_HEALTH = 100;
 
     private final GamePosition startingPosition;
     private final GamePosition position;
@@ -20,7 +20,7 @@ public class Player {
     private int pistolAmmo = 250;
     private int rifleAmmo = 100;
     private int score = 0;
-    private int currentHealth = MAX_HEALTH;
+    private float currentHealth = MAX_HEALTH;
 
     private float totalTime = 0f;
 
@@ -101,7 +101,7 @@ public class Player {
         return currentRide;
     }
 
-    public int getMaxHealth() {
+    public float getMaxHealth() {
         return MAX_HEALTH;
     }
 
@@ -113,9 +113,11 @@ public class Player {
         return rifleAmmo;
     }
 
-    public int getCurrentHealth() {
+    public float getCurrentHealth() {
         return currentHealth;
     }
+
+    public void setCurrentHealth(float health){this.currentHealth = health;}
 
     public void takeDamage(int amount) {
         currentHealth -= amount;

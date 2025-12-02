@@ -1,10 +1,12 @@
 package presentation.view;
 
 import application.game_use_cases.generate_entity.bullet.GenerateBulletStrategy;
+import application.game_use_cases.generate_entity.player_entity.GeneratePlayerEntityInputData;
+import application.game_use_cases.generate_entity.player_entity.GeneratePlayerEntityStrategy;
+import application.game_use_cases.remove_entity.RemoveEntityInputData;
+import application.game_use_cases.remove_entity.RemoveEntityInteractor;
 import application.game_use_cases.shoot.ShootInteractor;
-import application.game_use_cases.update_entity.BulletBehaviour;
-import application.game_use_cases.update_entity.TrainBehaviour;
-import application.game_use_cases.update_entity.ZombieBehaviour;
+import application.game_use_cases.update_entity.*;
 import application.game_use_cases.win_condition.WinConditionInputBoundary;
 import application.game_use_cases.win_condition.WinConditionInteractor;
 import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
@@ -28,10 +30,7 @@ import application.interface_use_cases.player_data.SavePlayerDataInteractor;
 import data_access.IdToEntityStorage;
 import domain.player.PlayerSession;
 import domain.GamePosition;
-import infrastructure.rendering.strategies.GenerateBulletMeshStrategy;
-import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
-import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
-import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
+import infrastructure.rendering.strategies.*;
 import domain.repositories.BlockRepository;
 import application.game_use_cases.item_interaction.ItemInteractionInteractor;
 import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
@@ -39,7 +38,6 @@ import application.game_use_cases.player_movement.PlayerMovementInteractor;
 import application.game_use_cases.ports.PhysicsControlPort;
 import application.game_use_cases.render_radius.RenderRadiusManagerInputBoundary;
 import application.game_use_cases.render_radius.RenderRadiusManagerInteractor;
-import application.game_use_cases.update_entity.EntityBehaviourSystem;
 import data_access.InMemoryBlockRepository;
 import domain.entities.*;
 import domain.player.Player;
@@ -48,12 +46,15 @@ import application.game_use_cases.query_camera_data.PlayerCameraDataQuery;
 import physics.BulletPhysicsAdapter;
 import physics.CollisionHandler;
 import physics.EntityContactFacade;
+import physics.GameMesh;
 import presentation.controllers.*;
 import presentation.view.hud.GameHUD;
 import infrastructure.rendering.*;
 import infrastructure.input_boundary.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+
+import java.util.List;
 
 public class GameView implements Viewable{
     private Player player;
@@ -65,7 +66,6 @@ public class GameView implements Viewable{
         this.playerSession = playerSession;
         this.saveScore = saveScore;
     }
-
 
     private boolean initialized = false;
 
@@ -94,6 +94,12 @@ public class GameView implements Viewable{
 
     private EntityContactFacade contactFacade;
 
+    private List<Integer> pendingRemoval;
+    private RemoveEntityInteractor removeEntityInteractor;
+    private RemoveEntityInputData removeEntityInputData;
+
+    private GeneratePlayerEntityInputData playerEntityInputData;
+
     @Override
     public void createView() {
         // ---  WORLD GENERATION SYSTEM INITIALIZATION ---
@@ -112,6 +118,7 @@ public class GameView implements Viewable{
         GenerateTrainStrategy trainGenerateStrategy = new GenerateTrainStrategy();
         GenerateBulletStrategy bulletGenerateStrategy = new GenerateBulletStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
+        GeneratePlayerEntityStrategy playerEntityStrategy = new GeneratePlayerEntityStrategy();
 
         IdToEntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
@@ -119,13 +126,17 @@ public class GameView implements Viewable{
             .register(EntityType.TRAIN, trainGenerateStrategy)
             .register(EntityType.BULLET, bulletGenerateStrategy)
             .register(EntityType.PICKUP, pickupGenerateStrategy)
+            .register(EntityType.PLAYER, playerEntityStrategy)
             .build();
+
 
         EntityBehaviourSystem entityBehaviourSystem = new EntityBehaviourSystem.EntityBehaviourSystemFactory(entityStorage, world)
             .register(EntityType.ZOMBIE, new ZombieBehaviour(player))
             .register(EntityType.BULLET, new BulletBehaviour())
             .register(EntityType.TRAIN, new TrainBehaviour(player))
+//            .register(EntityType.PLAYER, new PlayerEntityBehaviour(player))
             .build();
+
 
         // Chunk Generation
         GenerateChunkInputBoundary chunkGenerator = new GenerateChunkInteractor(blockRepository);
@@ -140,6 +151,7 @@ public class GameView implements Viewable{
         GenerateTrainMeshStrategy trainMeshStrategy = new GenerateTrainMeshStrategy();
         GenerateBulletMeshStrategy bulletMeshStrategy = new GenerateBulletMeshStrategy();
         GeneratePickupMeshStrategy pickupMeshStrategy = new GeneratePickupMeshStrategy();
+        GeneratePlayerEntityMeshStrategy playerEntityMeshStrategy = new GeneratePlayerEntityMeshStrategy();
 
         contactFacade = new EntityContactFacade(entityStorage);     // for usecases
         CollisionHandler colHandler = new CollisionHandler(contactFacade);
@@ -150,10 +162,13 @@ public class GameView implements Viewable{
             .register(EntityType.TRAIN, trainMeshStrategy)
             .register(EntityType.BULLET, bulletMeshStrategy)
             .register(EntityType.PICKUP, pickupMeshStrategy)
+            .register(EntityType.PLAYER, playerEntityMeshStrategy)
             .build();
 
-        EntityMeshSynchronizer meshSynchronizer = new EntityMeshSynchronizer(entityStorage, meshStorage);
 
+        EntityMeshSynchronizer meshSynchronizer = new EntityMeshSynchronizer(entityStorage, meshStorage);
+        // ENTITY REMOVAL
+        removeEntityInputData = new RemoveEntityInputData(entityStorage, meshStorage, pendingRemoval);
 
         // TODO: invert this dependency, object renderer should be at the end
         // --- SETUP FRAMEWORKS ---
@@ -164,10 +179,8 @@ public class GameView implements Viewable{
 
         ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
         ExitGameUseCase exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
-
         gameInputAdapter = new GameInputAdapter(playerMovementInteractor, exitGameUseCase, player);
         inventoryInputAdapter = new InventoryInputAdapter(player);
-
         PlayerCameraDataQuery playerCameraDataQuery = new PlayerCameraDataQuery(player);
 
 
@@ -178,7 +191,7 @@ public class GameView implements Viewable{
         // CHUNK + ENTITY RENDERING
         EntityRenderer entityRenderer = new EntityRenderer(entityStorage, meshFactory, meshStorage);
         ChunkRenderer chunkRenderer = new ChunkRenderer(objectRenderer, chunkMeshGenerator, entityRenderer);
-        cleanupController = new EntityCleanupController(entityStorage, meshStorage);
+        cleanupController = new EntityCleanupController(removeEntityInputData);
 
         // --- PHYSICS ---
 
@@ -200,6 +213,16 @@ public class GameView implements Viewable{
 
         this.WinConditionInteractor = new WinConditionInteractor(world, player, entityStorage, exitGameUseCase);
         hud = new GameHUD(player, entityStorage, itemInteractionController, exitGameUseCase);
+
+        worldSyncController.loadUpdate();
+
+        GeneratePlayerEntityInputData playerGenData = new GeneratePlayerEntityInputData(player.getPosition());
+
+        int playerID = entityFactory.create(playerGenData);
+
+        Entity playerEntity = entityStorage.getEntityByID(playerID);
+        GenerateMeshInputData meshInputData = new GenerateMeshInputData(playerEntity, playerID);
+        meshFactory.createMesh(meshInputData);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.getUiStage());

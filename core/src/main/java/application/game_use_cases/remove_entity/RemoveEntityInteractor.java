@@ -34,5 +34,4 @@ public class RemoveEntityInteractor implements RemoveEntityInputBoundary {
             entityStorage.removeEntity(id);
         }
     }
-
 }
