@@ -27,14 +27,13 @@ import application.interface_use_cases.player_data.SavePlayerDataInputData;
 import application.interface_use_cases.player_data.SavePlayerDataInteractor;
 import data_access.IdToEntityStorage;
 import domain.player.PlayerSession;
-import domain.repositories.EntityStorage;
 import domain.GamePosition;
 import infrastructure.rendering.strategies.GenerateBulletMeshStrategy;
 import infrastructure.rendering.strategies.GeneratePickupMeshStrategy;
 import infrastructure.rendering.strategies.GenerateTrainMeshStrategy;
 import infrastructure.rendering.strategies.GenerateZombieMeshStrategy;
 import domain.repositories.BlockRepository;
-import application.game_use_cases.pickup.PickupInteractor;
+import application.game_use_cases.item_interaction.ItemInteractionInteractor;
 import application.game_use_cases.player_movement.PlayerMovementInputBoundary;
 import application.game_use_cases.player_movement.PlayerMovementInteractor;
 import application.game_use_cases.ports.PhysicsControlPort;
@@ -79,14 +78,14 @@ public class GameView implements Viewable{
     // TODO: These should be merged
     private GameInputAdapter gameInputAdapter;
     private InventoryInputAdapter inventoryInputAdapter;
-    private PickUpInputAdapter  pickupInputAdapter;
+    private ItemInteractionInputAdapter pickupInputAdapter;
     private ShootInputAdapter shootInputAdapter;
 
     private WorldSyncController worldSyncController;
     private float accumulator;
 
     private GameSimulationController gameSimulationController;
-    private PickupController pickupController;
+    private ItemInteractionController itemInteractionController;
     private ShootController shootController;
     private WinConditionInputBoundary WinConditionInteractor;
     private EntityCleanupController cleanupController;
@@ -114,7 +113,7 @@ public class GameView implements Viewable{
         GenerateBulletStrategy bulletGenerateStrategy = new GenerateBulletStrategy();
         GeneratePickupStrategy pickupGenerateStrategy = new GeneratePickupStrategy();
 
-        EntityStorage entityStorage = new IdToEntityStorage(world);
+        IdToEntityStorage entityStorage = new IdToEntityStorage(world);
         EntityFactory entityFactory = new EntityFactory.EntityFactoryBuilder(entityStorage)
             .register(EntityType.ZOMBIE, zombieGenerateStrategy)
             .register(EntityType.TRAIN, trainGenerateStrategy)
@@ -159,9 +158,9 @@ public class GameView implements Viewable{
         // TODO: invert this dependency, object renderer should be at the end
         // --- SETUP FRAMEWORKS ---
         ViewCamera camera = new ViewCamera();
-        PickupInteractor pickupInteractor = new PickupInteractor(entityStorage, player);
-        pickupController = new PickupController(player, pickupInteractor, mountEntity, dismountEntity, meshStorage);
-        pickupInputAdapter = new PickUpInputAdapter(pickupController);
+        ItemInteractionInteractor itemInteractionInteractor = new ItemInteractionInteractor(entityStorage, player, mountEntity, dismountEntity);
+        itemInteractionController = new ItemInteractionController(itemInteractionInteractor, meshStorage);
+        pickupInputAdapter = new ItemInteractionInputAdapter(itemInteractionController);
 
         ApplicationLifecyclePort lifecycleAdapter = new LibGDXLifecycleAdapter();
         ExitGameUseCase exitGameUseCase = new ExitGameUseCase(lifecycleAdapter);
@@ -200,8 +199,8 @@ public class GameView implements Viewable{
         shootController = new ShootController(player, shootInteractor, meshStorage, entityRenderer);
         shootInputAdapter = new ShootInputAdapter(player, shootController);
 
-        this.WinConditionInteractor = new WinConditionInteractor(world, player, exitGameUseCase);
-        hud = new GameHUD(player, entityStorage, pickupController, exitGameUseCase);
+        this.WinConditionInteractor = new WinConditionInteractor(world, player, entityStorage, exitGameUseCase);
+        hud = new GameHUD(player, entityStorage, itemInteractionController, exitGameUseCase);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.getUiStage());
@@ -261,7 +260,7 @@ public class GameView implements Viewable{
 
         // RENDER UPDATES
         cameraController.renderCamera(alpha);
-        pickupController.refreshTarget();
+        itemInteractionController.refreshTarget();
         objectRenderer.render(deltaTime);
 
         // HUD

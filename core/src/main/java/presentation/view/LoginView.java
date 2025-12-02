@@ -34,7 +34,7 @@ public class LoginView extends BaseAuthView implements PropertyChangeListener {
         emailField = new TextField("", skin);
         passwordField = new TextField("", skin);
         passwordField.setPasswordMode(true);
-        passwordField.setPasswordCharacter('●');
+        passwordField.setPasswordCharacter('*');
         messageLabel = new Label("", skin);
 
         TextButton loginBtn = new TextButton("Login", skin);

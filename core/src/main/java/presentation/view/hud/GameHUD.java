@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import application.game_use_cases.exit_game.ExitGameUseCase;
 import domain.repositories.EntityStorage;
 import domain.player.Player;
-import presentation.controllers.PickupController;
+import presentation.controllers.ItemInteractionController;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -30,7 +30,7 @@ public class GameHUD {
     private final Skin skin;
     private boolean dialogShown = false;
 
-    public GameHUD(Player player, EntityStorage entityStorage, PickupController pickupController, ExitGameUseCase exitGameUseCase) {
+    public GameHUD(Player player, EntityStorage entityStorage, ItemInteractionController itemInteractionController, ExitGameUseCase exitGameUseCase) {
         this.uiStage = new Stage(new ScreenViewport());
         this.exitGameUseCase = exitGameUseCase;
 
@@ -49,7 +49,7 @@ public class GameHUD {
             new HeldItemHudElement(uiStage, player),
             new CrosshairHudElement(uiStage, player),
             new HotbarHudElement(uiStage, style, player),
-            new PickupPromptHudElement(uiStage, largeStyle, pickupController),
+            new ActionPromptHudElement(uiStage, largeStyle, itemInteractionController),
             new TimeHudElement(uiStage, mainStyle)
         };
     }

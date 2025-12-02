@@ -1,9 +1,11 @@
 package application.game_use_cases.win_condition;
 
 import application.game_use_cases.exit_game.ExitGameUseCase;
+import data_access.IdToEntityStorage;
 import domain.GamePosition;
 import domain.World;
 import domain.entities.Rideable;
+import domain.entities.Train;
 import domain.player.Player;
 
 /**
@@ -16,12 +18,14 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
     private final World world;
     private final Player player;
+    private final IdToEntityStorage entityStorage;
 
     private boolean isGameOver = false;
 
-    public WinConditionInteractor(World world, Player player, ExitGameUseCase exitGameUseCase) {
+    public WinConditionInteractor(World world, Player player, IdToEntityStorage entityStorage, ExitGameUseCase exitGameUseCase) {
         this.world = world;
         this.player = player;
+        this.entityStorage = entityStorage;
     }
 
     @Override
@@ -57,6 +61,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             float worldEndX = world.getWorldEndCoordinateX();
 
             if (trackedX >= worldEndX) {
+                stopTrain();
 
                 isGameOver = true;
                 String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
@@ -74,5 +79,14 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
         // Return default state if no end condition is met
         return new WinConditionOutputData(false, "", player.getScore());
+    }
+
+    private void stopTrain() {
+        Train train = entityStorage.getTrain();
+        if (train == null) {
+            return;
+        }
+        train.setSpeed(0);
+        train.setThrottle(0);
     }
 }
