@@ -2,7 +2,6 @@ package application.game_use_cases.GameMesh_Collision;
 
 import domain.GamePosition;
 import domain.entities.Bullet;
-import domain.entities.Entity;
 import domain.entities.Zombie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,50 +9,36 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 public class BulletZombieCollisionTest {
+
     private Zombie zombie;
     private Bullet bullet;
-    private GamePosition position;
     private BulletZombieCollisionInteractor interactor;
-
-
-
+    private GamePosition position;
     @BeforeEach
     void setup(){
-        position = new GamePosition(0, 0, 0);
-
-        zombie = new Zombie(1, position, true);
-        bullet = new Bullet(2, position, new GamePosition(1, 0,0), true);
-
+        position = new GamePosition(0,0,0);
         interactor = new BulletZombieCollisionInteractor();
 
+        bullet = new Bullet(1, position, new GamePosition(1, 0, 0), true);
+        zombie = new Zombie(2, position, true);
     }
 
     @Test
     void successfulBulletZombieContact(){
-        BulletZombieCollisionInputData inputData = new BulletZombieCollisionInputData(zombie, bullet);
-        float initialHealth = zombie.getHealth();
-
-        interactor.execute(inputData);
-
-        assertTrue(bullet.isMarkedForRemoval(), "Bullet is markede for removal after colliding.");
-
-        assertEquals(initialHealth - 25f, zombie.getHealth(), "Zombie lost 25 hp due to the collision");
-
-    }
-
-    @Test
-    void InputOrderDontMatter(){
         BulletZombieCollisionInputData inputData = new BulletZombieCollisionInputData(bullet, zombie);
         float initialHealth = zombie.getHealth();
 
         interactor.execute(inputData);
 
-        assertTrue(bullet.isMarkedForRemoval());
+        assertTrue(bullet.isMarkedForRemoval(), "Bullet show be removed after the collision");
+        assertEquals(initialHealth - 25f, zombie.getHealth(), "Zombie loses 25hp after contact with bullet");
+    }
 
-        assertEquals(initialHealth - 25f, zombie.getHealth());
-
+    @Test
+    void loadOrderDoesntMatter(){
+        // reverse the load order compared to the previous test
+        BulletZombieCollisionInputData inputData = new BulletZombieCollisionInputData(zombie, bullet);
     }
 
 }
