@@ -21,7 +21,7 @@ public class MockEntityStorage implements EntityStorage {
 
     @Override
     public void removeEntity(Integer id) {
-
+        entities.remove(id);
     }
 
     @Override
