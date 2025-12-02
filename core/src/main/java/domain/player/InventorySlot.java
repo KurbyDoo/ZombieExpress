@@ -22,6 +22,7 @@ public class InventorySlot {
     /**
      * Adds one instance of the specified item to this inventory slot.
      * Do nothing if unable to add the item to this slot.
+     *
      * @param newItem The item to be added to this slot.
      */
     public void addOne(Item newItem) {

@@ -1,6 +1,6 @@
 package domain.items;
 
-import domain.AmmoType;
+import domain.world.AmmoType;
 
 public class RangedWeapon extends Weapon {
 

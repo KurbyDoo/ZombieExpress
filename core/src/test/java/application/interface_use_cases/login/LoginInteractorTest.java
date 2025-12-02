@@ -1,9 +1,18 @@
 package application.interface_use_cases.login;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import application.account_features.login.LoginDataAccessInterface;
+import application.account_features.login.LoginInteractor;
+import application.account_features.login.LoginOutputBoundary;
+import application.account_features.login.LoginOutputData;
 
 // This is the Mock Data Access
 class MockLoginDAO implements LoginDataAccessInterface {
@@ -60,14 +69,14 @@ public class LoginInteractorTest {
     void nullInputShouldFail() {
         interactor.login(null, "123");
         assertTrue(mockPresenter.failedCalled);
-        assertEquals("Email or password is empty",mockPresenter.failedMessage);
+        assertEquals("Email or password is empty", mockPresenter.failedMessage);
     }
 
     @Test
     void nullPasswordShouldFail() {
         interactor.login("1234@mail.com", null);
         assertTrue(mockPresenter.failedCalled);
-        assertEquals("Email or password is empty",mockPresenter.failedMessage);
+        assertEquals("Email or password is empty", mockPresenter.failedMessage);
     }
 
     // Email or password is empty
@@ -111,7 +120,7 @@ public class LoginInteractorTest {
     void malformedJsonShouldThrow() {
         mockDAO.returnedJson = "not_json";
         assertThrows(Exception.class, () -> {
-            interactor.login("hi@mail.com","correct");
+            interactor.login("hi@mail.com", "correct");
         });
     }
 

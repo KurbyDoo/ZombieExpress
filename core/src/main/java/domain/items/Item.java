@@ -22,6 +22,7 @@ public class Item {
 
     /**
      * Determines whether this item is equal to another object.
+     *
      * @param o The object to compare with this item.
      * @return True if the specified object is an Item with the same ID; false otherwise.
      */

@@ -1,8 +1,7 @@
 package domain.entities;
 
-import com.badlogic.gdx.math.Vector3;
-import domain.GamePosition;
 import domain.items.Item;
+import domain.world.GamePosition;
 
 public class PickupEntity extends Entity {
 

@@ -1,9 +1,16 @@
 package application.interface_use_cases.register;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import application.account_features.register.RegisterInteractor;
+import application.account_features.register.RegisterOutputBoundary;
+import application.account_features.register.RegisterOutputData;
+import application.account_features.register.RegisterUserDataAccessInterface;
 
 class MockRegisterDAO implements RegisterUserDataAccessInterface {
     String receivedEmail;

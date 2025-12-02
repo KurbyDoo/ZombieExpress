@@ -1,21 +1,26 @@
 package application.interface_use_cases.player_data;
 
-import domain.player.PlayerData;
-import domain.player.PlayerSession;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import application.account_features.player_data.PlayerDataAccessInterface;
+import application.account_features.player_data.SavePlayerDataInputData;
+import application.account_features.player_data.SavePlayerDataInteractor;
+import domain.player.PlayerData;
+import domain.player.PlayerSession;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class MockSaveDAO implements PlayerDataAccessInterface{
+class MockSaveDAO implements PlayerDataAccessInterface {
     PlayerSession savedSession = null;
     boolean saveCalled = false;
 
     @Override
-    public PlayerSession loadPlayerData(String email, String uid){
+    public PlayerSession loadPlayerData(String email, String uid) {
         return null;
     }
 
@@ -24,8 +29,9 @@ class MockSaveDAO implements PlayerDataAccessInterface{
         saveCalled = true;
         savedSession = playerSession;
     }
+
     @Override
-    public List<PlayerData> getAllPlayers(){
+    public List<PlayerData> getAllPlayers() {
         return new ArrayList<>();
     }
 }
@@ -41,25 +47,25 @@ public class SavePlayerDataInteractorTest {
         session = new PlayerSession();
         session.setLastScore(10);
         session.setHeightScore(50);
-        interactor = new SavePlayerDataInteractor(mockDAO,session);
+        interactor = new SavePlayerDataInteractor(mockDAO, session);
     }
 
     @Test
-    void shouldUpdateScoresAndCallSave(){
+    void shouldUpdateScoresAndCallSave() {
         SavePlayerDataInputData inputData = new SavePlayerDataInputData(80);
         interactor.execute(inputData);
 
-        assertEquals(80,session.getLastScore());
-        assertEquals(80,session.getHeightScore());
+        assertEquals(80, session.getLastScore());
+        assertEquals(80, session.getHeightScore());
         assertTrue(mockDAO.saveCalled);
-        assertSame(session,mockDAO.savedSession);
+        assertSame(session, mockDAO.savedSession);
     }
 
     @Test
-    void shouldNotLowerHighestScores(){
+    void shouldNotLowerHighestScores() {
         SavePlayerDataInputData inputData = new SavePlayerDataInputData(30);
         interactor.execute(inputData);
-        assertEquals(30,session.getLastScore());
-        assertEquals(50,session.getHeightScore());
+        assertEquals(30, session.getLastScore());
+        assertEquals(50, session.getHeightScore());
     }
 }

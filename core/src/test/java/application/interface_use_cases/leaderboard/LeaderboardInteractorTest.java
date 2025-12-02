@@ -1,15 +1,17 @@
 package application.interface_use_cases.leaderboard;
 
-import application.interface_use_cases.player_data.PlayerDataAccessInterface;
-import domain.player.PlayerData;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import application.account_features.leaderboard.LeaderboardInteractor;
+import application.account_features.leaderboard.LeaderboardOutputBoundary;
+import application.account_features.player_data.PlayerDataAccessInterface;
+import domain.player.PlayerData;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 public class LeaderboardInteractorTest {
 

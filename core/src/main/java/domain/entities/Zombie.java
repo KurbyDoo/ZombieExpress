@@ -1,6 +1,6 @@
 package domain.entities;
 
-import domain.GamePosition;
+import domain.world.GamePosition;
 
 public class Zombie extends Entity {
     // Store raw info of the zombies
@@ -19,9 +19,15 @@ public class Zombie extends Entity {
         }
     }
 
-    public float getSpeed() { return speed; }
+    public float getSpeed() {
+        return speed;
+    }
 
-    public float getHealth(){return health;}
+    public float getHealth() {
+        return health;
+    }
 
-    public void setHealth(float health){this.health = health;}
+    public void setHealth(float health) {
+        this.health = health;
+    }
 }

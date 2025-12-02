@@ -1,15 +1,17 @@
 package application.interface_use_cases.player_data;
 
-import domain.player.PlayerData;
-import domain.player.PlayerSession;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import application.account_features.player_data.LoadPlayerDataInteractor;
+import application.account_features.player_data.PlayerDataAccessInterface;
+import domain.player.PlayerData;
+import domain.player.PlayerSession;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 class MockPlayerDataAccess implements PlayerDataAccessInterface {
     String recievedEmail;
@@ -26,12 +28,14 @@ class MockPlayerDataAccess implements PlayerDataAccessInterface {
     @Override
     public void savePlayerData(PlayerSession playerSession) {
     }
+
     @Override
-    public List<PlayerData> getAllPlayers(){
+    public List<PlayerData> getAllPlayers() {
         return new ArrayList<>();
     }
 }
-public class LoadPlayerDataInteractorTest{
+
+public class LoadPlayerDataInteractorTest {
     private MockPlayerDataAccess mockDAO;
     private LoadPlayerDataInteractor interactor;
 
@@ -52,8 +56,8 @@ public class LoadPlayerDataInteractorTest{
         mockDAO.returnedSession = mock;
         PlayerSession result = interactor.load("mail@mail.com", "thisistheuid");
 
-        assertEquals("mail@mail.com",mockDAO.recievedEmail);
-        assertEquals("thisistheuid",mockDAO.recievedUid);
-        assertSame(mock,result);
+        assertEquals("mail@mail.com", mockDAO.recievedEmail);
+        assertEquals("thisistheuid", mockDAO.recievedUid);
+        assertSame(mock, result);
     }
 }

@@ -1,15 +1,14 @@
 package data_access;
 
+import application.gateways.EntityStorage;
 import domain.entities.Entity;
-import domain.repositories.EntityStorage;
-
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 public class MockEntityStorage implements EntityStorage {
     Map<Integer, Entity> entities = new HashMap<>();
+
     @Override
     public Entity getEntityByID(Integer id) {
         return entities.getOrDefault(id, null);

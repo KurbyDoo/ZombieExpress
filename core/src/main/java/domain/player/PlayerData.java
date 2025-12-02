@@ -16,12 +16,15 @@ public class PlayerData {
     public String getUid() {
         return uid;
     }
+
     public String getEmail() {
         return email;
     }
+
     public int getLastScore() {
         return lastScore;
     }
+
     public int getHighScore() {
         return highScore;
     }

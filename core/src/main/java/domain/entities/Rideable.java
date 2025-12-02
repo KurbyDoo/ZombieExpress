@@ -1,9 +1,11 @@
 package domain.entities;
 
-import domain.GamePosition;
+import domain.world.GamePosition;
 
 public interface Rideable {
     int getSpeed();
+
     GamePosition getRideOffset();
+
     GamePosition getPosition();
 }
