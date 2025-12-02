@@ -134,7 +134,7 @@ public class GameView implements Viewable{
             .register(EntityType.ZOMBIE, new ZombieBehaviour(player))
             .register(EntityType.BULLET, new BulletBehaviour())
             .register(EntityType.TRAIN, new TrainBehaviour(player))
-//            .register(EntityType.PLAYER, new PlayerEntityBehaviour(player))
+            .register(EntityType.PLAYER, new PlayerEntityBehaviour(player))
             .build();
 
 
@@ -214,15 +214,15 @@ public class GameView implements Viewable{
         this.WinConditionInteractor = new WinConditionInteractor(world, player, entityStorage, exitGameUseCase);
         hud = new GameHUD(player, entityStorage, itemInteractionController, exitGameUseCase);
 
-        worldSyncController.loadUpdate();
+//        gameSimulationController.update(TIME_STEP);
 
-        GeneratePlayerEntityInputData playerGenData = new GeneratePlayerEntityInputData(player.getPosition());
+//        GeneratePlayerEntityInputData playerGenData = new GeneratePlayerEntityInputData(player.getPosition());
 
-        int playerID = entityFactory.create(playerGenData);
+//        int playerID = entityFactory.create(playerGenData);
 
-        Entity playerEntity = entityStorage.getEntityByID(playerID);
-        GenerateMeshInputData meshInputData = new GenerateMeshInputData(playerEntity, playerID);
-        meshFactory.createMesh(meshInputData);
+//        Entity playerEntity = entityStorage.getEntityByID(playerID);
+//        GenerateMeshInputData meshInputData = new GenerateMeshInputData(playerEntity, playerID);
+//        meshFactory.createMesh(meshInputData);
 
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hud.getUiStage());
