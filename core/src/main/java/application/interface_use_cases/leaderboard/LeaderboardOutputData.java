@@ -1,4 +1,4 @@
-package application.interface_use_cases.Leaderboard;
+package application.interface_use_cases.leaderboard;
 
 import domain.player.PlayerData;
 
