@@ -5,6 +5,7 @@ import data_access.IdToEntityStorage;
 import domain.GamePosition;
 import domain.World;
 import domain.entities.Rideable;
+import domain.entities.Train;
 import domain.player.Player;
 
 /**
@@ -60,7 +61,7 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
             float worldEndX = world.getWorldEndCoordinateX();
 
             if (trackedX >= worldEndX) {
-                entityStorage.getTrain().stop();
+                stopTrain();
 
                 isGameOver = true;
                 String message = "Congratulations! You conquered the Zombie Express! Final distance: " + (int)trackedX;
@@ -78,5 +79,14 @@ public class WinConditionInteractor implements WinConditionInputBoundary {
 
         // Return default state if no end condition is met
         return new WinConditionOutputData(false, "", player.getScore());
+    }
+
+    private void stopTrain() {
+        Train train = entityStorage.getTrain();
+        if (train == null) {
+            return;
+        }
+        train.setSpeed(0);
+        train.setThrottle(0);
     }
 }

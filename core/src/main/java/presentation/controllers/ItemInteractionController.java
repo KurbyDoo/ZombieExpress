@@ -21,9 +21,6 @@ public class ItemInteractionController {
         this.meshStorage = meshStorage;
     }
 
-    /**
-     * Called every frame to update which pickup/train the player is looking at.
-     */
     public void refreshTarget() {
         ItemInteractionOutputData output = itemInteractionInteractor.execute(
             new ItemInteractionInputData(ActionType.REFRESH_TARGET)
@@ -31,9 +28,6 @@ public class ItemInteractionController {
         this.currentMessage = output.getMessage();
     }
 
-    /**
-     * Called when the user presses E (from PickUpInputAdapter).
-     */
     public void onActionKeyPressed() {
         ItemInteractionOutputData output = itemInteractionInteractor.execute(
             new ItemInteractionInputData(ActionType.ACTION_KEY_PRESSED)
@@ -47,9 +41,6 @@ public class ItemInteractionController {
         this.currentMessage = output.getMessage();
     }
 
-    /**
-     * Called when the user presses F (ride / dismount).
-     */
     public void onRideKeyPressed() {
         ItemInteractionOutputData output = itemInteractionInteractor.execute(
             new ItemInteractionInputData(ActionType.RIDE_KEY_PRESSED)
@@ -57,9 +48,6 @@ public class ItemInteractionController {
         this.currentMessage = output.getMessage();
     }
 
-    /**
-     * Called when the user presses drop key (Q or similar).
-     */
     public void onDropKeyPressed() {
         itemInteractionInteractor.execute(
             new ItemInteractionInputData(ActionType.DROP_KEY_PRESSED)

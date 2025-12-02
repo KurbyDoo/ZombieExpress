@@ -134,7 +134,7 @@ public class ItemInteractionInteractor implements ItemInteractionInputBoundary {
         currentMessage = "";
     }
 
-    // ===================== Helper logic from old interactor =====================
+    // ===================== Helper logic =====================
 
     private boolean isInFront(GamePosition from,
                               GamePosition forward,
