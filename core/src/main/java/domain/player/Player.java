@@ -22,6 +22,8 @@ public class Player {
     private int score = 0;
     private int currentHealth = MAX_HEALTH;
 
+    private float totalTime = 0f;
+
     private Rideable currentRide;
 
     public Player(GamePosition startingPosition) {
@@ -123,9 +125,11 @@ public class Player {
         GamePosition start = getStartingPosition();
         GamePosition current = getPosition();
 
-        int distance = Math.max(0, (int)(current.x - start.x));
+        float distance = Math.max(0, (int)(current.x - start.x));
+        float time = getTotalTime();
+        float score = (distance/time) * 100f;
+        return (int)score;
 
-        return distance * 10;
     }
 
     public void resetScore() {
@@ -164,6 +168,13 @@ public class Player {
             default:
                 return false;
         }
+    }
+    public void addTime(float delta){
+        totalTime += delta;
+    }
+
+    public float getTotalTime() {
+        return Math.max(totalTime, 0.1f);
     }
 
     /**

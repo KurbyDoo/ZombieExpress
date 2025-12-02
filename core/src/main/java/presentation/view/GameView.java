@@ -210,6 +210,7 @@ public class GameView implements Viewable{
     @Override
     public void renderView() {
         float deltaTime = Gdx.graphics.getDeltaTime();
+        player.addTime(deltaTime);
         accumulator += deltaTime;
 
         // Theses should be polled at most once per frame
