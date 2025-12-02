@@ -1,12 +1,8 @@
 package application.interface_use_cases.player_data;
 
-import domain.player.PlayerData;
 import domain.player.PlayerSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,10 +19,6 @@ class MockSaveDAO implements PlayerDataAccessInterface{
     public void savePlayerData(PlayerSession playerSession) {
         saveCalled = true;
         savedSession = playerSession;
-    }
-    @Override
-    public List<PlayerData> getAllPlayers(){
-        return new ArrayList<>();
     }
 }
 

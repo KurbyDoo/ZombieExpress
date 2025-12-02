@@ -1,12 +1,8 @@
 package application.interface_use_cases.player_data;
 
-import domain.player.PlayerData;
 import domain.player.PlayerSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -25,10 +21,6 @@ class MockPlayerDataAccess implements PlayerDataAccessInterface {
 
     @Override
     public void savePlayerData(PlayerSession playerSession) {
-    }
-    @Override
-    public List<PlayerData> getAllPlayers(){
-        return new ArrayList<>();
     }
 }
 public class LoadPlayerDataInteractorTest{

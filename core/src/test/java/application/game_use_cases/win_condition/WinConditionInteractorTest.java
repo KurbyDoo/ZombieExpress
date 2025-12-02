@@ -96,6 +96,7 @@ class TestPlayer extends Player {
     }
 }
 
+
 /**
  * Unit tests for the WinConditionInteractor using manual test doubles.
  */

@@ -1,7 +1,7 @@
 package interface_adapter.Leaderboard;
 
-import application.interface_use_cases.leaderboard.LeaderboardOutputBoundary;
-import application.interface_use_cases.leaderboard.LeaderboardOutputData;
+import application.interface_use_cases.Leaderboard.LeaderboardOutputBoundary;
+import application.interface_use_cases.Leaderboard.LeaderboardOutputData;
 
 public class LeaderboardPresenter implements LeaderboardOutputBoundary {
 

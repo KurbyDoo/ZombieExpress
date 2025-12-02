@@ -1,6 +1,6 @@
 package interface_adapter.Leaderboard;
 
-import application.interface_use_cases.leaderboard.LeaderboardInputBoundary;
+import application.interface_use_cases.Leaderboard.LeaderboardInputBoundary;
 import presentation.view.ViewManager;
 import presentation.view.ViewType;
 
