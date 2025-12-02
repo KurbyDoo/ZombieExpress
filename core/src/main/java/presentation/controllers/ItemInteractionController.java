@@ -5,15 +5,15 @@ import application.game_use_cases.dismount_entity.DismountEntityInputData;
 import application.game_use_cases.mount_entity.MountEntityInputBoundary;
 import application.game_use_cases.mount_entity.MountEntityInputData;
 import application.game_use_cases.mount_entity.MountEntityOutputData;
-import application.game_use_cases.pickup.PickupInteractor;
+import application.game_use_cases.item_interaction.ItemInteractionInteractor;
 import domain.entities.PickupEntity;
 import domain.entities.Train;
 import domain.player.Player;
 import infrastructure.rendering.MeshStorage;
 
-public class PickupController {
+public class ItemInteractionController {
 
-    private final PickupInteractor interactor;
+    private final ItemInteractionInteractor interactor;
     private final MountEntityInputBoundary mountEntity;
     private final DismountEntityInputBoundary dismountEntity;
     private final MeshStorage meshStorage;
@@ -23,9 +23,9 @@ public class PickupController {
     private Train currentTrainTarget;
     private String currentMessage = "";
 
-    public PickupController(
+    public ItemInteractionController(
         Player player,
-        PickupInteractor interactor,
+        ItemInteractionInteractor interactor,
         MountEntityInputBoundary mountEntity,
         DismountEntityInputBoundary dismountEntity,
         MeshStorage meshStorage

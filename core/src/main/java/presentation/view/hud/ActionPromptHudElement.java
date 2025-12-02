@@ -3,14 +3,14 @@ package presentation.view.hud;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import presentation.controllers.PickupController;
+import presentation.controllers.ItemInteractionController;
 
-public class PickupPromptHudElement implements HudElement {
+public class ActionPromptHudElement implements HudElement {
 
-    private final PickupController controller;
+    private final ItemInteractionController controller;
     private final Label promptLabel;
 
-    public PickupPromptHudElement(Stage stage, Label.LabelStyle style, PickupController controller) {
+    public ActionPromptHudElement(Stage stage, Label.LabelStyle style, ItemInteractionController controller) {
         this.controller = controller;
 
         promptLabel = new Label("", style);

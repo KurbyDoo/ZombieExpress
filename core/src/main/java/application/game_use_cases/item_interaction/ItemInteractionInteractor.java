@@ -1,4 +1,4 @@
-package application.game_use_cases.pickup;
+package application.game_use_cases.item_interaction;
 
 import domain.repositories.EntityStorage;
 import domain.GamePosition;
@@ -8,13 +8,13 @@ import domain.player.Inventory;
 import domain.player.InventorySlot;
 import domain.player.Player;
 
-public class PickupInteractor {
+public class ItemInteractionInteractor {
 
     private final EntityStorage entityStorage;
     private final Player player;
 
-    public PickupInteractor(EntityStorage entityStorage,
-                            Player player) {
+    public ItemInteractionInteractor(EntityStorage entityStorage,
+                                     Player player) {
         this.entityStorage = entityStorage;
         this.player = player;
     }
