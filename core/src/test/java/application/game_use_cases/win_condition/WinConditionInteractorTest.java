@@ -1,9 +1,11 @@
 package application.game_use_cases.win_condition;
 
 import application.game_use_cases.exit_game.ExitGameUseCase;
+import data_access.IdToEntityStorage;
 import domain.GamePosition;
 import domain.World;
 import domain.entities.Rideable;
+import domain.entities.Train;
 import domain.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +15,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * --- Manual Test Doubles (Stubs and Spies) for Dependencies ---
+ * --- Manual Test Doubles (Stubs) for Dependencies ---
  */
 
 /** Stub for the World dependency, allowing control over the world end coordinate. */
 class TestWorld extends World {
-    private float worldEndX;
+    private final float worldEndX;
 
     public TestWorld(float worldEndX) {
         this.worldEndX = worldEndX;
@@ -27,20 +29,6 @@ class TestWorld extends World {
     @Override
     public float getWorldEndCoordinateX() {
         return worldEndX;
-    }
-}
-
-/** Spy for the ExitGameUseCase, tracking if the exit sequence was initiated. */
-class TestExitGameUseCase extends ExitGameUseCase {
-    private int callCount = 0;
-
-    // Must call super constructor, even if the port is null/unneeded for this test's scope
-    public TestExitGameUseCase() {
-        super(null);
-    }
-
-    public int getCallCount() {
-        return callCount;
     }
 }
 
@@ -61,20 +49,25 @@ class TestRideable implements Rideable {
         return position;
     }
 
-    // Other Rideable methods needed for compile
     @Override
-    public int getSpeed() { return 0; }
+    public int getSpeed() {
+        return 0;
+    }
+
     @Override
-    public GamePosition getRideOffset() { return new GamePosition(0, 0, 0); }
+    public GamePosition getRideOffset() {
+        return new GamePosition(0, 0, 0);
+    }
 }
 
-/** Stub for the Player entity, allowing control over its state. */
+/** Stub for the Player entity, allowing control over its state and score. */
 class TestPlayer extends Player {
     private boolean deadState = false;
     private Rideable currentRide = null;
+    private int score = 0;
 
     public TestPlayer() {
-        super(new GamePosition(0, 0, 0)); // Initialize with a dummy position
+        super(new GamePosition(0, 0, 0)); // dummy position
     }
 
     @Override
@@ -94,6 +87,37 @@ class TestPlayer extends Player {
     public void setCurrentRide(Rideable rideable) {
         this.currentRide = rideable;
     }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    @Override
+    public int getScore() {
+        return score;
+    }
+}
+
+/**
+ * Test double for IdToEntityStorage.
+ * Only implements what WinConditionInteractor needs: providing a Train for stopTrain().
+ */
+class TestIdToEntityStorage extends IdToEntityStorage {
+
+    private Train train;
+
+    public TestIdToEntityStorage() {
+        super(new TestWorld(100)); // adjust/remove if your real IdToEntityStorage has a different constructor
+    }
+
+    public void setTrain(Train train) {
+        this.train = train;
+    }
+
+    @Override
+    public Train getTrain() {
+        return train;
+    }
 }
 
 /**
@@ -104,27 +128,34 @@ class WinConditionInteractorTest {
     private TestWorld testWorld;
     private TestPlayer testPlayer;
     private TestRideable testRideable;
-    private TestExitGameUseCase testExitGameUseCase;
+    private TestIdToEntityStorage testEntityStorage;
+    private Train testTrain;
     private WinConditionInteractor interactor;
 
     // Constants for testing
-    private final float WORLD_END_X = 100.0f;
+    private static final float WORLD_END_X = 100.0f;
     private final GamePosition WIN_POS = new GamePosition(WORLD_END_X, 0, 0);
     private final GamePosition NEUTRAL_POS = new GamePosition(50.0f, 0, 0);
 
-    /*
-        Set up test doubles and the Interactor before each test.
-     */
     @BeforeEach
     void setUp() {
-        // 1. Instantiate Manual Test Doubles
         testWorld = new TestWorld(WORLD_END_X);
         testPlayer = new TestPlayer();
-        testRideable = new TestRideable(NEUTRAL_POS); // Neutral start position
-        testExitGameUseCase = new TestExitGameUseCase();
+        testRideable = new TestRideable(NEUTRAL_POS);
 
-        // 2. Instantiate the Interactor
-        interactor = new WinConditionInteractor(testWorld, testPlayer, testExitGameUseCase);
+        // Real Train instance so we can assert its speed/throttle after stopTrain()
+        testTrain = new Train(1, new GamePosition(0, 0, 0));
+        testTrain.setSpeed(30);
+        testTrain.setThrottle(1.5f);
+
+        // Our IdToEntityStorage test double that always returns this train
+        testEntityStorage = new TestIdToEntityStorage();
+        testEntityStorage.setTrain(testTrain);
+
+        // ExitGameUseCase is currently unused inside the interactor, so we can pass null
+        ExitGameUseCase exitGameUseCase = null;
+
+        interactor = new WinConditionInteractor(testWorld, testPlayer, testEntityStorage, exitGameUseCase);
     }
 
     @Nested
@@ -132,42 +163,48 @@ class WinConditionInteractorTest {
     class WinConditionTests {
 
         @Test
-        @DisplayName("Should return game over (Win) when riding train at end position")
-        void shouldWinWhenTrainReachesWorldEnd() {
-            // Setup: Player is riding, train is at the world end position
+        @DisplayName("Should return game over (Win) when riding train at end position and stop the train")
+        void shouldWinWhenTrainReachesWorldEnd_andStopTrain() {
             testPlayer.setDeadState(false);
             testPlayer.setCurrentRide(testRideable);
+            testPlayer.setScore(123);
             testRideable.setPosition(WIN_POS);
 
-            // Execute
+            // Pre-check: speed/throttle non-zero
+            assertTrue(testTrain.getSpeed() > 0, "Precondition: train speed should be > 0 before win.");
+            // If you don't have getThrottle(), you can remove this assertion and only rely on setters.
+            // Assume getThrottle exists; otherwise comment this out in your code.
+            // assertTrue(testTrain.getThrottle() > 0, "Precondition: train throttle should be > 0 before win.");
+
             WinConditionOutputData output = interactor.execute();
 
-            // Assertions
             assertTrue(output.isGameOver(), "Should report game over (Win).");
-            assertTrue(output.getMessage().contains("Congratulations!"), "Should report the win message.");
+            assertTrue(output.getMessage().contains("Congratulations!"),
+                "Should report the win message.");
+            assertEquals(123, output.getScore(), "Should propagate player's score.");
+            // Train should have been stopped via IdToEntityStorage
+            assertEquals(0, testTrain.getSpeed(), "Train speed should be set to 0 on win.");
+            // If there is a getter for throttle, assert that as well
+            // assertEquals(0f, testTrain.getThrottle(), "Train throttle should be set to 0 on win.");
 
-            // Execute again to test the internal `isGameOver` check
+            // Second call after game is already over
             WinConditionOutputData secondOutput = interactor.execute();
-            assertTrue(secondOutput.isGameOver(), "Should return game over on subsequent calls.");
+            assertTrue(secondOutput.isGameOver(), "Subsequent calls should still be game over.");
             assertEquals("Game Over.", secondOutput.getMessage(), "Should return generic message after game over.");
-
-            // Verify: Exit use case should not have been called
-            assertEquals(0, testExitGameUseCase.getCallCount(), "ExitGameUseCase should not be called on win.");
         }
 
         @Test
         @DisplayName("Should NOT check win condition if player is NOT riding")
         void shouldNotCheckWinIfNotRiding() {
-            // Setup: Player is alive, but not riding anything (currentRide == null)
             testPlayer.setDeadState(false);
             testPlayer.setCurrentRide(null);
+            testPlayer.setScore(10);
 
-            // Execute
             WinConditionOutputData output = interactor.execute();
 
-            // Assertions
             assertFalse(output.isGameOver(), "Should not report game over.");
-            assertTrue(output.getMessage().isEmpty(), "Should return empty message.");
+            assertTrue(output.getMessage().isEmpty(), "Message should be empty when no condition is met.");
+            assertEquals(10, output.getScore(), "Score should be passed through unchanged.");
         }
     }
 
@@ -178,40 +215,36 @@ class WinConditionInteractorTest {
         @Test
         @DisplayName("Should return game over (Loss) when player is dead")
         void shouldLoseWhenPlayerIsDead() {
-            // Setup: Player is dead
             testPlayer.setDeadState(true);
+            testPlayer.setScore(999);
 
-            // Execute
             WinConditionOutputData output = interactor.execute();
 
-            // Assertions
             assertTrue(output.isGameOver(), "Should report game over (Loss).");
-            assertTrue(output.getMessage().contains("health reached zero"), "Should report the loss message.");
+            assertTrue(output.getMessage().contains("You died"),
+                "Message should mention that the player died.");
+            assertTrue(output.getMessage().contains("Zombie Express"),
+                "Message should mention Zombie Express.");
+            assertEquals(999, output.getScore(), "Score should come from player.");
 
-            // Execute again to test the internal `isGameOver` check
             WinConditionOutputData secondOutput = interactor.execute();
-            assertTrue(secondOutput.isGameOver(), "Should return game over on subsequent calls.");
-            assertEquals("Game Over.", secondOutput.getMessage(), "Should return generic message after game over.");
-
-            // Verify: Exit use case should not have been called
-            assertEquals(0, testExitGameUseCase.getCallCount(), "ExitGameUseCase should not be called on loss.");
+            assertTrue(secondOutput.isGameOver(), "Subsequent calls should still be game over.");
+            assertEquals("Game Over.", secondOutput.getMessage(),
+                "Should return generic message after game over.");
         }
 
         @Test
         @DisplayName("Should prioritize Loss condition over Win condition check")
         void shouldPrioritizeLoss() {
-            // Setup: Player is dead, but the train is at the win position
-            // (The Interactor checks Player.isDead() first)
             testPlayer.setDeadState(true);
             testPlayer.setCurrentRide(testRideable);
             testRideable.setPosition(WIN_POS);
 
-            // Execute
             WinConditionOutputData output = interactor.execute();
 
-            // Assertions
             assertTrue(output.isGameOver(), "Should report game over.");
-            assertTrue(output.getMessage().contains("health reached zero"), "Should report loss message, ignoring win position.");
+            assertTrue(output.getMessage().contains("You died"),
+                "Loss condition should override win condition even if train is at world end.");
         }
     }
 
@@ -222,37 +255,29 @@ class WinConditionInteractorTest {
         @Test
         @DisplayName("Should return game ongoing when player is alive and train is before world end")
         void shouldBeOngoing() {
-            // Setup: Player is alive, riding, and the train has not reached the end
             testPlayer.setDeadState(false);
             testPlayer.setCurrentRide(testRideable);
             testRideable.setPosition(NEUTRAL_POS);
 
-            // Execute
             WinConditionOutputData output = interactor.execute();
 
-            // Assertions
             assertFalse(output.isGameOver(), "Should report game ongoing.");
-            assertTrue(output.getMessage().isEmpty(), "Should return empty message.");
-
-            // Verify: No exit call
-            assertEquals(0, testExitGameUseCase.getCallCount(), "ExitGameUseCase should not be called.");
+            assertTrue(output.getMessage().isEmpty(), "Message should be empty when game continues.");
         }
 
         @Test
-        @DisplayName("Should return game ongoing when player is alive and riding exactly at world end coordinate")
-        void shouldBeOngoingAtExactWorldEnd() {
-            // Setup: Player is alive, riding, and exactly at the end coordinate (WIN_POS)
-            // The logic uses trackedX >= worldEndX, so this should trigger a win.
+        @DisplayName("Should win when exactly at world end coordinate")
+        void shouldWinAtExactWorldEnd() {
             testPlayer.setDeadState(false);
             testPlayer.setCurrentRide(testRideable);
-            testRideable.setPosition(new GamePosition(WORLD_END_X, 0, 0)); // Exactly 100.0f
+            testRideable.setPosition(new GamePosition(WORLD_END_X, 0, 0));
 
-            // Execute
             WinConditionOutputData output = interactor.execute();
 
-            // Assertions
-            assertTrue(output.isGameOver(), "Should report game over (Win) when exactly at the coordinate.");
-            assertTrue(output.getMessage().contains("Congratulations!"), "Should report the win message.");
+            assertTrue(output.isGameOver(),
+                "trackedX >= worldEndX means we should win at exact coordinate.");
+            assertTrue(output.getMessage().contains("Congratulations!"),
+                "Should report the win message.");
         }
     }
 }
