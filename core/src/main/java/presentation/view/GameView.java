@@ -188,7 +188,6 @@ public class GameView implements Viewable{
             chunkRenderer
         );
 
-
         PhysicsControlPort physicsControlPort = new BulletPhysicsAdapter(meshStorage);
         gameSimulationController = new GameSimulationController(
             worldSyncController, colHandler, entityBehaviourSystem, meshSynchronizer, physicsControlPort, player, cleanupController

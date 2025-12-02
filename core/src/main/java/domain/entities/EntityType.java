@@ -5,5 +5,6 @@ public enum EntityType {
     ZOMBIE,
     BULLET,
     PICKUP,
-    TRAIN
+    TRAIN ,
+    PLAYER
 }
