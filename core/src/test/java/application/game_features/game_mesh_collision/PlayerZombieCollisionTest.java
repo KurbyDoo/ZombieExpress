@@ -6,8 +6,7 @@ import domain.world.GamePosition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerZombieCollisionTest {
 
@@ -24,9 +23,6 @@ public class PlayerZombieCollisionTest {
         zombie = new Zombie(2, position, true);
     }
 
-    // =========================================================================
-    // TEST 2: Player vs Zombie
-    // =========================================================================
     @Test
     void testPlayerZombieCollision_ShouldDamagePlayer() {
         playerEntity.setHealth(100f); // make sure playerEntity is max health
@@ -36,8 +32,26 @@ public class PlayerZombieCollisionTest {
         interactor.execute(inputData);
 
         // Player should lose 30 health (100 - 30 = 70)
-        assertEquals(70f, playerEntity.getHealth(), 0.01f, "Player should lose 30 health after collision.");
+        assertEquals(70f, playerEntity.getHealth(), "Player should lose 30 health after collision.");
+        assertTrue(playerEntity == inputData.getPlayerEntity());
+        assertTrue(zombie == inputData.getZombie());
     }
+
+
+    @Test
+    void testPlayerZombieCollision_ShouldDamagePlayer_inverseLoadOrder() {
+        playerEntity.setHealth(100f); // make sure playerEntity is max health
+
+        PlayerZombieCollisionInputData inputData = new PlayerZombieCollisionInputData(zombie, playerEntity);
+
+        interactor.execute(inputData);
+
+        // Player should lose 30 health (100 - 30 = 70)
+        assertEquals(70f, playerEntity.getHealth());
+        assertTrue(playerEntity == inputData.getPlayerEntity());
+        assertTrue(zombie == inputData.getZombie());
+    }
+
 
     @Test
     void testPlayerZombieCollision_FatalDamageTerminatesLife() {
