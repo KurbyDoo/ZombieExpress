@@ -2,6 +2,9 @@ package presentation.view;
 
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginViewModel;
@@ -74,7 +77,7 @@ public class LoginView extends BaseAuthView implements PropertyChangeListener {
                 break;
 
             case "playerSession":
-                viewManager.switchTo(ViewType.GAME);
+                viewManager.switchTo(ViewType.LEADERBOARD);
                 break;
         }
     }

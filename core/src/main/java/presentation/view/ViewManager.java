@@ -27,6 +27,10 @@ public class ViewManager {
                 currentScreen = ViewFactory.createRegisterView(this);
                 break;
 
+            case LEADERBOARD:
+                currentScreen = ViewFactory.createLeaderboardView(this);
+                break;
+
             case GAME:
                 currentScreen = ViewFactory.createGameScreen();
                 break;

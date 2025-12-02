@@ -1,5 +1,8 @@
 package application.interface_use_cases.player_data;
+import domain.player.PlayerData;
 import domain.player.PlayerSession;
+
+import java.util.List;
 
 /**
  * Data access interface for retrieving and saving player session data
@@ -20,5 +23,6 @@ public interface PlayerDataAccessInterface {
      * @param session
      */
     void savePlayerData(PlayerSession session);
-    // store back the player info to the database
+
+    List<PlayerData> getAllPlayers();
 }

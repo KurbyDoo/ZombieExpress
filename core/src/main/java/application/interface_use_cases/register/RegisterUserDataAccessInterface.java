@@ -10,10 +10,10 @@ package application.interface_use_cases.register;
 public interface RegisterUserDataAccessInterface {
 
     /**
-     * Attempts to create a new user with the given username and password
-     * @param username
+     * Attempts to create a new user with the given useremail and password
+     * @param useremail
      * @param password
      * @return a unique UID if creation is successful, or null if creation fails
      */
-    String newUser(String username, String password);
+    String newUser(String useremail, String password);
 }

@@ -3,6 +3,8 @@ package presentation.view;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import interface_adapter.register.RegisterController;
 import interface_adapter.register.RegisterViewModel;
 

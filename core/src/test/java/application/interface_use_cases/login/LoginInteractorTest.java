@@ -56,6 +56,20 @@ public class LoginInteractorTest {
         interactor = new LoginInteractor(mockDAO, mockPresenter);
     }
 
+    @Test
+    void nullInputShouldFail() {
+        interactor.login(null, "123");
+        assertTrue(mockPresenter.failedCalled);
+        assertEquals("Email or password is empty",mockPresenter.failedMessage);
+    }
+
+    @Test
+    void nullPasswordShouldFail() {
+        interactor.login("1234@mail.com", null);
+        assertTrue(mockPresenter.failedCalled);
+        assertEquals("Email or password is empty",mockPresenter.failedMessage);
+    }
+
     // Email or password is empty
     @Test
     void emptyInputShouldFail() {
@@ -71,7 +85,7 @@ public class LoginInteractorTest {
     void invalidCredentialsShouldFail() {
         mockDAO.returnedJson = null;  // Simulate Firebase rejects login
 
-        interactor.login("meiyi@mail.com", "wrongpw");
+        interactor.login("mail@mail.com", "wrongpw");
 
         assertTrue(mockPresenter.failedCalled);
         assertEquals("Invalid email or password", mockPresenter.failedMessage);
@@ -83,14 +97,22 @@ public class LoginInteractorTest {
     void successLogin() {
         mockDAO.returnedJson = "{ \"localId\": \"abc123uid\" }";
 
-        interactor.login("meiyi@mail.com", "correct");
+        interactor.login("mail@mail.com", "correct");
 
         assertTrue(mockPresenter.successCalled);
         assertFalse(mockPresenter.failedCalled);
         assertNotNull(mockPresenter.successData);
 
-        assertEquals("meiyi@mail.com", mockPresenter.successData.getEmail());
+        assertEquals("mail@mail.com", mockPresenter.successData.getEmail());
         assertEquals("abc123uid", mockPresenter.successData.getUid());
+    }
+
+    @Test
+    void malformedJsonShouldThrow() {
+        mockDAO.returnedJson = "not_json";
+        assertThrows(Exception.class, () -> {
+            interactor.login("hi@mail.com","correct");
+        });
     }
 
     // the data which pass to the DAO is correct
@@ -100,5 +122,14 @@ public class LoginInteractorTest {
 
         assertEquals("a@b.com", mockDAO.lastEmail);
         assertEquals("pass123", mockDAO.lastPassword);
+    }
+
+    @Test
+    void daoIsCalledWhenInputIsValid() {
+        mockDAO.returnedJson = null;
+        interactor.login("x@y.com", "abc");
+
+        assertEquals("x@y.com", mockDAO.lastEmail);
+        assertEquals("abc", mockDAO.lastPassword);
     }
 }
