@@ -5,7 +5,8 @@ import application.game_use_cases.dismount_entity.DismountEntityInputData;
 import application.game_use_cases.mount_entity.MountEntityInputBoundary;
 import application.game_use_cases.mount_entity.MountEntityInputData;
 import application.game_use_cases.mount_entity.MountEntityOutputData;
-import application.game_use_cases.item_interaction.ItemInteractionInteractor;
+import application.game_use_cases.item_interaction.PickupInteractor;
+import application.game_use_cases.item_interaction.FuelTrainInteractor;
 import domain.entities.PickupEntity;
 import domain.entities.Train;
 import domain.player.Player;
@@ -13,7 +14,8 @@ import infrastructure.rendering.MeshStorage;
 
 public class ItemInteractionController {
 
-    private final ItemInteractionInteractor interactor;
+    private final PickupInteractor pickupInteractor;
+    private final FuelTrainInteractor fuelTrainInteractor;
     private final MountEntityInputBoundary mountEntity;
     private final DismountEntityInputBoundary dismountEntity;
     private final MeshStorage meshStorage;
@@ -25,13 +27,15 @@ public class ItemInteractionController {
 
     public ItemInteractionController(
         Player player,
-        ItemInteractionInteractor interactor,
+        PickupInteractor pickupInteractor,
+        FuelTrainInteractor fuelTrainInteractor,
         MountEntityInputBoundary mountEntity,
         DismountEntityInputBoundary dismountEntity,
         MeshStorage meshStorage
     ) {
         this.player = player;
-        this.interactor = interactor;
+        this.pickupInteractor = pickupInteractor;
+        this.fuelTrainInteractor = fuelTrainInteractor;
         this.mountEntity = mountEntity;
         this.dismountEntity = dismountEntity;
         this.meshStorage = meshStorage;
@@ -44,19 +48,19 @@ public class ItemInteractionController {
         clearTargets();
         StringBuilder sb = new StringBuilder();
 
-        Train train = interactor.findTrainInFront();
+        Train train = fuelTrainInteractor.findTrainInFront();
         if (player.getCurrentRide() != null) {
             sb.append("Press F to dismount");
         } else if (train != null) {
             currentTrainTarget = train;
             sb.append("Press F to drive Train");
-            if (interactor.isHoldingFuel()) {
+            if (fuelTrainInteractor.isHoldingFuel()) {
                 sb.append("\nPress E to fuel Train");
             }
         }
 
         if (train == null) {
-            PickupEntity pickup = interactor.findPickupInFront();
+            PickupEntity pickup = pickupInteractor.findPickupInFront();
             if (pickup != null) {
                 currentPickupTarget = pickup;
                 String itemName = pickup.getItem().getName();
@@ -72,14 +76,14 @@ public class ItemInteractionController {
      */
     public void onActionKeyPressed() {
         if (currentTrainTarget != null) {
-            boolean fueled = interactor.attemptFuelTrain(currentTrainTarget);
+            boolean fueled = fuelTrainInteractor.attemptFuelTrain(currentTrainTarget);
             if (fueled) {
                 clearTargets();
                 return;
             }
         }
         if (currentPickupTarget != null) {
-            Integer pickedID = interactor.attemptPickup(currentPickupTarget);
+            Integer pickedID = pickupInteractor.attemptPickup(currentPickupTarget);
             if (pickedID == null) {
                 return;
             }

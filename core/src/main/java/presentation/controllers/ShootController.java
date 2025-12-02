@@ -1,17 +1,8 @@
 package presentation.controllers;
 
-import application.game_use_cases.dismount_entity.DismountEntityInputBoundary;
-import application.game_use_cases.dismount_entity.DismountEntityInputData;
-import application.game_use_cases.generate_entity.bullet.GenerateBulletInputData;
-import application.game_use_cases.mount_entity.MountEntityInputBoundary;
-import application.game_use_cases.mount_entity.MountEntityInputData;
-import application.game_use_cases.mount_entity.MountEntityOutputData;
-import application.game_use_cases.item_interaction.ItemInteractionInteractor;
 import application.game_use_cases.shoot.ShootInputData;
 import application.game_use_cases.shoot.ShootInteractor;
 import application.game_use_cases.shoot.ShootOutputData;
-import domain.entities.PickupEntity;
-import domain.entities.Train;
 import domain.player.Player;
 import infrastructure.rendering.EntityRenderer;
 import infrastructure.rendering.MeshStorage;
