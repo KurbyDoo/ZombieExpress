@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import application.game_features.generate_chunk.noise.PerlinNoise;
 import application.gateways.BlockRepository;
 import domain.world.Chunk;
 import domain.world.GamePosition;
@@ -26,6 +27,7 @@ class GenerateChunkInteractorTest {
     @Test
     @DisplayName("Chunk successfully generates")
     void shouldSuccessfullyGenerate() {
+        PerlinNoise.setSeed(1000);
         GamePosition pos = new GamePosition(0, 0, 0);
         GenerateChunkOutputData outputData = interactor.execute(
             new GenerateChunkInputData(pos, 100)
@@ -35,6 +37,7 @@ class GenerateChunkInteractorTest {
         assertNotNull(chunk, "Chunk should not be null");
         assertEquals(0, chunk.getMaxBlockHeight(), "Should be flat at the origin");
         assertEquals(0, chunk.getMinBlockHeight(), "Should be flat at the origin");
+        assertEquals(1000, PerlinNoise.getSeed(), "Seed should not change");
     }
 
     @Test

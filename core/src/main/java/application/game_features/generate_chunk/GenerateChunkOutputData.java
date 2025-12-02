@@ -5,7 +5,7 @@ import domain.world.Chunk;
 public class GenerateChunkOutputData {
     private final Chunk newChunk;
 
-    GenerateChunkOutputData(Chunk chunk) {
+    public GenerateChunkOutputData(Chunk chunk) {
         newChunk = chunk;
     }
 
