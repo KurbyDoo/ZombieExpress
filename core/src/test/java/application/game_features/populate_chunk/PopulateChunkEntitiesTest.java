@@ -91,7 +91,7 @@ class PopulateChunkEntitiesTest {
     @Test
     @DisplayName("Far chunks should have entities")
     void fullFarAway() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             chunk = new Chunk(new GamePosition(20 + i, 0, 0));
             world.addChunk(new GamePosition(20 + i, 0, 0), chunk);
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++) {
