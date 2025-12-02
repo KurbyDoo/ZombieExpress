@@ -1,5 +1,6 @@
 package presentation.view;
 
+import application.interface_use_cases.Leaderboard.LeaderboardInteractor;
 import application.interface_use_cases.login.LoginInteractor;
 import application.interface_use_cases.player_data.LoadPlayerDataInteractor;
 import application.interface_use_cases.player_data.PlayerDataAccessInterface;
@@ -7,6 +8,9 @@ import application.interface_use_cases.player_data.SavePlayerDataInteractor;
 import application.interface_use_cases.register.RegisterInteractor;
 import data_access.firebase.FirebaseLoginRegisterDataAccess;
 import domain.player.PlayerSession;
+import interface_adapter.Leaderboard.LeaderboardController;
+import interface_adapter.Leaderboard.LeaderboardPresenter;
+import interface_adapter.Leaderboard.LeaderboardViewModel;
 import interface_adapter.login.*;
 import interface_adapter.register.*;
 
@@ -40,6 +44,14 @@ public class ViewFactory {
         RegisterController controller = new RegisterController(interactor);
         return new RegisterView(vm, controller, vmRegister);
     }
+    public static LeaderboardView createLeaderboardView(ViewManager vm) {
+        LeaderboardViewModel vmLeader = new LeaderboardViewModel();
+        LeaderboardPresenter presenter = new LeaderboardPresenter(vmLeader);
+        LeaderboardInteractor interactor = new LeaderboardInteractor(playerDataAccess, presenter);
+        LeaderboardController controller = new LeaderboardController(interactor, vm);
+        return new LeaderboardView(vm,controller, vmLeader);
+    }
+
 
     public static GameScreen createGameScreen() {
         SavePlayerDataInteractor saveScore = new SavePlayerDataInteractor(playerDataAccess,currentSession);

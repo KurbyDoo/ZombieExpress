@@ -77,7 +77,7 @@ public class LoginView extends BaseAuthView implements PropertyChangeListener {
                 break;
 
             case "playerSession":
-                viewManager.switchTo(ViewType.GAME);
+                viewManager.switchTo(ViewType.LEADERBOARD);
                 break;
         }
     }
