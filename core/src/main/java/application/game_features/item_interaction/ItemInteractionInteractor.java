@@ -49,12 +49,9 @@ public class ItemInteractionInteractor implements ItemInteractionInputBoundary {
             case RIDE_KEY_PRESSED:
                 return handleRideKeyPressed();
 
-            case DROP_KEY_PRESSED:
+            default:
                 handleDropKeyPressed();
                 refreshTargets();
-                return new ItemInteractionOutputData(currentMessage, null, false, false, false);
-
-            default:
                 return new ItemInteractionOutputData(currentMessage, null, false, false, false);
         }
     }

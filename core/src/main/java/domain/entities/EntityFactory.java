@@ -18,7 +18,6 @@ public class EntityFactory {
     }
 
     public int create(GenerateEntityInputData inputData) {
-        // TODO: Should the entity hold id? yes right?
         idCounter++;
         inputData.setId(idCounter);
         Entity e = registry.get(inputData.getType()).execute(inputData);
